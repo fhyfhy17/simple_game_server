@@ -1,0 +1,56 @@
+syntax = "proto3";
+option java_package = "com.net.msg";
+option java_outer_classname = "MAIL_MSG";
+
+import "options.proto";
+import "common.proto";
+
+
+message CTG_DEL_MAIL{
+	option(messageId) = 12001;
+	repeated int64 mailId = 1;//邮件IDS
+}
+
+message GTC_DEL_MAIL{
+	option(messageId) = 12002;
+	Status result = 1;
+	repeated int64 mailId = 2;//邮件IDS
+}
+
+message CTG_READ_MAIL{
+	option(messageId) = 12003;
+	int64 mailId = 1;//邮件ID
+}
+
+
+message CTG_MAIL_LIST{
+	option(messageId) = 12004;
+}
+
+message GTC_MAIL_LIST{
+	option(messageId) = 12005;
+	repeated MAIL_INFO mails = 1;
+}
+
+message MAIL_INFO{
+    int64 mailId =1;
+    int32 mailTemplateId=2;
+    bool hasRead =3;
+    bool hasReceived =4;
+    repeated ItemInfo items =5;
+    int64 mailTime =6;
+}
+
+message CTG_RECEIVE_ITEMS{
+	option(messageId) = 12006;
+	int64 mailId = 1;
+}
+
+message GTC_RECEIVE_ITEMS{
+	option(messageId) = 12007;	
+	Status result = 1;
+	repeated ItemInfo items = 2;
+}
+
+
+

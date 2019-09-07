@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <tr id="int" name="string" describe="string" />
+  <tr id="1" name="rank" describe="排行工具" />
+  <tr id="2" name="pageShow" describe="翻页显示工具(从game到player,排行榜类用,key:long)" />
+  <tr id="3" name="match" describe="匹配工具" />
+  <tr id="4" name="itemContainer" describe="物品容器工具(有格背包)" />
+  <tr id="5" name="selfPageShow" describe="翻页显示工具(角色个人读写的)" />
+  <tr id="6" name="itemDicContainer" describe="物品字典容器(无格背包)" />
+  <tr id="7" name="roleSocialPool" describe="角色社交数据池工具" />
+  <tr id="8" name="equipContainer" describe="装备容器" />
+</root>
+

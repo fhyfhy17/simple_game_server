@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <tr id="int" name="string" describe="string" />
+  <tr id="1" name="stuff" describe="材料（不可使用）" />
+  <tr id="2" name="equip" describe="装备" />
+  <tr id="3" name="box" describe="礼包、礼盒" />
+  <tr id="4" name="prop" describe="道具（可以使用）" />
+  <tr id="5" name="coin" describe="银币" />
+  <tr id="6" name="gold" describe="金币" />
+  <tr id="7" name="money" describe="元宝" />
+  <tr id="8" name="vit" describe="体力" />
+</root>
+

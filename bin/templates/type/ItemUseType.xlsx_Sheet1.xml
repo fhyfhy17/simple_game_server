@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <tr id="int" name="string" describe="string" />
+  <tr id="1" name="openBox" describe="打开礼包" />
+  <tr id="2" name="cost" describe="消耗" />
+</root>
+

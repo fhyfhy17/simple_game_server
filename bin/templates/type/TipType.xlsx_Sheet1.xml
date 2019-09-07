@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <tr id="int" name="string" describe="string" />
+  <tr id="1" name="levelLess" describe="等级不足" />
+  <tr id="2" name="CoinLess" describe="银币不足" />
+  <tr id="3" name="GoldLess" describe="金币不足" />
+  <tr id="4" name="NoPlayer" describe="没有Player" />
+  <tr id="5" name="accountError" describe="账户错误" />
+    <tr id="6" name="mailNoExist" describe="邮件不存在"/>
+    <tr id="7" name="bagNotEnough" describe="背包空间不足"/>
+    <tr id="8" name="mailHasItem" describe="邮件有物品，不能删除"/>
+</root>
+

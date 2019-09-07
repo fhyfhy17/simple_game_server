@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <tr id="int" name="string" describe="string" />
+  <tr id="-11" name="discard" describe="丢弃" />
+  <tr id="-12" name="refuse" describe="拒绝（弹出提示说放不进去）" />
+  <tr id="-13" name="mail" describe="邮件" />
+</root>
+

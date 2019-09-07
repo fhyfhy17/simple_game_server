@@ -1,0 +1,25 @@
+syntax = "proto3";
+option java_package = "com.net.msg";
+option java_outer_classname = "BUS_MSG";
+
+import "options.proto";
+
+
+message GTB_REGIST_ONLINE{
+	option(messageId) = 50001;
+	int64 uid =1;
+	int64 playerId =2;
+	string gate =3;
+	string game =4;
+}
+
+message GTB_OFFLINE{
+	option(messageId) = 50002;
+	int64 uid =1;
+}
+
+
+message GTB_ONLINE_UIDS_HEART{
+	option(messageId) = 50003;
+	repeated int64 uids =1;
+}

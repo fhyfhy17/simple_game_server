@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <tr id="int" name="string" describe="string"/>
+    <tr id="1" name="personal" describe="个人"/>
+    <tr id="2" name="multiple" describe="多人"/>
+    <tr id="3" name="total" describe="全体"/>
+</root>
+

@@ -1,0 +1,95 @@
+syntax = "proto3";
+option java_package = "com.net.msg";
+option java_outer_classname = "LOGIN_MSG";
+
+import "options.proto";
+import "common.proto";
+
+message CTG_LOGIN{
+	option(messageId) = 10001;
+	string username = 1;
+	string password =2;
+	string sessionId = 3;
+}
+message GTC_LOGIN{
+	option(messageId) = 10002;
+	int64 uid = 1;
+	Status result =2;
+	string sessionId = 3;
+}
+
+message CTG_HEART{
+	option(messageId) = 10003;
+}
+
+message GTC_HEART{
+	option(messageId) = 10004;
+}
+
+
+message CTG_TEST{
+	option(messageId) = 10005;
+	string word =1;
+}
+
+
+message GTC_TEST{
+	option(messageId) = 10006;
+	string word =1;
+}
+
+
+message LTGAME_RESET_COUNT{
+	option(messageId) = 10007;
+}
+
+
+message CTG_PLAYER_LIST{
+	option(messageId) = 10008;
+}
+message GTC_PLAYER_LIST{
+	option(messageId) = 10009;
+	repeated PLAYER_INFO players =1;
+}
+
+message PLAYER_INFO{
+	int64 uid			=1;
+	int64 playerId		=2;
+	int32 level			=3;
+	string name			=4;
+	int64 coin			=5;
+}
+
+message CTG_GAME_LOGIN_PLAYER{
+	option(messageId) = 10010;
+	int64 playerId =1;
+}
+
+message GTC_GAME_LOGIN_PLAYER{
+	option(messageId) = 10011;
+	PLAYER_INFO playerInfo =1;
+	Status result =2;
+	//其它模块信息
+}
+
+
+
+message CTG_PlayerInfo{
+	option(messageId) = 10012;
+}
+
+message GTC_PlayerInfo{
+	option(messageId) = 10013;
+	PLAYER_INFO playerInfo =1;
+}
+//统一错误回复
+message GTC_UNIFIED_EXCEPTION{
+	option(messageId) = 10014;
+	string msg=1;
+} 
+
+//Test收发时间
+message TEST_TIME{
+	option(messageId) = 10015;
+	string msg=1;
+} 

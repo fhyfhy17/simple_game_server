@@ -1,0 +1,24 @@
+syntax = "proto3";
+option java_package = "com.net.msg";
+option java_outer_classname = "COMMON_MSG";
+
+import "options.proto";
+
+message MyMessage{
+	int64 uid =1;
+	int32 id=2;
+	bytes data =3;
+	string from=4;
+	string gate=5;
+}
+
+
+message Status{
+	bool result = 1;//状态，成功失败
+	int32 tip = 2 ;//失败状态码
+}
+
+message ItemInfo{
+	int32 itemId = 1;
+	int32 itemNum = 2;
+}

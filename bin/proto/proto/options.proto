@@ -1,0 +1,12 @@
+syntax ="proto3";
+option java_package = "com.net.msg";
+import "google/protobuf/descriptor.proto";
+//ID分配规则
+//10 000 前两位代表模块 ，每加一个模块千位加1，下一模块起始为11 000，每个模块允许1000个ID
+//10 登录模块
+//center从5开始
+extend google.protobuf.MessageOptions {
+
+   int32 messageId = 51235;
+
+}

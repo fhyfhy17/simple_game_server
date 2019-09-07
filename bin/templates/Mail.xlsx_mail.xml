@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <tr id="int" name="string" describe="string" title="int" content="int" items="int[][]"/>
+    <tr id="1" name="currency_coin_name" describe="金币" title="1" content="2" items="1,1;2,2"/>
+</root>
+

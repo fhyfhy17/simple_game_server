@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <tr id="int" chinese="string" englist="string"/>
+    <tr id="1" chinese="邮件1title" englist="mail1title"/>
+    <tr id="2" chinese="邮件2content" englist="mail1content"/>
+</root>
+

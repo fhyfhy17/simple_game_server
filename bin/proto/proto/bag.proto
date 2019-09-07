@@ -1,0 +1,21 @@
+syntax = "proto3";
+option java_package = "com.net.msg";
+option java_outer_classname = "BAG_MSG";
+
+import "options.proto";
+import "common.proto";
+
+
+message CTG_TIDY{
+	option(messageId) = 11001;
+}
+
+message CTG_USEITEM{
+	option(messageId) = 11002;
+	int32 index = 1;//格子index ，从1开始
+	int32 num = 2;//使用数量
+}
+
+
+
+
