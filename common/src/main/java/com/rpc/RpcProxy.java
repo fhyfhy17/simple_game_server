@@ -2,6 +2,7 @@ package com.rpc;
 
 import co.paralleluniverse.fibers.Suspendable;
 import co.paralleluniverse.strands.SettableFuture;
+import com.Constant;
 import com.annotation.Rpc;
 import com.enums.TypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class RpcProxy
 				String name = method.getDeclaringClass().getName();
 				String methodName = method.getName();
 				RpcRequest rpcRequest = new RpcRequest();
-				rpcRequest.setId(UUID.randomUUID().toString());
+				rpcRequest.setId(Constant.RPC_REQUEST+UUID.randomUUID().toString());
 				rpcRequest.setClassName(name);
 				rpcRequest.setMethodName(methodName);
 				rpcRequest.setParameters(args);

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.Objects;
 
 
 @SuppressWarnings("unchecked")
@@ -38,4 +39,5 @@ public class SpringUtils implements ApplicationContextAware {
     public static Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotation) {
         return applicationContext.getBeansWithAnnotation(annotation);
     }
+
 }

@@ -13,6 +13,6 @@ public interface HandlerInterceptor {
         return true;
     }
 
-    default void postHandle(Packet message, ControllerHandler handler, Object result, String rpcRequestId) {
+    default void postHandle(Packet message, Object result) {
     }
 }

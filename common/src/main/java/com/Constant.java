@@ -19,7 +19,7 @@ public class Constant {
 
     public static final String ZOOKEEPER_PATH = "/cluster/nodes";
 
-    public static final int RPC_REQUEST_ID= -1;
+    public static final String RPC_REQUEST= "rpcRequest";
     
-    public static final int RPC_RESPONSE_ID= -2;
+    public static final String RPC_RESPONSE = "rpcResponse";
 }

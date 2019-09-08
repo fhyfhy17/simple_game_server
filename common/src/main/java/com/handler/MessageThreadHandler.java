@@ -11,8 +11,6 @@ import com.controller.fun.Fun4;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.exception.StatusException;
 import com.exception.exceptionNeedSendToClient.ServerBusinessException;
-import com.google.protobuf.Message;
-import com.manager.ServerInfoManager;
 import com.pojo.Packet;
 import com.rpc.RpcHolder;
 import com.rpc.RpcRequest;
@@ -75,12 +73,12 @@ public class MessageThreadHandler implements Runnable {
                 packet = pulseQueues.poll();
                 final int cmdId = packet.getId();
                 gate = packet.getGate();
-                if(packet.getId() == Constant.RPC_RESPONSE_ID){
+                if(Constant.RPC_RESPONSE.equals(packet.getRpc())){
                     //log.info("收到 RPC 返回时间  "+ System.currentTimeMillis());
                     SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(),RpcResponse.class));
                     return;
                 }
-                isRpc = packet.getId() == Constant.RPC_REQUEST_ID;
+                isRpc = StringUtil.contains(packet.getRpc(),Constant.RPC_REQUEST);
     
                 if(!isRpc){
                     handler = ControllerFactory.getControllerMap().get(cmdId);
@@ -137,7 +135,7 @@ public class MessageThreadHandler implements Runnable {
 
                 ////拦截器后
                 if (!Objects.isNull(result)) {
-                    HandlerExecutionChain.applyPostHandle(packet,result, handler,isRpc?rpcRequest.getId():null);
+                    HandlerExecutionChain.applyPostHandle(packet,result);
                 }
             }
 

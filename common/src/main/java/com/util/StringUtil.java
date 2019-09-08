@@ -1,5 +1,7 @@
 package com.util;
 
+import java.util.Objects;
+
 public class StringUtil {
 
     public static String cutByRemovePostfix(String complete, String postfix) {
@@ -20,5 +22,13 @@ public class StringUtil {
             return s;
         }
         return with + s.substring(i + sub.length());
+    }
+
+
+    public static boolean contains(String a,String b){
+        if(Objects.isNull(a)||Objects.isNull(b)){
+            return false;
+        }
+        return a.contains(b);
     }
 }

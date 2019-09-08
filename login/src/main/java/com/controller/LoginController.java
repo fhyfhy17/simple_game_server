@@ -4,10 +4,12 @@ package com.controller;
 import co.paralleluniverse.fibers.Suspendable;
 import com.annotation.Controllor;
 import com.annotation.Rpc;
+import com.controller.interceptor.HandlerExecutionChain;
 import com.entry.PlayerEntry;
 import com.entry.UserEntry;
 import com.exception.StatusException;
 import com.net.msg.LOGIN_MSG;
+import com.pojo.Packet;
 import com.rpc.interfaces.gameToBus.GameToBus;
 import com.service.LoginService;
 import com.template.templates.type.TipType;
@@ -30,7 +32,7 @@ public class LoginController extends BaseController implements GameToBus {
     private LoginService loginService;
 
     @Controllor
-    public CompletableFuture<LOGIN_MSG.GTC_LOGIN> login(UidContext context, LOGIN_MSG.CTG_LOGIN req) throws StatusException {
+    public Object login(UidContext context, LOGIN_MSG.CTG_LOGIN req) throws StatusException {
         String username = req.getUsername();
         String password = req.getPassword();
         String sessionId = req.getSessionId();
@@ -38,6 +40,7 @@ public class LoginController extends BaseController implements GameToBus {
         LOGIN_MSG.GTC_LOGIN.Builder builder = LOGIN_MSG.GTC_LOGIN.newBuilder();
         CompletableFuture<UserEntry> user = loginService.login(username, password);
 
+        builder.setSessionId(sessionId);
         user.whenCompleteAsync((userEntry, throwable) -> {
 
             if(!Objects.isNull(throwable)){
@@ -50,12 +53,11 @@ public class LoginController extends BaseController implements GameToBus {
             } else {
                 builder.setResult(TipStatus.fail(TipType.AccountError));
             }
-
+            HandlerExecutionChain.applyPostHandle(
+                    new Packet(context.getUid(),context.getId(),null,context.getFrom(),context.getGate(),context.getRpc())
+                    ,builder.build());
         });
-
-
-        return CompletableFuture.completedFuture(builder.build());
-
+        return null;
     }
 
 

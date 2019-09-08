@@ -1,5 +1,6 @@
 package com.util;
 
+import com.Constant;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
 import com.net.msg.Options;
@@ -49,12 +50,13 @@ public class ProtoUtil {
         return messageResult;
     }
     
-    public static Packet buildRpcRequstMessage(byte[] data,long uid,@Nullable String from) {
+    public static Packet buildRpcRequestMessage(byte[] data, long uid, @Nullable String from, String rpcRequestId) {
         Packet messageResult = new Packet();
         messageResult.setId(-1);
         messageResult.setUid(uid);
         messageResult.setFrom(null == from ? ContextUtil.id : from);
         messageResult.setData(data);
+        messageResult.setRpc(rpcRequestId);
         return messageResult;
     }
     
@@ -64,6 +66,7 @@ public class ProtoUtil {
         messageResult.setUid(uid);
         messageResult.setFrom(null == from ? ContextUtil.id : from);
         messageResult.setData(data);
+        messageResult.setRpc(Constant.RPC_RESPONSE);
         return messageResult;
     }
     

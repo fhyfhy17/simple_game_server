@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 //只针对前端消息，服务之间暂时不需要
 public class ResultExceptionReplyInterceptor implements HandlerInterceptor {
     @Override
-    public void postHandle(Packet message,ControllerHandler handler,Object result,String rpcRequestId) {
+    public void postHandle(Packet message,Object result) {
         if (!Constant.DEFAULT_ERROR_REPLY.equals(result)) {
             return;
         }

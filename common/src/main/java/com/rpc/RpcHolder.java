@@ -3,6 +3,7 @@ package com.rpc;
 import co.paralleluniverse.strands.SettableFuture;
 import com.enums.TypeEnum;
 import com.manager.ServerInfoManager;
+import com.util.ContextUtil;
 import com.util.ProtoUtil;
 import com.util.ProtostuffUtil;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class RpcHolder{
 		}
 		Assert.notNull(requestId, "requestId 不能为空");
 		String s=ServerInfoManager.hashChooseServer(hashkey,serverType);
-		ServerInfoManager.sendMessage(s,ProtoUtil.buildRpcRequstMessage(ProtostuffUtil.serializeObject(rpcRequest,RpcRequest.class),uid,null));
+		ServerInfoManager.sendMessage(s,ProtoUtil.buildRpcRequestMessage(ProtostuffUtil.serializeObject(rpcRequest,RpcRequest.class),uid, ContextUtil.id,requestId));
 		return future;
 	}
 	

@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 //结果拦截器 （根据执行完消息返回的结果，执行回消息操作）  CompletableFuture
 public class ResultCompletableFutureReplyInterceptor implements HandlerInterceptor {
     @Override
-    public void postHandle(Packet message, ControllerHandler handler, Object result, String rpcRequestId) {
+    public void postHandle(Packet message, Object result) {
         if (!CompletableFuture.class.isAssignableFrom(result.getClass())) {
             return;
         }
@@ -37,11 +37,7 @@ public class ResultCompletableFutureReplyInterceptor implements HandlerIntercept
         try {
             Object result1 = completableFuture.get();
             if (!Objects.isNull(result1)) {
-                if (message.getId() == Constant.RPC_REQUEST_ID) {
-                    HandlerExecutionChain.applyPostHandle(message, result1, handler, ProtostuffUtil.deserializeObject(message.getData(), RpcRequest.class).getId());
-                } else {
-                    HandlerExecutionChain.applyPostHandle(message, result1, handler, null);
-                }
+                HandlerExecutionChain.applyPostHandle(message, result1);
             }
         } catch (Exception e) {
             log.error("", e);
