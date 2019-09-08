@@ -2,6 +2,7 @@ package com.controller.interceptor.handlerInterceptorImpl;
 
 import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerInterceptor;
+import com.google.protobuf.Message;
 import com.manager.ServerInfoManager;
 import com.pojo.Packet;
 import com.util.ContextUtil;
@@ -16,18 +17,19 @@ import java.util.Objects;
 //结果拦截器 （根据执行完消息返回的结果，执行回消息操作）
 public class ResultReplyInterceptor implements HandlerInterceptor {
     @Override
-    public void postHandle(Packet message,ControllerHandler handler,com.google.protobuf.Message result) {
-        if (Objects.isNull(result)) {
+    public void postHandle(Packet message, ControllerHandler handler, Object result, String rpcRequestId) {
+
+        if(!Message.class.isAssignableFrom(result.getClass())){
             return;
         }
 
-        Packet messageResult = buildMessage(result, message);
+        Packet messageResult = buildMessage((Message) result, message);
         ServerInfoManager.sendMessage(message.getFrom(), messageResult);
 
     }
 
-    private Packet buildMessage(com.google.protobuf.Message resultMessage,Packet message) {
-        Packet messageResult = new Packet();
+    private Packet buildMessage(Message resultMessage,Packet message) {
+        Packet  messageResult = new Packet();
         messageResult.setId(ProtoUtil.protoGetMessageId(resultMessage));
         messageResult.setUid(message.getUid());
         messageResult.setFrom(ContextUtil.id);

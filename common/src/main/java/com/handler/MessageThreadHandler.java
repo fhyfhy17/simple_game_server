@@ -17,13 +17,11 @@ import com.pojo.Packet;
 import com.rpc.RpcHolder;
 import com.rpc.RpcRequest;
 import com.rpc.RpcResponse;
-import com.util.ProtoUtil;
-import com.util.ProtostuffUtil;
-import com.util.SpringUtils;
-import com.util.TipStatus;
+import com.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Slf4j
@@ -54,6 +52,7 @@ public class MessageThreadHandler implements Runnable {
                     Thread.sleep(1);
                 }
             } catch (InterruptedException e) {
+                log.error("线程中断",e);
             } finally {
                 stopWatch.reset();
             }
@@ -134,43 +133,26 @@ public class MessageThreadHandler implements Runnable {
 
 
                 ////针对method的每个参数进行处理， 处理多参数,返回result（这是老的invoke执行controller 暂时废弃）
-                //com.google.protobuf.Message result = (com.google.protobuf.Message) com.handler.invokeForController(packet);
+                //Message result = (Message) com.handler.invokeForController(packet);
+
                 ////拦截器后
-                if (result!=null&&Message.class.isAssignableFrom(result.getClass())) {
-
-                    HandlerExecutionChain.applyPostHandle(packet, (com.google.protobuf.Message) result, handler);
+                if (!Objects.isNull(result)) {
+                    HandlerExecutionChain.applyPostHandle(packet,result, handler,isRpc?rpcRequest.getId():null);
                 }
-                
-                if(isRpc&& result!=null){
-                    RpcResponse rpcResponse = new RpcResponse();
-                    rpcResponse.setRequestId(rpcRequest.getId());
-                    rpcResponse.setData(result);
-                    ServerInfoManager.sendMessage(packet.getFrom(),ProtoUtil.buildRpcResponseMessage(ProtostuffUtil.serializeObject(rpcResponse,RpcResponse.class),packet.getUid(),null));
-                    //log.info("响应 发回去 的  "+ System.currentTimeMillis());
-                }
-
             }
-            //服务之间的错误，只在本地打印，  如果是RPC发回去一个错误类型也就够了
+
             catch (StatusException se) {
-                // Status报错， 执行方法时，抛出主动定义的错误，方便多层调用时无法中断方法，这里主动回复给有result参数的协议
-                Class<?> returnType = handler.getMethod().getReturnType();
-                if (returnType.isAssignableFrom(Message.class)) {
-                    Message.Builder builder = ProtoUtil.setFieldByName(ProtoUtil.createBuilerByClassName(returnType.getName()), "result", TipStatus.fail(se.getTip()));
-                    Packet message1 = ProtoUtil.buildMessage(builder.build(), packet.getUid(), null);
-                    ServerInfoManager.sendMessage(gate, message1);
-                }
+                ExceptionUtil.sendStatusExceptionToClient(handler,packet,gate,se);
             } catch (ServerBusinessException sbe) {
                 // 业务报错，
                 log.error("", sbe);
-                //TODO  也发给前端，方便调试
             } catch (Exception e) {
                 // 系统报错
                 log.error("", e);
-                HandlerExecutionChain.applyPostHandle(packet, Constant.DEFAULT_ERROR_REPLY, handler);
-
             }
         }
     }
+
 
 
     public String getHandlerId() {

@@ -32,7 +32,7 @@ public class MessageWorkerHandler extends WorkerHandler {
             //针对method的每个参数进行处理， 处理多参数,返回result
             com.google.protobuf.Message result = (com.google.protobuf.Message) handler.invokeForController(message);
             //拦截器后
-            HandlerExecutionChain.applyPostHandle(message, result, handler);
+//            HandlerExecutionChain.applyPostHandle(message, result, handler);
         } catch (Exception e) {
             log.error("", e);
         }

@@ -1,6 +1,7 @@
 package com.controller.interceptor;
 
 import com.controller.ControllerHandler;
+import com.google.protobuf.Message;
 import com.pojo.Packet;
 
 //TODO 拦截器可以实现 白名单黑名单功能，类似于多少级以下的不能访问某些协议之类的
@@ -12,6 +13,6 @@ public interface HandlerInterceptor {
         return true;
     }
 
-    default void postHandle(Packet message,ControllerHandler handler,com.google.protobuf.Message result) {
+    default void postHandle(Packet message, ControllerHandler handler, Object result, String rpcRequestId) {
     }
 }

@@ -1,6 +1,7 @@
 package com.controller.interceptor;
 
 import com.controller.ControllerHandler;
+import com.google.protobuf.Message;
 import com.pojo.Packet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,11 @@ public class HandlerExecutionChain {
         return true;
     }
 
-    public static void applyPostHandle(Packet message,com.google.protobuf.Message result,ControllerHandler handler) {
+    public static void applyPostHandle(Packet message, Object result, ControllerHandler handler,String rpcRequestId) {
         if (!ObjectUtils.isEmpty(interceptorList)) {
             for (int i = 0; i < interceptorList.size(); i++) {
                 HandlerInterceptor interceptor = interceptorList.get(i);
-                interceptor.postHandle(message, handler, result);
+                interceptor.postHandle(message, handler, result,rpcRequestId);
             }
         }
     }

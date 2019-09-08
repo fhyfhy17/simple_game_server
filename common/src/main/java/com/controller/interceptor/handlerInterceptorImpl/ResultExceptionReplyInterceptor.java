@@ -17,21 +17,21 @@ import org.springframework.stereotype.Component;
 //只针对前端消息，服务之间暂时不需要
 public class ResultExceptionReplyInterceptor implements HandlerInterceptor {
     @Override
-    public void postHandle(Packet message,ControllerHandler handler,com.google.protobuf.Message result) {
+    public void postHandle(Packet message,ControllerHandler handler,Object result,String rpcRequestId) {
         if (!Constant.DEFAULT_ERROR_REPLY.equals(result)) {
             return;
         }
 
-        Packet messageResult = new Packet();
-        LOGIN_MSG.GTC_UNIFIED_EXCEPTION.Builder builder = LOGIN_MSG.GTC_UNIFIED_EXCEPTION.newBuilder();
-        builder.setMsg("服务器报错!");
-
-        messageResult.setId(ProtoUtil.protoGetMessageId(builder));
-        messageResult.setUid(message.getUid());
-        messageResult.setFrom(ContextUtil.id);
-        messageResult.setData(builder.build().toByteArray());
-
-        ServerInfoManager.sendMessage(message.getGate(), messageResult);
+//        Packet messageResult = new Packet();
+//        LOGIN_MSG.GTC_UNIFIED_EXCEPTION.Builder builder = LOGIN_MSG.GTC_UNIFIED_EXCEPTION.newBuilder();
+//        builder.setMsg("服务器报错!");
+//
+//        messageResult.setId(ProtoUtil.protoGetMessageId(builder));
+//        messageResult.setUid(message.getUid());
+//        messageResult.setFrom(ContextUtil.id);
+//        messageResult.setData(builder.build().toByteArray());
+//
+//        ServerInfoManager.sendMessage(message.getGate(), messageResult);
     }
 
 
