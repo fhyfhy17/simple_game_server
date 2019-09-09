@@ -74,7 +74,6 @@ public class MessageThreadHandler implements Runnable {
                 final int cmdId = packet.getId();
                 gate = packet.getGate();
                 if(Constant.RPC_RESPONSE.equals(packet.getRpc())){
-                    //log.info("收到 RPC 返回时间  "+ System.currentTimeMillis());
                     SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(),RpcResponse.class));
                     continue;
                 }
