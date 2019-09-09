@@ -52,6 +52,16 @@ public final class COMMON_MSG {
      */
     com.google.protobuf.ByteString
         getGateBytes();
+
+    /**
+     * <code>string rpc = 6;</code>
+     */
+    java.lang.String getRpc();
+    /**
+     * <code>string rpc = 6;</code>
+     */
+    com.google.protobuf.ByteString
+        getRpcBytes();
   }
   /**
    * Protobuf type {@code MyMessage}
@@ -71,6 +81,7 @@ public final class COMMON_MSG {
       data_ = com.google.protobuf.ByteString.EMPTY;
       from_ = "";
       gate_ = "";
+      rpc_ = "";
     }
 
     @java.lang.Override
@@ -122,6 +133,12 @@ public final class COMMON_MSG {
               java.lang.String s = input.readStringRequireUtf8();
 
               gate_ = s;
+              break;
+            }
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              rpc_ = s;
               break;
             }
             default: {
@@ -251,6 +268,40 @@ public final class COMMON_MSG {
       }
     }
 
+    public static final int RPC_FIELD_NUMBER = 6;
+    private volatile java.lang.Object rpc_;
+    /**
+     * <code>string rpc = 6;</code>
+     */
+    public java.lang.String getRpc() {
+      java.lang.Object ref = rpc_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        rpc_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string rpc = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getRpcBytes() {
+      java.lang.Object ref = rpc_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        rpc_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -280,6 +331,9 @@ public final class COMMON_MSG {
       if (!getGateBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, gate_);
       }
+      if (!getRpcBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, rpc_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -307,6 +361,9 @@ public final class COMMON_MSG {
       if (!getGateBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, gate_);
       }
+      if (!getRpcBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, rpc_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -333,6 +390,8 @@ public final class COMMON_MSG {
           .equals(other.getFrom());
       result = result && getGate()
           .equals(other.getGate());
+      result = result && getRpc()
+          .equals(other.getRpc());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -355,6 +414,8 @@ public final class COMMON_MSG {
       hash = (53 * hash) + getFrom().hashCode();
       hash = (37 * hash) + GATE_FIELD_NUMBER;
       hash = (53 * hash) + getGate().hashCode();
+      hash = (37 * hash) + RPC_FIELD_NUMBER;
+      hash = (53 * hash) + getRpc().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -498,6 +559,8 @@ public final class COMMON_MSG {
 
         gate_ = "";
 
+        rpc_ = "";
+
         return this;
       }
 
@@ -529,6 +592,7 @@ public final class COMMON_MSG {
         result.data_ = data_;
         result.from_ = from_;
         result.gate_ = gate_;
+        result.rpc_ = rpc_;
         onBuilt();
         return result;
       }
@@ -592,6 +656,10 @@ public final class COMMON_MSG {
         }
         if (!other.getGate().isEmpty()) {
           gate_ = other.gate_;
+          onChanged();
+        }
+        if (!other.getRpc().isEmpty()) {
+          rpc_ = other.rpc_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -838,6 +906,75 @@ public final class COMMON_MSG {
   checkByteStringIsUtf8(value);
         
         gate_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object rpc_ = "";
+      /**
+       * <code>string rpc = 6;</code>
+       */
+      public java.lang.String getRpc() {
+        java.lang.Object ref = rpc_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          rpc_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string rpc = 6;</code>
+       */
+      public com.google.protobuf.ByteString
+          getRpcBytes() {
+        java.lang.Object ref = rpc_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          rpc_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string rpc = 6;</code>
+       */
+      public Builder setRpc(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        rpc_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string rpc = 6;</code>
+       */
+      public Builder clearRpc() {
+        
+        rpc_ = getDefaultInstance().getRpc();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string rpc = 6;</code>
+       */
+      public Builder setRpcBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        rpc_ = value;
         onChanged();
         return this;
       }
@@ -2037,12 +2174,13 @@ public final class COMMON_MSG {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014common.proto\032\roptions.proto\"N\n\tMyMessa" +
+      "\n\014common.proto\032\roptions.proto\"[\n\tMyMessa" +
       "ge\022\013\n\003uid\030\001 \001(\003\022\n\n\002id\030\002 \001(\005\022\014\n\004data\030\003 \001(" +
-      "\014\022\014\n\004from\030\004 \001(\t\022\014\n\004gate\030\005 \001(\t\"%\n\006Status\022" +
-      "\016\n\006result\030\001 \001(\010\022\013\n\003tip\030\002 \001(\005\"+\n\010ItemInfo" +
-      "\022\016\n\006itemId\030\001 \001(\005\022\017\n\007itemNum\030\002 \001(\005B\031\n\013com" +
-      ".net.msgB\nCOMMON_MSGb\006proto3"
+      "\014\022\014\n\004from\030\004 \001(\t\022\014\n\004gate\030\005 \001(\t\022\013\n\003rpc\030\006 \001" +
+      "(\t\"%\n\006Status\022\016\n\006result\030\001 \001(\010\022\013\n\003tip\030\002 \001(" +
+      "\005\"+\n\010ItemInfo\022\016\n\006itemId\030\001 \001(\005\022\017\n\007itemNum" +
+      "\030\002 \001(\005B\031\n\013com.net.msgB\nCOMMON_MSGb\006proto" +
+      "3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2062,7 +2200,7 @@ public final class COMMON_MSG {
     internal_static_MyMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_MyMessage_descriptor,
-        new java.lang.String[] { "Uid", "Id", "Data", "From", "Gate", });
+        new java.lang.String[] { "Uid", "Id", "Data", "From", "Gate", "Rpc", });
     internal_static_Status_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_Status_fieldAccessorTable = new

@@ -179,6 +179,7 @@ public class SerializeUtil {
         if(m.getGate()!=null){
             builder.setGate(m.getGate());
         }
+        builder.setRpc(m.getRpc());
        
         return builder.build().toByteArray();
     }
@@ -194,6 +195,7 @@ public class SerializeUtil {
             m2.setData(m.getData().toByteArray());
             m2.setFrom(m.getFrom());
             m2.setGate(m.getGate());
+            m2.setRpc(m.getRpc());
             return m2;
 
         } catch (InvalidProtocolBufferException e) {

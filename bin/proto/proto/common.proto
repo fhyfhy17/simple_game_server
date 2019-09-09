@@ -10,6 +10,7 @@ message MyMessage{
 	bytes data =3;
 	string from=4;
 	string gate=5;
+	string rpc=6;
 }
 
 
