@@ -7,9 +7,7 @@ import java.util.Queue;
 import java.util.concurrent.Executor;
 
 /**
- * 有序线程池，可以包装在任何线程池外层，通过对相同的key进行队列执行，效果是，如果
- * * 线程池中无相同key的待执行任务，该任务做为普通线程池任务，可以在任何一条线程里执行，
- * 如果池程池中有相同key的待执行任务，该任务加到待执行任务的队列里连续执行
+ * 有序线程池，可以包装在任何线程池外层，通过对相同的key进行队列执行，效果是相同key的进行队列执行进真正的线程池
  */
 public class OrderingExecutor implements Executor {
 
@@ -81,6 +79,14 @@ public class OrderingExecutor implements Executor {
                         nextTask = dependencyQueue.poll();
                     }
                 }
+                //try
+                //{
+                //    Thread.sleep(2000);
+                //}
+                //catch(InterruptedException e)
+                //{
+                //    e.printStackTrace();
+                //}
                 if (nextTask != null)
                     delegate.execute(nextTask);
             }

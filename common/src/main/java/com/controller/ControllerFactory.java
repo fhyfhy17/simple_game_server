@@ -9,14 +9,11 @@ import com.controller.fun.Fun3;
 import com.controller.fun.Fun4;
 import com.controller.fun.FunType;
 import com.google.common.collect.Maps;
-import com.google.common.reflect.Reflection;
 import com.google.protobuf.Message;
 import com.util.Pair;
 import com.util.ProtoUtil;
 import com.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
-import sun.reflect.MethodAccessor;
-import sun.reflect.ReflectionFactory;
 
 import java.lang.invoke.CallSite;
 import java.lang.invoke.LambdaConversionException;
@@ -49,11 +46,11 @@ public class ControllerFactory {
                 }
                 
                 if(!Objects.isNull(method.getAnnotation(Rpc.class))){
-                    MethodAccessor methodAccessor = ReflectionFactory.getReflectionFactory().newMethodAccessor(method);
+                    //MethodAccessor methodAccessor = ReflectionFactory.getReflectionFactory().newMethodAccessor(method);
 
                     Pair<Object, FunType> add = addFunType(controller, method);
 
-                    rpcControllerMap.put(method.getDeclaringClass().getGenericInterfaces()[0].getTypeName()+"_"+method.getName(), new ControllerHandler(controller, method, -1, methodAccessor, add.getValue(), add.getKey()));
+                    rpcControllerMap.put(method.getDeclaringClass().getGenericInterfaces()[0].getTypeName()+"_"+method.getName(), new ControllerHandler(controller, method, -1, add.getValue(), add.getKey()));
                 }else{
                     for (Class<?> parameterClass : method.getParameterTypes()) {
                         if (!Message.class.isAssignableFrom(parameterClass)) {
@@ -70,11 +67,11 @@ public class ControllerFactory {
                                 continue;
                             }
 
-                            MethodAccessor methodAccessor = ReflectionFactory.getReflectionFactory().newMethodAccessor(method);
+                            //MethodAccessor methodAccessor = ReflectionFactory.getReflectionFactory().newMethodAccessor(method);
             
                             Pair<Object, FunType> add = addFunType(controller, method);
             
-                            controllerMap.put(msgId, new ControllerHandler(controller, method, msgId, methodAccessor, add.getValue(), add.getKey()));
+                            controllerMap.put(msgId, new ControllerHandler(controller, method, msgId, add.getValue(), add.getKey()));
             
                         } catch (IllegalAccessException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException e) {
                             log.error("", e);

@@ -13,7 +13,6 @@ public class ThreadOrderingExecutor extends OrderingExecutor {
     
     @Override
     public void execute(Runnable task){
-        System.out.println(Thread.currentThread().getName());
         execute(task,Thread.currentThread().getName());
     }
 }

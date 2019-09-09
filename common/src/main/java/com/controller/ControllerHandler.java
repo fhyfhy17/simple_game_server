@@ -7,7 +7,6 @@ import com.pojo.Packet;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.MethodAccessor;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -19,16 +18,16 @@ public class ControllerHandler {
     private Method method;
     private MethodParameter[] parameters;
     private int msgId;
-    private MethodAccessor methodAccessor;
+    //private MethodAccessor methodAccessor;
     private FunType funType;
     private Object fun;
 
-    public ControllerHandler(BaseController action, Method method, int msgId, MethodAccessor methodAccessor, FunType funType, Object fun) {
+    public ControllerHandler(BaseController action, Method method, int msgId, FunType funType, Object fun) {
 
         this.action = action;
         this.method = method;
         this.msgId = msgId;
-        this.methodAccessor = methodAccessor;
+        //this.methodAccessor = methodAccessor;
         this.funType = funType;
         this.fun = fun;
         Class<?>[] parameterTypes = this.method.getParameterTypes();
@@ -41,7 +40,7 @@ public class ControllerHandler {
 
     public Object invokeForController(Packet message) throws Exception {
         Object[] args = getMethodArgumentValues(message);
-        return this.methodAccessor.invoke(this.action, args);
+        return this.method.invoke(this.action, args);
 
     }
 
