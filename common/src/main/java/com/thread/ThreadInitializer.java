@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class ThreadInitializer {
 
     @Bean(name = "ioThreadPool")
-    public OrderingExecutor getOrderingExecutor() {
+    public ThreadOrderingExecutor getOrderingExecutor() {
         ThreadPool ioThreadPool = new ThreadPool(4,
                 4,
                 0,
@@ -20,7 +20,7 @@ public class ThreadInitializer {
                 new LinkedBlockingQueue<>(),
                 new NamedThreadFactory("IO线程", true));
 
-        return new OrderingExecutor(ioThreadPool);
+        return new ThreadOrderingExecutor(ioThreadPool);
     }
 
 }
