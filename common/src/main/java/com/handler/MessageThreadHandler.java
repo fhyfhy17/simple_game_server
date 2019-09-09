@@ -76,7 +76,7 @@ public class MessageThreadHandler implements Runnable {
                 if(Constant.RPC_RESPONSE.equals(packet.getRpc())){
                     //log.info("收到 RPC 返回时间  "+ System.currentTimeMillis());
                     SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(),RpcResponse.class));
-                    return;
+                    continue;
                 }
                 isRpc = StringUtil.contains(packet.getRpc(),Constant.RPC_REQUEST);
     
