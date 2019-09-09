@@ -68,7 +68,6 @@ public class OrderingExecutor implements Executor {
         @Override
         public void run() {
             try {
-                System.out.println(Thread.currentThread().getName()+"  在执行run");
                 task.run();
             } finally {
                 Runnable nextTask = null;

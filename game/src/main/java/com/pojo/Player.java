@@ -20,16 +20,16 @@ public class Player {
 
     private CacheManager cacheManager;
 
-    private List<BaseModule> parts;
+    private List<BaseModule> modules;
 
     public Player() {
         cacheManager = SpringUtils.getBean(CacheManager.class);
     }
 
-    public void initParts(List<BaseModule> parts) {
-        this.parts = parts;
+    public void initParts(List<BaseModule> modules) {
+        this.modules = modules;
 
-        parts.forEach(x -> {
+        modules.forEach(x -> {
             x.setPlayer(this);
             x.onLoad();
 
@@ -38,34 +38,34 @@ public class Player {
 
 
     public void onDaily() {
-        parts.forEach(BaseModule::onDaily);
+        modules.forEach(BaseModule::onDaily);
     }
 
     public void onLogin() {
-        parts.forEach(BaseModule::onLogin);
+        modules.forEach(BaseModule::onLogin);
     }
 
     public void onLogout() {
-        parts.forEach(BaseModule::onLogout);
+        modules.forEach(BaseModule::onLogout);
     }
 
     public void onActivityOpen() {
-        parts.forEach(BaseModule::onActivityOpen);
+        modules.forEach(BaseModule::onActivityOpen);
     }
 
     public void onActivityClose() {
-        parts.forEach(BaseModule::onActivityClose);
+        modules.forEach(BaseModule::onActivityClose);
     }
 
     public void onActivityReset() {
-        parts.forEach(BaseModule::onActivityReset);
+        modules.forEach(BaseModule::onActivityReset);
     }
 
     public void onLevelUp() {
-        parts.forEach(BaseModule::onLevelUp);
+        modules.forEach(BaseModule::onLevelUp);
     }
 
     public void onSecond() {
-        parts.forEach(BaseModule::onSecond);
+        modules.forEach(BaseModule::onSecond);
     }
 }

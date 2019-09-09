@@ -31,7 +31,6 @@ public class GateToClientMessageHandler extends MessageThreadHandler {
         ConnectManager connectManager = SpringUtils.getBean(ConnectManager.class);
 
         //如果是登录返回消息
-        //TODO  这还没加失败呢
         if (message.getId() == LOGIN_MSG.GTC_LOGIN.getDescriptor().getOptions().getExtension(Options.messageId)) {
             LOGIN_MSG.GTC_LOGIN m = LOGIN_MSG.GTC_LOGIN.parseFrom(message.getData());
             if (m.getResult().getResult()) {

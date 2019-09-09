@@ -25,7 +25,7 @@ public abstract class BaseModule{
     }
 
     public String getCacheName() {
-        return StringUtil.cutByRemovePostfix(getName(), "Part") + "EntryCache";
+        return StringUtil.cutByRemovePostfix(getName(), "Module") + "EntryCache";
     }
 
     public BaseEntry getEntry() {
