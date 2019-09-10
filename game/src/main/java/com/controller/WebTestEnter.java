@@ -28,6 +28,7 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.builders.WriteBehindConfigurationBuilder;
 import org.ehcache.config.units.MemoryUnit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -59,7 +60,8 @@ public class WebTestEnter {
 //    @Autowired
 //    RedissonConfig redissonConfig;
     
- 
+    @Autowired
+    private MongoTemplate mongoTemplate;
     
     @RequestMapping("/test/rpc")
     public void rpc() {
@@ -93,6 +95,12 @@ public class WebTestEnter {
         stopWatch.stop();
         log.info("共用时："+stopWatch.getTime());
     }
+    
+    @RequestMapping("/test/rrrrr")
+    public void rrrr() {
+        playerRepository.save(new PlayerEntry(123));
+    }
+    
     
     
     @RequestMapping("/test/a")
