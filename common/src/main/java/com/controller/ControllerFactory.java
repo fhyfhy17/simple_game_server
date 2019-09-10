@@ -14,6 +14,7 @@ import com.util.Pair;
 import com.util.ProtoUtil;
 import com.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.invoke.CallSite;
 import java.lang.invoke.LambdaConversionException;
@@ -36,16 +37,17 @@ public class ControllerFactory {
         Map<String, BaseController> allControllers = SpringUtils.getBeansOfType(BaseController.class);
         allControllers.values().forEach(controller -> {
             Method[] declaredMethods = controller.getClass().getDeclaredMethods();
-
+    
+           
+            
             for (Method method : declaredMethods) {
-//                if (method.getName().startsWith("CGLIB")) {
-//                    continue;
-//                }
-                if(Objects.isNull(method.getAnnotation(Controllor.class))){
+    
+                Controllor annotation=AnnotationUtils.findAnnotation(method,Controllor.class);
+                if(Objects.isNull(annotation)){
                     continue;
                 }
                 
-                if(!Objects.isNull(method.getAnnotation(Rpc.class))){
+                if(!Objects.isNull(AnnotationUtils.findAnnotation(method,Rpc.class))){
                     //MethodAccessor methodAccessor = ReflectionFactory.getReflectionFactory().newMethodAccessor(method);
 
                     Pair<Object, FunType> add = addFunType(controller, method);

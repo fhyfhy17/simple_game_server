@@ -21,69 +21,69 @@ import java.util.Objects;
  * */
 public class LogAspect {
 
-//    private StopWatch stopWatch = new StopWatch();
-//
-//    @Pointcut("execution(* com.controller.BaseController+.*(..))")
-//    public void logPoint() {
-//    }
-//
-//
-//    @Around("logPoint()")
-//    public Object around(ProceedingJoinPoint pjp) throws Throwable {
-//
-//        StringBuilder sb = new StringBuilder();
-//
-//        try {
-//            sb.append("[controller=" + pjp.getTarget().getClass().getSimpleName())
-//                    .append("][method=" + pjp.getSignature().getName())
-//                    .append("][params=" + parseParam(pjp.getArgs()));
-//            stopWatch.start();
-//
-//            Object result = pjp.proceed(pjp.getArgs());
-//
-//            stopWatch.stop();
-//
-//            sb.append("][result=" + parseObject(result));
-//            sb.append("][time=" + (stopWatch.getTime()));
-//            sb.append("]");
-//
-//            log.info(sb.toString());
-//
-//
-//            return result;
-//        } catch (Throwable e) {
-//            sb.append("][error=" + e.getMessage());
-//            sb.append("][time=" + stopWatch.getTime());
-//            sb.append("]");
-//
-//            log.info(sb.toString());
-//            throw e;
-//        } finally {
-//            stopWatch.reset();
-//        }
-//    }
-//
-//    public static String parseParam(Object[] params) {
-//        if (Objects.isNull(params)) {
-//            return "";
-//        }
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < params.length; i++) {
-//            Object param = params[i];
-//            sb.append(parseObject(param));
-//            sb.append(";");
-//        }
-//        return sb.toString();
-//    }
-//
-//    public static String parseObject(Object data) {
-//
-//        if (data instanceof Message) {
-//            return data.toString().replace('\n', ',');
-//        } else if (data instanceof Player) {
-//            return "playerId:" + ((Player) data).getPlayerId();
-//        } else {
-//            return JSON.toJSONString(data);
-//        }
-//    }
+    private StopWatch stopWatch = new StopWatch();
+
+    @Pointcut("execution(* com.controller.BaseController+.*(..))")
+    public void logPoint() {
+    }
+
+
+    @Around("logPoint()")
+    public Object around(ProceedingJoinPoint pjp) throws Throwable {
+
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("[controller=" + pjp.getTarget().getClass().getSimpleName())
+                    .append("][method=" + pjp.getSignature().getName())
+                    .append("][params=" + parseParam(pjp.getArgs()));
+            stopWatch.start();
+
+            Object result = pjp.proceed(pjp.getArgs());
+
+            stopWatch.stop();
+
+            sb.append("][result=" + parseObject(result));
+            sb.append("][time=" + (stopWatch.getTime()));
+            sb.append("]");
+
+            log.info(sb.toString());
+
+
+            return result;
+        } catch (Throwable e) {
+            sb.append("][error=" + e.getMessage());
+            sb.append("][time=" + stopWatch.getTime());
+            sb.append("]");
+
+            log.info(sb.toString());
+            throw e;
+        } finally {
+            stopWatch.reset();
+        }
+    }
+
+    public static String parseParam(Object[] params) {
+        if (Objects.isNull(params)) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < params.length; i++) {
+            Object param = params[i];
+            sb.append(parseObject(param));
+            sb.append(";");
+        }
+        return sb.toString();
+    }
+
+    public static String parseObject(Object data) {
+
+        if (data instanceof Message) {
+            return data.toString().replace('\n', ',');
+        } else if (data instanceof Player) {
+            return "playerId:" + ((Player) data).getPlayerId();
+        } else {
+            return JSON.toJSONString(data);
+        }
+    }
 }
