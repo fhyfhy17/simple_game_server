@@ -3,8 +3,11 @@ package com.controller;
 import com.dao.PlayerRepository;
 import com.dao.UserRepository;
 import com.dao.cache.PlayerDBStore;
+import com.entry.BagEntry;
+import com.entry.BaseEntry;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
+import com.google.common.collect.Lists;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.ServerInfoManager;
 import com.mongoListener.SaveEventListener;
@@ -96,12 +99,22 @@ public class WebTestEnter {
         log.info("共用时："+stopWatch.getTime());
     }
     
-    @RequestMapping("/test/rrrrr")
-    public void rrrr() {
-        playerRepository.save(new PlayerEntry(123));
+    @RequestMapping("/test/testinsert")
+    public void testinsert() {
+        playerEntry = playerRepository.save(new PlayerEntry(0));
+    }
+    @RequestMapping("/test/testupdate")
+    public void testupdate() {
+        playerRepository.save(playerEntry);
+    }
+    @RequestMapping("/test/saveall")
+    public void saveall() {
+        playerRepository.saveAll(Lists.newArrayList(new PlayerEntry(1234),new PlayerEntry(1215),new PlayerEntry(1216)));
+        
     }
     
     
+    private PlayerEntry playerEntry;
     
     @RequestMapping("/test/a")
     public void test() {
