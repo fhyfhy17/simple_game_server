@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class LoginService implements BaseService{
+public class LoginService1 {
 
     @Autowired
     private UserRepository userRepository;
@@ -30,11 +30,6 @@ public class LoginService implements BaseService{
             userRepository.save(userEntry);
             return userEntry;
         }));
-
-    }
-
-    @Override
-    public void onServerStop() {
 
     }
 

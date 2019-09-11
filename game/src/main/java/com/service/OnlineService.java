@@ -19,7 +19,7 @@ import java.util.Objects;
 @EventListener
 @Slf4j
 @Data
-public class OnlineService implements BaseService{
+public class OnlineService {
     private Map<Long, Player> playerMap = Maps.newHashMap();
     private Map<Long, Long> userIdPlayerIdMap = Maps.newHashMap();
 
@@ -54,7 +54,7 @@ public class OnlineService implements BaseService{
         DBUtil.forceEntrySave(list,true);
     }
 
-    @Override
+
     public void onServerStop() {
         for (Player player : playerMap.values()) {
             offline(player.getPlayerId());

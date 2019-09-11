@@ -11,7 +11,7 @@ import com.exception.StatusException;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.Packet;
 import com.rpc.interfaces.gameToBus.GameToBus;
-import com.service.LoginService;
+import com.service.LoginService1;
 import com.template.templates.type.TipType;
 import com.util.CountUtil;
 import com.util.ExceptionUtil;
@@ -19,7 +19,6 @@ import com.util.IdCreator;
 import com.util.TipStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 
 import java.util.Objects;
@@ -29,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class LoginController extends BaseController implements GameToBus {
     @Autowired
-    private LoginService loginService;
+    private LoginService1 loginService;
 
     @Controllor
     public Object login(UidContext context, LOGIN_MSG.CTG_LOGIN req) throws StatusException {
@@ -80,6 +79,7 @@ public class LoginController extends BaseController implements GameToBus {
 
     @Controllor
     @Rpc(needResponse = false)
+    @Suspendable
     @Override
     public Object noNeedResponse(String a) {
         log.info("异步");
@@ -88,6 +88,7 @@ public class LoginController extends BaseController implements GameToBus {
 
     @Controllor
     @Rpc(needResponse = false)
+    @Suspendable
     @Override
     public Object noNeedResponse0() {
         log.info("异步0");

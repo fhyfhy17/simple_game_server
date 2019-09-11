@@ -88,12 +88,11 @@ public class WebTestEnter {
     
         stopWatch.start();
         CountDownLatch countDownLatch =new CountDownLatch(10);
-        for(int i=0;i<10;i++)
-        {
-            new Thread(()->{
-                for(int j=0;j<100;j++)
-                {
-                    GameToBus gameToBus=rpcProxy.serviceProxy(GameToBus.class,123,TypeEnum.ServerTypeEnum.LOGIN,123);
+        GameToBus gameToBus = rpcProxy.serviceProxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> {
+                for (int j = 0; j < 100; j++) {
+
                     gameToBus.needResponse("");
                     //log.info("发送 RPC 请求时间  "+ System.currentTimeMillis());
                 }

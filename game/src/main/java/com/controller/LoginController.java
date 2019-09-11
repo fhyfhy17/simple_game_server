@@ -36,7 +36,7 @@ public class LoginController extends BaseController {
     public LOGIN_MSG.GTC_PlayerInfo getPlayerInfo(UidContext uidContext, Player player, LOGIN_MSG.CTG_PlayerInfo req) {
         LOGIN_MSG.GTC_PlayerInfo.Builder builder = LOGIN_MSG.GTC_PlayerInfo.newBuilder();
 
-        builder.setPlayerInfo(playerService.buildPlayerInfo(player.playerPart.getPlayerEntry()));
+        builder.setPlayerInfo(playerService.buildPlayerInfo(player.getPlayerModule().getPlayerEntry()));
         return builder.build();
     }
 

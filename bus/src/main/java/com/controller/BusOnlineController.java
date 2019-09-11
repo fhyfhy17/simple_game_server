@@ -1,6 +1,7 @@
 package com.controller;
 
 import com.annotation.Controllor;
+import com.annotation.Rpc;
 import com.net.msg.BUS_MSG;
 import com.pojo.OnlineContext;
 import com.service.BusOnlineService;
@@ -18,12 +19,13 @@ public class BusOnlineController extends BaseController {
     private BusOnlineService busOnlineService;
 
     @Controllor
-    public void registOnline(UidContext uidContext,BUS_MSG.GTB_REGIST_ONLINE req) {
-        busOnlineService.putOnlineContext(
-                new OnlineContext(req.getUid(), req.getPlayerId(), req.getGate(), req.getGame()));
+    @Rpc
+    public void putOnline(OnlineContext onlineContext) {
+        busOnlineService.putOnlineContext(onlineContext);
     }
 
     @Controllor
+    @Rpc
     public void offline(UidContext uidContext,BUS_MSG.GTB_OFFLINE req) {
         busOnlineService.delOnlineContext(req.getUid());
     }

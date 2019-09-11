@@ -12,8 +12,8 @@ import com.entry.UserEntry;
 import com.event.playerEvent.PlayerLoginEvent;
 import com.exception.StatusException;
 import com.google.common.eventbus.Subscribe;
-import com.net.msg.LOGIN_MSG;
 import com.module.BaseModule;
+import com.net.msg.LOGIN_MSG;
 import com.pojo.Player;
 import com.template.templates.type.TipType;
 import com.util.IdCreator;
@@ -30,7 +30,7 @@ import java.util.Optional;
 @Service
 @EventListener
 @Slf4j
-public class PlayerService implements BaseService{
+public class PlayerService {
     @Autowired
     private PlayerRepository playerRepository;
 
@@ -111,10 +111,5 @@ public class PlayerService implements BaseService{
         playerBuilder.setLevel(playerEntry.getLevel());
         playerBuilder.setCoin(playerEntry.getCoin());
         return playerBuilder;
-    }
-
-    @Override
-    public void onServerStop() {
-
     }
 }

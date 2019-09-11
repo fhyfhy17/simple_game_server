@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 @EventListener
 @Slf4j
-public class MailService implements BaseService{
+public class MailService {
     @Autowired
     private CenterMailRepository centerMailRepository;
 
@@ -58,8 +58,4 @@ public class MailService implements BaseService{
         return mailPo;
     }
 
-    @Override
-    public void onServerStop() {
-
-    }
 }
