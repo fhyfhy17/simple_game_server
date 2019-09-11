@@ -1,17 +1,9 @@
 package com.controller;
 
-import com.dao.BagRepository;
-import com.dao.CenterMailRepository;
-import com.dao.MailRepository;
-import com.dao.NoCellBagRepository;
-import com.dao.PlayerRepository;
-import com.dao.UnionRepository;
-import com.dao.UserRepository;
-import com.dao.cache.ForceSaveRepository;
+import com.dao.*;
 import com.dao.cache.PlayerDBStore;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
-import com.google.common.collect.Lists;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.ServerInfoManager;
 import com.mongoListener.MongoEventListener;
@@ -158,11 +150,6 @@ public class WebTestEnter {
       
       
       
-    }
-    
-    @RequestMapping("/test/forceSave")
-    public void forceSave() {
-       mongoTemplate.sa
     }
     
     private PlayerEntry playerEntry;

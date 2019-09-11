@@ -21,17 +21,18 @@ public class DBUtil{
 		if(CollectionUtils.isEmpty(list)){
 			return;
 		}
-		long playerId = ((BaseEntry)list.get(0)).getId();
-		synchronized(cacheCenter.lock){
-			cacheCenter.clearWhenDelete(playerId);
+		if( clearPlayerDBCache ){
+			long playerId = list.get(0).getId();
+			synchronized(cacheCenter.lock){
+				cacheCenter.clearWhenDelete(playerId);
+			}
 		}
-		for(PlayerEntryMark playerEntryMark : list){
-			mongoTemplate.save(playerEntryMark);
+
+		for(BaseEntry baseEntry : list){
+			mongoTemplate.save(baseEntry);
 		}
 	}
-	
-	
-	
+
 	
 	@Autowired
 	public void setMongoTemplate(MongoTemplate mongoTemplate) {

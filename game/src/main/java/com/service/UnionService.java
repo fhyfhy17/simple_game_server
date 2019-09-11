@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @EventListener
 @Slf4j
-public class UnionService {
+public class UnionService implements BaseService{
     @Autowired
     private UnionRepository unionRepository;
 
@@ -38,4 +38,8 @@ public class UnionService {
 
     }
 
+    @Override
+    public void onServerStop() {
+
+    }
 }

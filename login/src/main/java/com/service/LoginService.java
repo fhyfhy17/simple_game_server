@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class LoginService {
+public class LoginService implements BaseService{
 
     @Autowired
     private UserRepository userRepository;
@@ -32,7 +32,12 @@ public class LoginService {
         }));
 
     }
-    
+
+    @Override
+    public void onServerStop() {
+
+    }
+
 
 //    public UserEntry login(String username,String password) throws StatusException
 //    {

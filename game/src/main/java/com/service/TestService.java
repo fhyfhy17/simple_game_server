@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @EventListener
 @Slf4j
-public class TestService {
+public class TestService implements BaseService{
     @Autowired
     PlayerRepository playerRepository;
 
@@ -99,6 +99,11 @@ public class TestService {
 //
 //
 //        System.out.println(aaa.get(1L));
+
+    }
+
+    @Override
+    public void onServerStop() {
 
     }
 }

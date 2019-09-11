@@ -30,7 +30,7 @@ import java.util.Optional;
 @Service
 @EventListener
 @Slf4j
-public class PlayerService {
+public class PlayerService implements BaseService{
     @Autowired
     private PlayerRepository playerRepository;
 
@@ -57,7 +57,7 @@ public class PlayerService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("player", player);
         ServiceLogAspect.THREAD_LOCAL.set(jsonObject);
-        builder.setPlayerInfo(buildPlayerInfo(player.playerPart.getPlayerEntry()));
+        builder.setPlayerInfo(buildPlayerInfo(player.getPlayerModule().getPlayerEntry()));
     }
 
     private Player loadPlayer(long playerId) throws StatusException {
@@ -111,5 +111,10 @@ public class PlayerService {
         playerBuilder.setLevel(playerEntry.getLevel());
         playerBuilder.setCoin(playerEntry.getCoin());
         return playerBuilder;
+    }
+
+    @Override
+    public void onServerStop() {
+
     }
 }

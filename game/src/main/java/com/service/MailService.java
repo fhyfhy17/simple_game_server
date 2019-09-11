@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 @EventListener
 @Slf4j
-public class MailService {
+public class MailService implements BaseService{
     @Autowired
     private CenterMailRepository centerMailRepository;
 
@@ -56,5 +56,10 @@ public class MailService {
         mailPo.setMailTime(Instant.now().toEpochMilli());
         mailPo.setItemList(itemInfoList);
         return mailPo;
+    }
+
+    @Override
+    public void onServerStop() {
+
     }
 }

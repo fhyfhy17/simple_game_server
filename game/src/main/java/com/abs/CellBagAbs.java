@@ -92,7 +92,7 @@ public abstract class CellBagAbs {
                 //特殊数，代表不进背包，是货币型，进行其它操作
                 if (tempCell.bigType == ItemBigType.Currency) {
                     ItemInfo itemInfo = new ItemInfo(tempCell.tempItemId, tempCell.tempNum);
-                    player.noCellBagPart.getNoCellBag().addItem(itemInfo);
+                    player.getNoCellBagModule().getNoCellBag().addItem(itemInfo);
                 }
 
                 // 这里发邮件 ，可以定义在item表里，发不进去放在哪，也可以把isForceAdd定义为枚举，指定发不进去放哪

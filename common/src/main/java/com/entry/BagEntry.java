@@ -15,7 +15,7 @@ import java.util.Map;
 @Setter
 @SeqClassName(name = "seq.BagEntry")
 @ToString
-public class BagEntry extends BaseEntry implements PlayerEntryMark {
+public class BagEntry extends BaseEntry {
 
 
     public Map<Integer, ItemPo> indexMap = new HashMap<>();

@@ -18,10 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
@@ -102,6 +99,9 @@ public class CacheCenter{
 						log.error("批量入库，转码报错 {} -> {}",entry.getKey(),baseEntry.getId(),e);
 					}
 					Update update = new Update();
+					if(Objects.isNull(updateMap)){
+						continue;
+					}
 					for(Map.Entry<String,Object> stringObjectEntry : updateMap.entrySet()){
 						if(stringObjectEntry.getKey().equals("id")){
 							continue;

@@ -34,7 +34,7 @@ public class WebEnter {
     public void test(@PathVariable int type, @PathVariable String playerIds, @PathVariable int mailTemplateId) {
         if (type == CenterMailType.Total) {
             for (Player player : onlineService.getPlayerMap().values()) {
-                player.mailPart.addMail(mailTemplateId);
+                player.getMailModule().addMail(mailTemplateId);
             }
         } else {
             List<Long> playerLongIds = Lists.newArrayList();
@@ -46,7 +46,7 @@ public class WebEnter {
 
             for (Player player : onlineService.getPlayerMap().values()) {
                 if (playerLongIds.contains(player.getPlayerId())) {
-                    player.mailPart.addMail(mailTemplateId);
+                    player.getMailModule().addMail(mailTemplateId);
                 }
             }
         }
