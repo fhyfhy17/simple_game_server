@@ -43,7 +43,7 @@ public class MailModule extends BaseModule
 
     @Override
     public void onLoad() {
-        player.mailPart = this;
+        player.setMailModule(this);
         Cache<Long, MailEntry> cache = cacheManager.getCache(getCacheName(), Long.class, MailEntry.class);
         mailEntry = cache.get(player.getPlayerId());
         if (Objects.isNull(mailEntry)) {
@@ -106,7 +106,7 @@ public class MailModule extends BaseModule
         }
         if (!Objects.isNull(mail)) {
             mail.setHasReceived(true);
-            boolean b = player.bagPart.getBag().addItemRefuse(mail.getItemList());
+            boolean b = player.getBagModule().getBag().addItemRefuse(mail.getItemList());
             if (!b) {
                 throw new StatusException(TipType.BagNotEnough);
             }

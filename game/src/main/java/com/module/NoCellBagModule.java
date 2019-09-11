@@ -28,7 +28,7 @@ public class NoCellBagModule extends BaseModule
 
     @Override
     public void onLoad() {
-        player.noCellBagPart = this;
+        player.setNoCellBagModule(this);
         Cache<Long, NoCellBagEntry> cache = cacheManager.getCache(getCacheName(), Long.class, NoCellBagEntry.class);
         noCellBagEntry = cache.get(player.getPlayerId());
         if (Objects.isNull(noCellBagEntry)) {

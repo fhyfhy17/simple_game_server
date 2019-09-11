@@ -7,9 +7,11 @@ import com.dao.NoCellBagRepository;
 import com.dao.PlayerRepository;
 import com.dao.UnionRepository;
 import com.dao.UserRepository;
+import com.dao.cache.ForceSaveRepository;
 import com.dao.cache.PlayerDBStore;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
+import com.google.common.collect.Lists;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.ServerInfoManager;
 import com.mongoListener.MongoEventListener;
@@ -75,6 +77,8 @@ public class WebTestEnter {
 
     @Autowired
     private RpcProxy rpcProxy;
+    
+   
 //    @Autowired
 //    @Qualifier("ha")
 //    private HazelcastInstance hazelcastInstance;
@@ -154,6 +158,11 @@ public class WebTestEnter {
       
       
       
+    }
+    
+    @RequestMapping("/test/forceSave")
+    public void forceSave() {
+       mongoTemplate.sa
     }
     
     private PlayerEntry playerEntry;

@@ -21,7 +21,7 @@ public class PlayerModule extends BaseModule
 
     @Override
     public void onLoad() {
-        player.playerPart = this;
+        player.setPlayerModule(this);
         Cache<Long, PlayerEntry> cache = cacheManager.getCache(getCacheName(), Long.class, PlayerEntry.class);
         playerEntry = cache.get(player.getPlayerId());
         if (Objects.isNull(playerEntry)) {

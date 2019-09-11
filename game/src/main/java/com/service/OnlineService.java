@@ -2,6 +2,7 @@ package com.service;
 
 import com.annotation.EventListener;
 import com.google.common.collect.Maps;
+import com.module.BaseModule;
 import com.pojo.Player;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -37,4 +38,6 @@ public class OnlineService {
         }
         return playerMap.get(playerId);
     }
+    
+   
 }

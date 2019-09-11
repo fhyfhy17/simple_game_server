@@ -13,10 +13,10 @@ public class Player {
     private long playerId;
     private long uid;
 
-    public PlayerModule playerPart;
-    public BagModule bagPart;
-    public NoCellBagModule noCellBagPart;
-    public MailModule mailPart;
+    private PlayerModule playerModule;
+    private BagModule bagModule;
+    private NoCellBagModule noCellBagModule;
+    private MailModule mailModule;
 
     private CacheManager cacheManager;
 

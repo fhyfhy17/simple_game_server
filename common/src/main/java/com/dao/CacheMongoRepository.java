@@ -1,9 +1,11 @@
 package com.dao;
 
 import com.dao.cache.CacheCenter;
+
 import com.entry.BaseEntry;
 import com.google.common.collect.Lists;
 import com.util.SpringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
@@ -12,8 +14,8 @@ import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.util.List;
 
-public class CacheMongoRepository<T, ID extends Serializable> extends SimpleMongoRepository<T, ID>
-{
+@Slf4j
+public class CacheMongoRepository<T, ID extends Serializable> extends SimpleMongoRepository<T, ID>{
     private final MongoOperations mongoOperations;
     private final MongoEntityInformation<T, ID> entityInformation;
 

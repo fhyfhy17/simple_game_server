@@ -28,7 +28,7 @@ public class BagModule extends BaseModule
 
     @Override
     public void onLoad() {
-        player.bagPart = this;
+        player.setBagModule(this);
         Cache<Long, BagEntry> cache = cacheManager.getCache(getCacheName(), Long.class, BagEntry.class);
         bagEntry = cache.get(player.getPlayerId());
         if (Objects.isNull(bagEntry)) {
