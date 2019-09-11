@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,7 +34,7 @@ public class CacheCenter{
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
-	private final BlockingQueue<BaseEntry> queue = new LinkedBlockingDeque<>(1024);
+	private final BlockingQueue<BaseEntry> queue = new LinkedBlockingQueue<>();
 	
 	@Getter
 	public final Object lock = new Object();
