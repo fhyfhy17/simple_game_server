@@ -1,11 +1,18 @@
 package com.controller;
 
+import com.dao.BagRepository;
+import com.dao.CenterMailRepository;
+import com.dao.MailRepository;
+import com.dao.NoCellBagRepository;
 import com.dao.PlayerRepository;
+import com.dao.UnionRepository;
 import com.dao.UserRepository;
 import com.dao.cache.PlayerDBStore;
 import com.entry.BagEntry;
 import com.entry.BaseEntry;
+import com.entry.CenterMailEntry;
 import com.entry.PlayerEntry;
+import com.entry.UserEntry;
 import com.enums.TypeEnum;
 import com.google.common.collect.Lists;
 import com.lock.zk.ZkDistributedLock;
@@ -22,6 +29,7 @@ import com.util.ContextUtil;
 import com.util.IdCreator;
 import com.util.SerializeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
@@ -49,6 +57,21 @@ public class WebTestEnter {
     PlayerRepository playerRepository;
     @Autowired
     UserRepository userRepository;
+    
+    @Autowired
+    BagRepository bagRepository;
+    
+    @Autowired
+    NoCellBagRepository noCellBagRepository;
+    
+    @Autowired
+    MailRepository mailRepository;
+    @Autowired
+    CenterMailRepository centerMailRepository;
+    @Autowired
+    UnionRepository unionRepository;
+    
+    
     @Autowired
     SaveEventListener saveEventListener;
 
@@ -109,10 +132,34 @@ public class WebTestEnter {
     }
     @RequestMapping("/test/saveall")
     public void saveall() {
-        playerRepository.saveAll(Lists.newArrayList(new PlayerEntry(1234),new PlayerEntry(1215),new PlayerEntry(1216)));
+        for(int i=0;i<100;i++)
+        {
+            //playerRepository.saveAll(Lists.newArrayList(new PlayerEntry( RandomUtils.nextInt(200,300)),new PlayerEntry(RandomUtils.nextInt(100,200)),new PlayerEntry(RandomUtils.nextInt(100,200))));
+            PlayerEntry playerEntry=new PlayerEntry(RandomUtils.nextInt(100,200));
+            
+            playerEntry.setName(RandomUtils.nextDouble()+"");
+            playerRepository.save(playerEntry);
+            //
+            //playerRepository.insert(new PlayerEntry(RandomUtils.nextInt(100,200)));
+            //
+            //playerRepository.insert(Lists.newArrayList(new PlayerEntry(RandomUtils.nextInt(100,200)),new PlayerEntry(RandomUtils.nextInt(100,200))));
+            //
+            //userRepository.saveAll(Lists.newArrayList(new UserEntry( RandomUtils.nextInt(100,200)),new UserEntry(RandomUtils.nextInt(100,200)),new UserEntry(RandomUtils.nextInt(100,200))));
+            //
+            //userRepository.save(new UserEntry( RandomUtils.nextInt(100,200)));
+            //
+        }
+       
         
-    }
     
+    }
+    @RequestMapping("/test/insertt")
+    public void insertt() {
+      playerRepository.insert(new PlayerEntry(201));
+      
+      
+      
+    }
     
     private PlayerEntry playerEntry;
     
