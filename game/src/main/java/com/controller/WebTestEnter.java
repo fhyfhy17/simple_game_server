@@ -8,16 +8,11 @@ import com.dao.PlayerRepository;
 import com.dao.UnionRepository;
 import com.dao.UserRepository;
 import com.dao.cache.PlayerDBStore;
-import com.entry.BagEntry;
-import com.entry.BaseEntry;
-import com.entry.CenterMailEntry;
 import com.entry.PlayerEntry;
-import com.entry.UserEntry;
 import com.enums.TypeEnum;
-import com.google.common.collect.Lists;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.ServerInfoManager;
-import com.mongoListener.SaveEventListener;
+import com.mongoListener.MongoEventListener;
 import com.net.msg.LOGIN_MSG;
 import com.net.msg.Options;
 import com.node.RemoteNode;
@@ -73,7 +68,7 @@ public class WebTestEnter {
     
     
     @Autowired
-    SaveEventListener saveEventListener;
+    MongoEventListener saveEventListener;
 
     @Autowired
     private UnionService unionService;

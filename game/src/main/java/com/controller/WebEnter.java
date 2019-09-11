@@ -3,7 +3,7 @@ package com.controller;
 import com.dao.PlayerRepository;
 import com.dao.UserRepository;
 import com.google.common.collect.Lists;
-import com.mongoListener.SaveEventListener;
+import com.mongoListener.MongoEventListener;
 import com.pojo.Player;
 import com.service.OnlineService;
 import com.template.templates.type.CenterMailType;
@@ -25,7 +25,7 @@ public class WebEnter {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    SaveEventListener saveEventListener;
+	MongoEventListener saveEventListener;
     @Autowired
     private OnlineService onlineService;
 

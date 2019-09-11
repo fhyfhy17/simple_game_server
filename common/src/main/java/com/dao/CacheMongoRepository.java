@@ -4,16 +4,13 @@ import com.dao.cache.CacheCenter;
 import com.entry.BaseEntry;
 import com.google.common.collect.Lists;
 import com.util.SpringUtils;
-import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class CacheMongoRepository<T, ID extends Serializable> extends SimpleMongoRepository<T, ID>
 {
@@ -52,9 +49,5 @@ public class CacheMongoRepository<T, ID extends Serializable> extends SimpleMong
 		);
 		return list;
 	}
-	
-	
-	
-	
 	
 }
