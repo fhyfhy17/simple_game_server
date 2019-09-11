@@ -45,8 +45,7 @@ public class CacheMongoRepository<T, ID extends Serializable> extends SimpleMong
 	@Override
 	public <S extends T> List<S> saveAll(Iterable<S> entities){
 		List<S> list =Lists.newArrayList();
-		entities.forEach(s -> list.add(this.save(s))
-		);
+		entities.forEach(s -> list.add(this.save(s)));
 		return list;
 	}
 	
