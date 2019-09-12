@@ -69,8 +69,6 @@ public class LoginController extends BaseController implements GameToBus {
     }
 
     @Controllor
-    @Rpc(needResponse = true)
-    @Suspendable
     @Override
     public String needResponse(String a) {
         //log.info("neeResponse : "+ a);
@@ -78,8 +76,6 @@ public class LoginController extends BaseController implements GameToBus {
     }
 
     @Controllor
-    @Rpc(needResponse = false)
-    @Suspendable
     @Override
     public Object noNeedResponse(String a) {
         log.info("异步");
@@ -87,8 +83,6 @@ public class LoginController extends BaseController implements GameToBus {
     }
 
     @Controllor
-    @Rpc(needResponse = false)
-    @Suspendable
     @Override
     public Object noNeedResponse0() {
         log.info("异步0");
@@ -96,8 +90,6 @@ public class LoginController extends BaseController implements GameToBus {
     }
 
     @Controllor
-    @Rpc(needResponse = false)
-    @Suspendable
     @Override
     public PlayerEntry aaa(String a) {
         System.out.println("有点慢啊");

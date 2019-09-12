@@ -1,9 +1,11 @@
 package com.controller;
 
+import co.paralleluniverse.fibers.Suspendable;
 import com.annotation.Controllor;
 import com.annotation.Rpc;
 import com.net.msg.BUS_MSG;
 import com.pojo.OnlineContext;
+import com.rpc.interfaces.gameToBus.GameToBus;
 import com.service.BusOnlineService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,21 +15,25 @@ import java.util.List;
 
 @Controller
 @Slf4j
-public class BusOnlineController extends BaseController {
+public class BusOnlineController extends BaseController implements GameToBus{
 
     @Autowired
     private BusOnlineService busOnlineService;
 
     @Controllor
-    @Rpc
-    public void putOnline(OnlineContext onlineContext) {
+    @Suspendable
+    @Override
+    public Object putOnline(OnlineContext onlineContext) {
         busOnlineService.putOnlineContext(onlineContext);
+        return null;
     }
 
     @Controllor
-    @Rpc
-    public void offline(UidContext uidContext,BUS_MSG.GTB_OFFLINE req) {
-        busOnlineService.delOnlineContext(req.getUid());
+    @Suspendable
+    @Override
+    public Object offline(long uid) {
+        busOnlineService.delOnlineContext(uid);
+        return null;
     }
 
     @Controllor

@@ -146,9 +146,13 @@ public class WebTestEnter {
     @RequestMapping("/test/insertt")
     public void insertt() {
       playerRepository.insert(new PlayerEntry(201));
-      
-      
-      
+    }
+    
+    
+    @RequestMapping("/test/noneed")
+    public void noneed() {
+        GameToBus gameToBus = rpcProxy.serviceProxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
+        gameToBus.noNeedResponse0();
     }
     
     private PlayerEntry playerEntry;
