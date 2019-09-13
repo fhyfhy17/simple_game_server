@@ -1,35 +1,38 @@
 package com.module;
 
+import com.dao.PlayerRepository;
+import com.entry.BaseEntry;
 import com.entry.PlayerEntry;
+import com.exception.StatusException;
+import com.template.templates.type.TipType;
 import lombok.Getter;
 import lombok.Setter;
-import org.ehcache.Cache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 @Getter
 @Setter
 @Order(1)
-public class PlayerModule extends BaseModule
-{
+public class PlayerModule extends BaseModule {
 
 
     private PlayerEntry playerEntry;
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
     @Override
     public void onLoad() {
         player.setPlayerModule(this);
-        Cache<Long, PlayerEntry> cache = cacheManager.getCache(getCacheName(), Long.class, PlayerEntry.class);
-        playerEntry = cache.get(player.getPlayerId());
-        if (Objects.isNull(playerEntry)) {
-            playerEntry = new PlayerEntry(player.getPlayerId());
-            cache.put(player.getPlayerId(), playerEntry);
-        }
+        playerEntry = playerRepository.findById(player.getPlayerId()).orElseThrow(() -> new StatusException(TipType.NoPlayer));
     }
 
+    @Override
+    public BaseEntry getEntry() {
+        return playerEntry;
+    }
 
     @Override
     public void onLogin() {

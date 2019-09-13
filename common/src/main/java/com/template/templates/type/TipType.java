@@ -18,11 +18,13 @@ public class TipType {
 
     public static final int MailHasItem = 8;//邮件有物品，不能删除
 
+    public static final int NoUid = 9;//没有用户
+
 
     public static final int FIRST_ID = 1;//第一个ID
 
-    public static final int LAST_ID = 8;//最后一个ID
+    public static final int LAST_ID = 9;//最后一个ID
 
-    public static final int TYPE_SIZE = 8;//ID数量
+    public static final int TYPE_SIZE = 9;//ID数量
 
 }

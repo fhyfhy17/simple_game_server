@@ -1,9 +1,7 @@
 package com.controller;
 
 
-import co.paralleluniverse.fibers.Suspendable;
 import com.annotation.Controllor;
-import com.annotation.Rpc;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.entry.PlayerEntry;
 import com.entry.UserEntry;
@@ -41,11 +39,7 @@ public class LoginController extends BaseController implements GameToBus {
 
         builder.setSessionId(sessionId);
         user.whenCompleteAsync((userEntry, throwable) -> {
-
-            if(!Objects.isNull(throwable)){
-                ExceptionUtil.doThrow(throwable);
-            }
-
+            ExceptionUtil.doThrow(throwable);
             if (!Objects.isNull(userEntry)) {
                 builder.setUid(userEntry.getId());
                 builder.setResult(TipStatus.suc());

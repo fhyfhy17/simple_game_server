@@ -1,9 +1,7 @@
 package com.pojo;
 
 import com.module.*;
-import com.util.SpringUtils;
 import lombok.Data;
-import org.ehcache.CacheManager;
 
 import java.util.List;
 
@@ -18,12 +16,10 @@ public class Player {
     private NoCellBagModule noCellBagModule;
     private MailModule mailModule;
 
-    private CacheManager cacheManager;
 
     private List<BaseModule> modules;
 
     public Player() {
-        cacheManager = SpringUtils.getBean(CacheManager.class);
     }
 
     public void initParts(List<BaseModule> modules) {

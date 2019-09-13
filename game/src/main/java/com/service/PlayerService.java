@@ -1,17 +1,16 @@
 package com.service;
 
+import com.Constant;
 import com.alibaba.fastjson.JSONObject;
 import com.annotation.EventListener;
 import com.annotation.ServiceLog;
 import com.aop.ServiceLogAspect;
-import com.config.CacheHelper;
 import com.dao.PlayerRepository;
 import com.dao.UserRepository;
 import com.entry.PlayerEntry;
 import com.entry.UserEntry;
-import com.event.playerEvent.PlayerLoginEvent;
 import com.exception.StatusException;
-import com.google.common.eventbus.Subscribe;
+import com.google.common.collect.Lists;
 import com.module.BaseModule;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.Player;
@@ -19,13 +18,12 @@ import com.template.templates.type.TipType;
 import com.util.IdCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.ehcache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @EventListener
@@ -44,34 +42,25 @@ public class PlayerService {
     private List<BaseModule> modules;
 
 
-    @Subscribe
+    @Async(Constant.IO_THREAD_NAME)
     @ServiceLog
-    public void login(PlayerLoginEvent playerLoginEvent) throws StatusException {
-        long playerId = playerLoginEvent.getPlayerId();
-        long uid = playerLoginEvent.getUid();
-        LOGIN_MSG.GTC_GAME_LOGIN_PLAYER.Builder builder = playerLoginEvent.getBuilder();
+    public CompletableFuture<LOGIN_MSG.PLAYER_INFO> login(long playerId) throws StatusException {
         Player player = loadPlayer(playerId);
-        onlineService.putPlayer(uid, player);
+        onlineService.putPlayer(player.getUid(), player);
         onlineService.putPlayer(player);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("player", player);
         ServiceLogAspect.THREAD_LOCAL.set(jsonObject);
-        builder.setPlayerInfo(buildPlayerInfo(player.getPlayerModule().getPlayerEntry()));
+        return CompletableFuture.completedFuture(buildPlayerInfo(player.getPlayerModule().getPlayerEntry()).build());
     }
 
-    private Player loadPlayer(long playerId) throws StatusException {
-
-        Cache<Long, PlayerEntry> playerEntryCache = CacheHelper.getPlayerEntryCache();
-
-        PlayerEntry playerEntry = playerEntryCache.get(playerId);
-
-        if (Objects.isNull(playerEntry)) {
-            throw new StatusException(TipType.NoPlayer);
-        }
+    private Player loadPlayer(long playerId) {
         Player player = new Player();
-        player.setPlayerId(playerEntry.getId());
-        player.setUid(playerEntry.getUid());
+        player.setPlayerId(playerId);
+        player.initParts(modules);
+        player.setPlayerId(playerId);
+        player.setUid(player.getPlayerModule().getPlayerEntry().getUid());
         player.initParts(modules);
 
 
@@ -79,28 +68,27 @@ public class PlayerService {
 
     }
 
-    public void playerList(long uid, LOGIN_MSG.GTC_PLAYER_LIST.Builder builder) {
-        Optional<UserEntry> user = userRepository.findById(uid);
-        UserEntry userEntry = user.get();
-        List<Long> playerIds = userEntry.getPlayerIds();
+    @Async(Constant.IO_THREAD_NAME)
+    public CompletableFuture<List<LOGIN_MSG.PLAYER_INFO>> playerList(long uid) {
+        UserEntry user = userRepository.findById(uid).orElseThrow(() -> new StatusException(TipType.NoUid));
+        List<Long> playerIds = user.getPlayerIds();
         if (CollectionUtils.isEmpty(playerIds)) {
             // 创建一个角色并存储
             long playerId = IdCreator.nextId(PlayerEntry.class);
             PlayerEntry playerEntry = new PlayerEntry(playerId);
             playerEntry.setName("游客" + playerId);
             playerEntry.setUid(uid);
-            CacheHelper.getPlayerEntryCache().put(playerId, playerEntry);
             // 存储到角色列表
-            userEntry.getPlayerIds().add(playerId);
-            userRepository.save(userEntry);
-            playerIds = userEntry.getPlayerIds();
+            user.getPlayerIds().add(playerId);
+            userRepository.save(user);
+            playerIds = user.getPlayerIds();
         }
+        List<LOGIN_MSG.PLAYER_INFO> list = Lists.newArrayList();
         for (Long playerId : playerIds) {
-            PlayerEntry playerEntry = CacheHelper.getPlayerEntryCache().get(playerId);
-
-            builder.addPlayers(buildPlayerInfo(playerEntry));
+            PlayerEntry playerEntry = playerRepository.findById(playerId).orElseThrow(() -> new StatusException(TipType.NoPlayer));
+            list.add(buildPlayerInfo(playerEntry).build());
         }
-
+        return CompletableFuture.completedFuture(list);
     }
 
     public LOGIN_MSG.PLAYER_INFO.Builder buildPlayerInfo(PlayerEntry playerEntry) {

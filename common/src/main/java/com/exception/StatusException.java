@@ -1,6 +1,6 @@
 package com.exception;
 
-public class StatusException extends Exception {
+public class StatusException extends RuntimeException {
 
     int tip;
 

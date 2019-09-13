@@ -1,7 +1,6 @@
 package com.controller;
 
 import com.dao.*;
-import com.dao.cache.PlayerDBStore;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
 import com.lock.zk.ZkDistributedLock;
@@ -20,13 +19,6 @@ import com.util.SerializeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.ehcache.Cache;
-import org.ehcache.CacheManager;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.CacheManagerBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.config.builders.WriteBehindConfigurationBuilder;
-import org.ehcache.config.units.MemoryUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //import com.config.RedissonConfig;
@@ -314,32 +305,6 @@ public class WebTestEnter {
             RemoteNode remoteNode = ServerInfoManager.getRemoteNode("login-1");
             remoteNode.sendReqMsg(SerializeUtil.mts(message));
         }
-
-    }
-
-    @RequestMapping("/test/ehcache")
-    public void aaa() {
-        CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);
-
-        Cache<Long, PlayerEntry> writeBehindCache = cacheManager.createCache("writeBehindCache",
-                CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, PlayerEntry.class, ResourcePoolsBuilder.newResourcePoolsBuilder().heap(10, MemoryUnit.GB))
-                        .withLoaderWriter(new PlayerDBStore())
-                        .add(WriteBehindConfigurationBuilder
-                                .newBatchedWriteBehindConfiguration(1, TimeUnit.SECONDS, 1000)
-                                .queueSize(3000)
-                                .concurrencyLevel(1)
-                                .enableCoalescing()
-
-                        )
-                        .build());
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-//        for (int i = 0; i < 1000000; i++) {
-//            PlayerEntry playerEntry = new PlayerEntry(IdCreator.nextId(PlayerEntry.class));
-//
-//            writeBehindCache.put(playerEntry.getId(), playerEntry);
-//        }
-        System.out.println("用时：" + stopWatch.getTime());
 
     }
 }

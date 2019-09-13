@@ -1,5 +1,6 @@
 package com.service;
 
+import com.Constant;
 import com.dao.UserRepository;
 import com.entry.UserEntry;
 import com.exception.StatusException;
@@ -17,7 +18,7 @@ public class LoginService1 {
     @Autowired
     private UserRepository userRepository;
 
-    @Async("ioThreadPool")
+    @Async(Constant.IO_THREAD_NAME)
     public CompletableFuture<UserEntry> login(String username, String password) throws StatusException {
         //TODO 多点登录判断
         Optional<UserEntry> user = userRepository.findByUserNameAndPassWord(username, password);

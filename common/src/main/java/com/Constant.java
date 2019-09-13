@@ -22,4 +22,6 @@ public class Constant {
     public static final String RPC_REQUEST= "rpcRequest";
     
     public static final String RPC_RESPONSE = "rpcResponse";
+
+    public static final String IO_THREAD_NAME = "ioThreadPool";
 }

@@ -6,6 +6,8 @@ import com.google.protobuf.Message;
 import com.manager.ServerInfoManager;
 import com.pojo.Packet;
 
+import java.util.Objects;
+
 public class ExceptionUtil {
     /**
      * 在lambda里Throw异常
@@ -14,7 +16,8 @@ public class ExceptionUtil {
      * @throws E
      */
     public static <E extends Throwable> void doThrow(Throwable e) throws E {
-        throw (E)e;
+        if (!Objects.isNull(e))
+            throw (E) e;
     }
 
     /**

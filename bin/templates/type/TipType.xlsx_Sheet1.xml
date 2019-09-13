@@ -9,5 +9,6 @@
     <tr id="6" name="mailNoExist" describe="邮件不存在"/>
     <tr id="7" name="bagNotEnough" describe="背包空间不足"/>
     <tr id="8" name="mailHasItem" describe="邮件有物品，不能删除"/>
+    <tr id="9" name="NoUid" describe="没有用户"/>
 </root>
 

@@ -2,16 +2,15 @@ package com.module;
 
 import com.abs.NoCellBagAbs;
 import com.abs.impl.CommonNoCellBag;
+import com.dao.NoCellBagRepository;
+import com.entry.BaseEntry;
 import com.entry.NoCellBagEntry;
 import com.template.TemplateManager;
 import lombok.Getter;
 import lombok.Setter;
-import org.ehcache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 @Getter
@@ -26,20 +25,21 @@ public class NoCellBagModule extends BaseModule
 
     private NoCellBagAbs noCellBag;
 
+    @Autowired
+    private NoCellBagRepository noCellBagRepository;
     @Override
     public void onLoad() {
         player.setNoCellBagModule(this);
-        Cache<Long, NoCellBagEntry> cache = cacheManager.getCache(getCacheName(), Long.class, NoCellBagEntry.class);
-        noCellBagEntry = cache.get(player.getPlayerId());
-        if (Objects.isNull(noCellBagEntry)) {
-            noCellBagEntry = new NoCellBagEntry(player.getPlayerId());
-            cache.put(player.getPlayerId(), noCellBagEntry);
-        }
+        noCellBagEntry = noCellBagRepository.findById(player.getPlayerId()).orElse(new NoCellBagEntry(player.getPlayerId()));
         noCellBag = new CommonNoCellBag();
         noCellBag.init(noCellBagEntry.map, templateManager, player);
 
     }
 
+    @Override
+    public BaseEntry getEntry() {
+        return noCellBagEntry;
+    }
 
     @Override
     public void onLogin() {

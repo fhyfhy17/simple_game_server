@@ -2,6 +2,7 @@ package com.module;
 
 import com.dao.CenterMailRepository;
 import com.dao.MailRepository;
+import com.entry.BaseEntry;
 import com.entry.CenterMailEntry;
 import com.entry.MailEntry;
 import com.entry.po.MailPo;
@@ -12,7 +13,6 @@ import com.template.templates.type.CenterMailType;
 import com.template.templates.type.TipType;
 import lombok.Getter;
 import lombok.Setter;
-import org.ehcache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -44,14 +44,14 @@ public class MailModule extends BaseModule
     @Override
     public void onLoad() {
         player.setMailModule(this);
-        Cache<Long, MailEntry> cache = cacheManager.getCache(getCacheName(), Long.class, MailEntry.class);
-        mailEntry = cache.get(player.getPlayerId());
-        if (Objects.isNull(mailEntry)) {
-            mailEntry = new MailEntry(player.getPlayerId());
-            cache.put(player.getPlayerId(), mailEntry);
-        }
+        mailEntry = mailRepository.findById(player.getPlayerId()).orElse(new MailEntry(player.getPlayerId()));
         scanCenterMail();
 
+    }
+
+    @Override
+    public BaseEntry getEntry() {
+        return mailEntry;
     }
 
     private void scanCenterMail() {
