@@ -1,26 +1,16 @@
 package com.mongoListener;
 
 import com.annotation.EventListener;
-import com.annotation.IncKey;
-import com.annotation.SeqClassName;
 import com.dao.cache.CacheCenter;
 import com.entry.BaseEntry;
-import com.entry.SeqEntry;
-import com.util.Pair;
-import com.util.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 import org.springframework.data.mongodb.core.mapping.event.BeforeDeleteEvent;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 
 @Component
@@ -58,8 +48,9 @@ public class MongoEventListener extends AbstractMongoEventListener<BaseEntry> {
 	@Override
 	public void onBeforeDelete(BeforeDeleteEvent<BaseEntry> event){
 		super.onBeforeDelete(event);
-		Long id=(Long)event.getSource().get("_id");
-		cacheCenter.clearWhenDelete(id);
+        Class<BaseEntry> type = event.getType();
+        Long id = (Long) event.getSource().get("_id");
+        cacheCenter.clearWhenDelete(type, id);
 	}
 	
 	@Override
