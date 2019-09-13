@@ -24,7 +24,7 @@ public class DBUtil{
 		if( clearPlayerDBCache ){
 			long playerId = list.get(0).getId();
 			synchronized(cacheCenter.lock){
-				cacheCenter.clearWhenDeleteAll(playerId);
+				cacheCenter.clearWhenDeleteAllForPlayer(playerId);
 			}
 		}
 
