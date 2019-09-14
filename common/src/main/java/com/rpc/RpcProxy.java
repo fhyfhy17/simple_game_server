@@ -21,7 +21,12 @@ public class RpcProxy
 	@Autowired
 	private RpcHolder rpcHolder;
 
-	//如果 hashKey为空，则为群发
+	//如果 hashKey为空，则为群发，群发消息必须是无返回的
+	//rpc使用限制
+	// 1 群发必须是不能改变属性的，无返回的。如果有类似于，帮派升级了给每个人加钱这种，即改变属性又群发的，必须改成发邮件
+	// 2 无需返回的消息，必须不能改变属性，如果改变属性，必须为有返回的消息，因为改变属性说明是强需求，不要求返回如果有超时错误，则无法处理
+	// * 以上说所改变属性，基本上是针对个人、组队、工会这种。 如果是bus通知各服务器改变状态，不属于上述规则
+	// * rpc还不成熟，待完善，并且还无法处理类似 ，如果bus服挂了，game做了一个类似于个人升级了，给工会涨经验这种功能。这样工会涨经验的这次机会就失去了，也就是还没有做到一致性
 	public <T> T proxy(Class<T> serviceInterface, @Nullable Object hashKey, TypeEnum.ServerTypeEnum serverType, long uid) {
 		Object proxyInstance = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{serviceInterface}, new InvocationHandler() {
 			@Suspendable

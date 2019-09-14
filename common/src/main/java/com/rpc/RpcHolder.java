@@ -52,7 +52,6 @@ public class RpcHolder {
             log.error("rpcResponseFuture,原因是收到了多条同requestID 回复 requestId = {}，也有可能是超时被删", requestId);
             return;
         }
-
         if (code > 0) {
             futureContext.future.setException(new StatusException(code));
         } else {
