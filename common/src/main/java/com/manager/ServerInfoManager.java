@@ -92,6 +92,11 @@ public class ServerInfoManager {
         return remotes.get(serverId);
     }
 
+    //群发
+    public static void sendMessageForTypeAll(TypeEnum.ServerTypeEnum typeEnum, Packet message) {
+        List<ServerInfo> list = getServerInfosByType(typeEnum);
+        list.forEach(queue -> sendMessage(queue.getServerId(), message));
+    }
 
     public static void sendMessage(String queue, Packet message) {
         RemoteNode remoteNode = ServerInfoManager.getRemoteNode(queue);

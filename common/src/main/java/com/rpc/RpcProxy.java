@@ -6,6 +6,7 @@ import com.Constant;
 import com.annotation.Rpc;
 import com.enums.TypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationHandler;
@@ -19,7 +20,9 @@ public class RpcProxy
 {
 	@Autowired
 	private RpcHolder rpcHolder;
-	public <T> T serviceProxy(Class<T> serviceInterface,Object hashkey,TypeEnum.ServerTypeEnum serverType,long uid) {
+
+	//如果 hashKey为空，则为群发
+	public <T> T proxy(Class<T> serviceInterface, @Nullable Object hashKey, TypeEnum.ServerTypeEnum serverType, long uid) {
 		Object proxyInstance = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{serviceInterface}, new InvocationHandler() {
 			@Suspendable
 			@Override
@@ -47,11 +50,11 @@ public class RpcProxy
 				rpcRequest.setParameters(args);
 				Rpc rpc=method.getAnnotation(Rpc.class);
 				if(!rpc.needResponse()){
-					rpcHolder.sendRequest(rpcRequest, hashkey,serverType,uid,false);
+					rpcHolder.sendRequest(rpcRequest, hashKey, serverType, uid, false);
 					return null;
 				}
-				
-				SettableFuture<RpcResponse> rpcResponseSettableFuture = rpcHolder.sendRequest(rpcRequest, hashkey,serverType,uid,true);
+
+				SettableFuture<RpcResponse> rpcResponseSettableFuture = rpcHolder.sendRequest(rpcRequest, hashKey, serverType, uid, true);
 				RpcResponse rpcResponse = rpcResponseSettableFuture.get();
 				return rpcResponse.getData();
 			}

@@ -75,7 +75,7 @@ public class WebTestEnter {
     
         stopWatch.start();
         CountDownLatch countDownLatch =new CountDownLatch(10);
-        GameToBus gameToBus = rpcProxy.serviceProxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
+        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
         for (int i = 0; i < 10; i++) {
             new Thread(() -> {
                 for (int j = 0; j < 100; j++) {
@@ -138,7 +138,7 @@ public class WebTestEnter {
     
     @RequestMapping("/test/noneed")
     public void noneed() {
-        GameToBus gameToBus = rpcProxy.serviceProxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
+        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
         gameToBus.noNeedResponse0();
     }
     

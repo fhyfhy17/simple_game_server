@@ -4,6 +4,7 @@ import co.paralleluniverse.strands.SettableFuture;
 import com.enums.TypeEnum;
 import com.exception.StatusException;
 import com.manager.ServerInfoManager;
+import com.pojo.Packet;
 import com.template.templates.type.TipType;
 import com.util.ContextUtil;
 import com.util.ProtoUtil;
@@ -32,8 +33,13 @@ public class RpcHolder {
             requestContext.put(requestId, new FutureContext(requestId, future, System.currentTimeMillis()));
         }
         Assert.notNull(requestId, "requestId 不能为空");
-        String s = ServerInfoManager.hashChooseServer(hashKey, serverType);
-        ServerInfoManager.sendMessage(s, ProtoUtil.buildRpcRequestMessage(ProtostuffUtil.serializeObject(rpcRequest, RpcRequest.class), uid, ContextUtil.id, requestId));
+        Packet packet = ProtoUtil.buildRpcRequestMessage(ProtostuffUtil.serializeObject(rpcRequest, RpcRequest.class), uid, ContextUtil.id, requestId);
+
+        if (Objects.isNull(hashKey)) {
+            ServerInfoManager.sendMessageForTypeAll(serverType, packet);
+        } else {
+            ServerInfoManager.sendMessage(ServerInfoManager.hashChooseServer(hashKey, serverType), packet);
+        }
         return future;
     }
 
