@@ -12,7 +12,6 @@ import com.node.RemoteNode;
 import com.pojo.Packet;
 import com.rpc.RpcProxy;
 import com.rpc.interfaces.gameToBus.GameToBus;
-import com.service.UnionService;
 import com.util.ContextUtil;
 import com.util.IdCreator;
 import com.util.SerializeUtil;
@@ -54,9 +53,6 @@ public class WebTestEnter {
     
     @Autowired
     MongoEventListener saveEventListener;
-
-    @Autowired
-    private UnionService unionService;
 
     @Autowired
     private RpcProxy rpcProxy;
@@ -208,12 +204,6 @@ public class WebTestEnter {
     StopWatch s = new StopWatch();
     ZkDistributedLock lock = new ZkDistributedLock(ContextUtil.zkIpPort, 1000, "textLock");
 
-    @RequestMapping("/test/playerAddUnion")
-    public void playerAddUnion() {
-        unionService.examinePlayer(1078490924780228608L, 1071010079177838592L);
-//        1077939648774410240
-//        1077941486252855296
-    }
 
     @RequestMapping("/test/testZk")
     public void testZk() {

@@ -20,11 +20,15 @@ public class TipType {
 
     public static final int NoUid = 9;//没有用户
 
+    public static final int VisitOverTime = 10;//访问超时
+
+    public static final int SystemError = 11;//系统错误
+
 
     public static final int FIRST_ID = 1;//第一个ID
 
-    public static final int LAST_ID = 9;//最后一个ID
+    public static final int LAST_ID = 11;//最后一个ID
 
-    public static final int TYPE_SIZE = 9;//ID数量
+    public static final int TYPE_SIZE = 11;//ID数量
 
 }

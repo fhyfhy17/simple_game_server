@@ -10,5 +10,7 @@
     <tr id="7" name="bagNotEnough" describe="背包空间不足"/>
     <tr id="8" name="mailHasItem" describe="邮件有物品，不能删除"/>
     <tr id="9" name="NoUid" describe="没有用户"/>
+    <tr id="10" name="visitOverTime" describe="访问超时"/>
+    <tr id="11" name="SystemError" describe="系统错误"/>
 </root>
 

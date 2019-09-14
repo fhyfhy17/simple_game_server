@@ -3,11 +3,7 @@ package com.handler;
 import com.Constant;
 import com.controller.ControllerFactory;
 import com.controller.ControllerHandler;
-import com.controller.fun.Fun0;
-import com.controller.fun.Fun1;
-import com.controller.fun.Fun2;
-import com.controller.fun.Fun3;
-import com.controller.fun.Fun4;
+import com.controller.fun.*;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.exception.StatusException;
 import com.exception.exceptionNeedSendToClient.ServerBusinessException;
@@ -15,7 +11,10 @@ import com.pojo.Packet;
 import com.rpc.RpcHolder;
 import com.rpc.RpcRequest;
 import com.rpc.RpcResponse;
-import com.util.*;
+import com.util.ExceptionUtil;
+import com.util.ProtostuffUtil;
+import com.util.SpringUtils;
+import com.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -50,7 +49,7 @@ public class MessageThreadHandler implements Runnable {
                     Thread.sleep(1);
                 }
             } catch (InterruptedException e) {
-                log.error("线程中断",e);
+                log.error("线程中断", e);
             } finally {
                 stopWatch.reset();
             }
@@ -67,30 +66,30 @@ public class MessageThreadHandler implements Runnable {
             ControllerHandler handler = null;
             Packet packet = null;
             String gate = null;
-            boolean isRpc;
+            boolean isRpc = false;
             RpcRequest rpcRequest = null;
             try {
                 packet = pulseQueues.poll();
                 final int cmdId = packet.getId();
                 gate = packet.getGate();
-                if(Constant.RPC_RESPONSE.equals(packet.getRpc())){
-                    SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(),RpcResponse.class));
+                if (Constant.RPC_RESPONSE.equals(packet.getRpc())) {
+                    SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(), RpcResponse.class));
                     continue;
                 }
-                isRpc = StringUtil.contains(packet.getRpc(),Constant.RPC_REQUEST);
-    
-                if(!isRpc){
+                isRpc = StringUtil.contains(packet.getRpc(), Constant.RPC_REQUEST);
+
+                if (!isRpc) {
                     handler = ControllerFactory.getControllerMap().get(cmdId);
                     if (handler == null) {
                         throw new IllegalStateException("收到不存在的消息，消息ID=" + cmdId);
                     }
-                }else {
-                    rpcRequest=ProtostuffUtil.deserializeObject(packet.getData(),RpcRequest.class);
-                    String key = rpcRequest.getClassName()+"_"+rpcRequest.getMethodName();
-                    handler=ControllerFactory.getRpcControllerMap().get(key);
+                } else {
+                    rpcRequest = ProtostuffUtil.deserializeObject(packet.getData(), RpcRequest.class);
+                    String key = rpcRequest.getClassName() + "_" + rpcRequest.getMethodName();
+                    handler = ControllerFactory.getRpcControllerMap().get(key);
                     //log.info("收到 RPC 请求时间  "+ System.currentTimeMillis());
                     if (handler == null) {
-                        throw new IllegalStateException("收到不存在的Rpc消息，消息KEY=" + key );
+                        throw new IllegalStateException("收到不存在的Rpc消息，消息KEY=" + key);
                     }
                 }
 
@@ -99,13 +98,13 @@ public class MessageThreadHandler implements Runnable {
                     continue;
                 }
                 Object result = null;
-                Object[] m ;
-                if(!isRpc){
+                Object[] m;
+                if (!isRpc) {
                     m = handler.getMethodArgumentValues(packet);
-                }else {
+                } else {
                     m = rpcRequest.getParameters();
                 }
-                
+
                 //
                 switch (handler.getFunType()) {
                     case Fun0:
@@ -134,12 +133,20 @@ public class MessageThreadHandler implements Runnable {
 
                 ////拦截器后
                 if (!Objects.isNull(result)) {
-                    HandlerExecutionChain.applyPostHandle(packet,result);
+                    HandlerExecutionChain.applyPostHandle(packet, result);
                 }
-            }
-
-            catch (StatusException se) {
-                ExceptionUtil.sendStatusExceptionToClient(handler,packet,gate,se);
+            } catch (StatusException se) {
+                try {
+                    //如果是rpc报错，把错误返回给发送方。
+                    if (isRpc) {
+                        HandlerExecutionChain.applyPostHandle(packet, null);
+                    } else {//rpc response和protobuf协议要区分
+                        boolean isRpcResponse = Constant.RPC_RESPONSE.equals(packet.getRpc());
+                        ExceptionUtil.sendStatusExceptionToClient(handler, packet, gate, se, isRpcResponse);
+                    }
+                } catch (Exception e) {
+                    log.error("", e);
+                }
             } catch (ServerBusinessException sbe) {
                 // 业务报错，
                 log.error("", sbe);
@@ -149,7 +156,6 @@ public class MessageThreadHandler implements Runnable {
             }
         }
     }
-
 
 
     public String getHandlerId() {
