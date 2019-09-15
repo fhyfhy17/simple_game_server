@@ -24,11 +24,13 @@ public class TipType {
 
     public static final int SystemError = 11;//系统错误
 
+    public static final int GroupSendCantHaveReturnValue = 12;//群发不能有返回值
+
 
     public static final int FIRST_ID = 1;//第一个ID
 
-    public static final int LAST_ID = 11;//最后一个ID
+    public static final int LAST_ID = 12;//最后一个ID
 
-    public static final int TYPE_SIZE = 11;//ID数量
+    public static final int TYPE_SIZE = 12;//ID数量
 
 }

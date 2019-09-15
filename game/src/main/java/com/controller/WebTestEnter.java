@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.Constant;
 import com.dao.*;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
@@ -11,10 +12,9 @@ import com.net.msg.Options;
 import com.node.RemoteNode;
 import com.pojo.Packet;
 import com.rpc.RpcProxy;
+import com.rpc.RpcRequest;
 import com.rpc.interfaces.gameToBus.GameToBus;
-import com.util.ContextUtil;
-import com.util.IdCreator;
-import com.util.SerializeUtil;
+import com.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -66,7 +67,25 @@ public class WebTestEnter {
     
     @Autowired
     private MongoTemplate mongoTemplate;
-    
+
+    @RequestMapping("/test/self")
+    public void self() {
+        //TODO 给自己发个RPC请求，这个以后可以摘出来，做成一个功能。 另看能不能集成在RPC访问对端报错，发送方加后续处理那
+        RpcRequest rpcRequest = new RpcRequest();
+
+        rpcRequest.setId(Constant.RPC_REQUEST + UUID.randomUUID().toString());
+        rpcRequest.setClassName("com.controller.LoginController");
+        rpcRequest.setMethodName("self");
+        rpcRequest.setParameters(new Object[]{"a"});
+
+        ServerInfoManager.sendMessage("game-2",
+                ProtoUtil.buildRpcRequestMessage(
+                        ProtostuffUtil.serializeObject(rpcRequest, RpcRequest.class),
+                        123,
+                        ContextUtil.id,
+                        rpcRequest.getId()));
+    }
+
     @RequestMapping("/test/rpc")
     public void rpc() {
         //GameToBus gameToBus=rpcProxy.serviceProxy(GameToBus.class,123,TypeEnum.ServerTypeEnum.LOGIN,123);

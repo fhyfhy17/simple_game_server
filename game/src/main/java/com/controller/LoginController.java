@@ -5,6 +5,7 @@ import com.controller.interceptor.HandlerExecutionChain;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.Packet;
 import com.pojo.Player;
+import com.rpc.interfaces.gameToBus.GameToGame;
 import com.service.PlayerService;
 import com.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Controller
 @Slf4j
-public class LoginController extends BaseController {
+public class LoginController extends BaseController implements GameToGame {
     @Autowired
     private PlayerService playerService;
 
@@ -58,5 +59,10 @@ public class LoginController extends BaseController {
         return builder.build();
     }
 
-
+    @Controllor
+    @Override
+    public Object self(String a) {
+        log.info(a + "  ========");
+        return null;
+    }
 }

@@ -2,12 +2,7 @@ package com.controller;
 
 import com.annotation.Controllor;
 import com.annotation.Rpc;
-import com.controller.fun.Fun0;
-import com.controller.fun.Fun1;
-import com.controller.fun.Fun2;
-import com.controller.fun.Fun3;
-import com.controller.fun.Fun4;
-import com.controller.fun.FunType;
+import com.controller.fun.*;
 import com.google.common.collect.Maps;
 import com.google.protobuf.Message;
 import com.util.Pair;
@@ -16,11 +11,7 @@ import com.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import java.lang.invoke.CallSite;
-import java.lang.invoke.LambdaConversionException;
-import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import java.lang.invoke.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -49,10 +40,9 @@ public class ControllerFactory {
                 
                 if(!Objects.isNull(AnnotationUtils.findAnnotation(method,Rpc.class))){
                     //MethodAccessor methodAccessor = ReflectionFactory.getReflectionFactory().newMethodAccessor(method);
-
                     Pair<Object, FunType> add = addFunType(controller, method);
-
-                    rpcControllerMap.put(method.getDeclaringClass().getGenericInterfaces()[0].getTypeName()+"_"+method.getName(), new ControllerHandler(controller, method, -1, add.getValue(), add.getKey()));
+                    Method rawMethod = SpringUtils.getRawMethod(method);
+                    rpcControllerMap.put(rawMethod.getDeclaringClass().getName() + "_" + rawMethod.getName(), new ControllerHandler(controller, rawMethod, -1, add.getValue(), add.getKey()));
                 }else{
                     for (Class<?> parameterClass : method.getParameterTypes()) {
                         if (!Message.class.isAssignableFrom(parameterClass)) {
