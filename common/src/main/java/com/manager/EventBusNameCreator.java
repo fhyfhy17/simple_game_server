@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class EventBusNameCreater {
+public class EventBusNameCreator {
 
 
     private static Map<String, Integer> map = new HashMap<>();
 
     public static String getName(String oldName) {
-        synchronized (EventBusNameCreater.class) {
+        synchronized (EventBusNameCreator.class) {
             Integer count = map.get(oldName);
             String newName = "";
             if (Objects.isNull(count)) {

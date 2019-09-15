@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 @EventListener
 @Slf4j
-public class MailService {
+public class MailService extends BaseService {
     @Autowired
     private CenterMailRepository centerMailRepository;
 
@@ -58,4 +58,13 @@ public class MailService {
         return mailPo;
     }
 
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onClose() {
+
+    }
 }

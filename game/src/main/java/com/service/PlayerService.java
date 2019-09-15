@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @EventListener
 @Slf4j
-public class PlayerService {
+public class PlayerService extends BaseService {
     @Autowired
     private PlayerRepository playerRepository;
 
@@ -99,5 +99,15 @@ public class PlayerService {
         playerBuilder.setLevel(playerEntry.getLevel());
         playerBuilder.setCoin(playerEntry.getCoin());
         return playerBuilder;
+    }
+
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onClose() {
+
     }
 }

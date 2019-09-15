@@ -1,7 +1,7 @@
 package com;
 
-import com.controller.ControllerFactory;
-import com.net.NettyServer;
+import com.manager.GateServerManager;
+import com.util.SpringUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,10 +24,6 @@ public class Gate implements CommandLineRunner {
 
     @EventListener
     void afterSpringBoot(ApplicationReadyEvent event) throws Exception {
-        ControllerFactory.init();
-        //启动 netty
-        NettyServer nettyServer = new NettyServer();
-        nettyServer.init();
-
+        SpringUtils.getBean(GateServerManager.class).onServerStart();
     }
 }

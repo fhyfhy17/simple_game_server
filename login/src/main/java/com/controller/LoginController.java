@@ -3,17 +3,15 @@ package com.controller;
 
 import com.annotation.Controllor;
 import com.controller.interceptor.HandlerExecutionChain;
-import com.entry.PlayerEntry;
 import com.entry.UserEntry;
 import com.exception.StatusException;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.Packet;
-import com.rpc.interfaces.gameToBus.GameToBus;
-import com.service.LoginService1;
+import com.rpc.interfaces.gameToBus.GameToLogin;
+import com.service.LoginService;
 import com.template.templates.type.TipType;
 import com.util.CountUtil;
 import com.util.ExceptionUtil;
-import com.util.IdCreator;
 import com.util.TipStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +22,9 @@ import java.util.concurrent.CompletableFuture;
 
 @Controller
 @Slf4j
-public class LoginController extends BaseController implements GameToBus {
+public class LoginController extends BaseController implements GameToLogin {
     @Autowired
-    private LoginService1 loginService;
+    private LoginService loginService;
 
     @Controllor
     public Object login(UidContext context, LOGIN_MSG.CTG_LOGIN req) throws StatusException {
@@ -62,31 +60,5 @@ public class LoginController extends BaseController implements GameToBus {
 
     }
 
-    @Controllor
-    @Override
-    public String needResponse(String a) {
-        //log.info("neeResponse : "+ a);
-        return a;
-    }
 
-    @Controllor
-    @Override
-    public Object noNeedResponse(String a) {
-        log.info("异步");
-        return null;
-    }
-
-    @Controllor
-    @Override
-    public Object noNeedResponse0() {
-        log.info("异步0");
-        return null;
-    }
-
-    @Controllor
-    @Override
-    public PlayerEntry aaa(String a) {
-        System.out.println("有点慢啊");
-        return new PlayerEntry(IdCreator.nextId(PlayerEntry.class));
-    }
 }

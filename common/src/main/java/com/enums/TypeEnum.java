@@ -85,4 +85,11 @@ public interface TypeEnum {
         ;
     }
 
+    enum ServerStatus implements TypeEnum {
+        STARTING,//启动中
+        OPEN,//启动完毕
+        CLOSING,//关闭中
+        ;
+    }
+
 }

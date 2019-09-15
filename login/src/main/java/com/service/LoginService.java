@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class LoginService1 {
+public class LoginService extends BaseService {
 
     @Autowired
     private UserRepository userRepository;
@@ -31,6 +31,16 @@ public class LoginService1 {
             userRepository.save(userEntry);
             return userEntry;
         }));
+
+    }
+
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onClose() {
 
     }
 

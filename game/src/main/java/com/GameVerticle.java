@@ -7,17 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
 @Component
 @Slf4j
-public class GameVerticle {
+public class GameVerticle extends BaseVerticle {
 
     @Autowired
     private GameReceiver gameReceiver;
 
-    @PostConstruct
-    void init() {
+    public void init() {
         log.info("启动node");
 
 

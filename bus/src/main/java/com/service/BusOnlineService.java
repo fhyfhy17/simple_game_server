@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 @Slf4j
 @Data
-public class BusOnlineService {
+public class BusOnlineService extends BaseService {
     //TODO bus的在线信息，要game发过来心跳控制,不用每条都发，可以把整个Online的id全发过来，因为Game层已经有
     // 心跳控制了那么可以每次是该服的，不存在的就删除。暂时先这样，这里应该容易出现BUG，以后观察
 
@@ -48,4 +48,13 @@ public class BusOnlineService {
 
     }
 
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onClose() {
+
+    }
 }

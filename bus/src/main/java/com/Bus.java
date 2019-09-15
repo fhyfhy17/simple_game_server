@@ -1,6 +1,7 @@
 package com;
 
-import com.controller.ControllerFactory;
+import com.manager.BusServerManager;
+import com.util.SpringUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +24,8 @@ public class Bus implements CommandLineRunner {
 
     @EventListener
     void afterSpringBoot(ApplicationReadyEvent event) throws Exception {
-        ControllerFactory.init();
+        BusServerManager busServerManager = SpringUtils.getBean(BusServerManager.class);
+        busServerManager.onServerStart();
     }
 }
 

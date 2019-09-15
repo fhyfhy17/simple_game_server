@@ -7,17 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
 @Component
 @Slf4j
-public class LoginVerticle {
+public class LoginVerticle extends BaseVerticle {
 
     @Autowired
     private LoginReceiver loginReceiver;
 
-    @PostConstruct
-    void init() {
+    public void init() {
         log.info("启动node");
 
 

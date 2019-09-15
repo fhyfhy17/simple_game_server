@@ -1,7 +1,8 @@
 package com;
 
 
-import com.controller.ControllerFactory;
+import com.manager.LoginServerManager;
+import com.util.SpringUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,8 +27,7 @@ public class Login implements CommandLineRunner {
 
     @EventListener
     void afterSpringBoot(ApplicationReadyEvent event) throws Exception {
-        ControllerFactory.init();
-
+        SpringUtils.getBean(LoginServerManager.class).onServerStart();
     }
 }
 

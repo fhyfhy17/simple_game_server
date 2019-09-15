@@ -28,7 +28,7 @@ public class BusReceiver extends BaseReceiver {
             public void messageReceived(Packet msg) {
         
                 // 分配执行器执行
-                int index = msg.getFrom().hashCode() % handlerCount;
+                int index = Math.abs(msg.getFrom().hashCode()) % handlerCount;
                 
                 MessageThreadHandler handler = hanlderList.get(index);
                 handler.messageReceived(msg);

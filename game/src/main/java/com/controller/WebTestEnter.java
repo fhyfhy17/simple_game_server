@@ -74,7 +74,7 @@ public class WebTestEnter {
         RpcRequest rpcRequest = new RpcRequest();
 
         rpcRequest.setId(Constant.RPC_REQUEST + UUID.randomUUID().toString());
-        rpcRequest.setClassName("com.controller.LoginController");
+        rpcRequest.setClassName("com.rpc.interfaces.gameToBus.GameToGame");
         rpcRequest.setMethodName("self");
         rpcRequest.setParameters(new Object[]{"a"});
 
@@ -94,7 +94,7 @@ public class WebTestEnter {
     
         stopWatch.start();
         CountDownLatch countDownLatch =new CountDownLatch(10);
-        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
+        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.BUS, 123);
         for (int i = 0; i < 10; i++) {
             new Thread(() -> {
                 for (int j = 0; j < 100; j++) {
@@ -157,7 +157,7 @@ public class WebTestEnter {
     
     @RequestMapping("/test/noneed")
     public void noneed() {
-        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
+        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.BUS, 123);
         gameToBus.noNeedResponse0();
     }
     

@@ -42,8 +42,8 @@ public class ControllerFactory {
                     //MethodAccessor methodAccessor = ReflectionFactory.getReflectionFactory().newMethodAccessor(method);
                     Pair<Object, FunType> add = addFunType(controller, method);
                     Method rawMethod = SpringUtils.getRawMethod(method);
-                    rpcControllerMap.put(rawMethod.getDeclaringClass().getName() + "_" + rawMethod.getName(), new ControllerHandler(controller, rawMethod, -1, add.getValue(), add.getKey()));
-                }else{
+                    rpcControllerMap.put(rawMethod.getDeclaringClass().getGenericInterfaces()[0].getTypeName() + "_" + rawMethod.getName(), new ControllerHandler(controller, rawMethod, -1, add.getValue(), add.getKey()));
+                } else {
                     for (Class<?> parameterClass : method.getParameterTypes()) {
                         if (!Message.class.isAssignableFrom(parameterClass)) {
                             continue;
