@@ -1,6 +1,7 @@
 package com.manager;
 
 import com.BaseVerticle;
+import com.config.ZookeeperConfig;
 import com.controller.ControllerFactory;
 import com.enums.TypeEnum;
 import com.service.BaseService;
@@ -17,16 +18,29 @@ public abstract class ServerManager {
     @Autowired
     private List<BaseService> services;
 
+    @Autowired
+    private ZookeeperConfig zookeeperConfig;
+
     public abstract BaseVerticle getVerticle();
 
     //服务器启动
     public void onServerStart() {
         //启动node
         getVerticle().init();
-        //启动消息注册器
-        ControllerFactory.init();
+
         //启动service的start方法
         services.forEach(BaseService::onStart);
+        //启动连接
+        new Thread(() -> {
+            try {
+                zookeeperConfig.init();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+        //启动消息注册器
+        ControllerFactory.init();
+
     }
 
     //服务器关闭

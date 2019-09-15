@@ -1,6 +1,7 @@
 package com.controller;
 
 import com.Constant;
+import com.config.ZookeeperConfig;
 import com.dao.*;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
@@ -57,7 +58,9 @@ public class WebTestEnter {
 
     @Autowired
     private RpcProxy rpcProxy;
-    
+
+    @Autowired
+    private ZookeeperConfig zookeeperConfig;
    
 //    @Autowired
 //    @Qualifier("ha")
@@ -221,11 +224,12 @@ public class WebTestEnter {
 
     AtomicInteger a = new AtomicInteger(0);
     StopWatch s = new StopWatch();
-    ZkDistributedLock lock = new ZkDistributedLock(ContextUtil.zkIpPort, 1000, "textLock");
+
 
 
     @RequestMapping("/test/testZk")
     public void testZk() {
+        ZkDistributedLock lock = zookeeperConfig.getZkLock();
         s.reset();
         s.start();
         for (int i = 0; i < 1000; i++) {

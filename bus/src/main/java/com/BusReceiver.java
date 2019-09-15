@@ -28,6 +28,7 @@ public class BusReceiver extends BaseReceiver {
             public void messageReceived(Packet msg) {
         
                 // 分配执行器执行
+                //TODO ID的分配策略  包括服与服之间
                 int index = Math.abs(msg.getFrom().hashCode()) % handlerCount;
                 
                 MessageThreadHandler handler = hanlderList.get(index);

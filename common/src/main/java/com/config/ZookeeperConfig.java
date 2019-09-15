@@ -2,6 +2,7 @@ package com.config;
 
 
 import com.Constant;
+import com.lock.zk.ZkDistributedLock;
 import com.manager.ServerInfoManager;
 import com.pojo.ServerInfo;
 import com.util.ContextUtil;
@@ -18,29 +19,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
-
 @Configuration
 @Slf4j
 public class ZookeeperConfig {
 
     @Autowired
     private ServerInfo serverInfo;
-    
+
+    private ZkDistributedLock lock;
+
     @Bean("curator")
     public CuratorFramework getCurator() {
-        RetryPolicy retryPolicy = new RetryForever(20);
+        RetryPolicy retryPolicy = new RetryForever(200);
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-                .connectString(StringUtil.getSplitePrefix(ContextUtil.zkIpPort,":"))
+                .connectString(StringUtil.getSplitePrefix(ContextUtil.zkIpPort, ":"))
                 .namespace("sgs")
-                .sessionTimeoutMs(6000)
+                .sessionTimeoutMs(60 * 1000)
                 .retryPolicy(retryPolicy).build();
         return curator;
     }
 
 
-    @PostConstruct
-    public void curatorFramework() throws Exception {
+    public void init() throws Exception {
 
 
         CuratorFramework curator = getCurator();
@@ -73,6 +73,10 @@ public class ZookeeperConfig {
                 }
         );
         ZookeeperUtil.connectZookeeper(serverInfo);
+        lock = new ZkDistributedLock(ContextUtil.zkIpPort, 1000, "textLock");
+    }
 
+    public ZkDistributedLock getZkLock() {
+        return lock;
     }
 }
