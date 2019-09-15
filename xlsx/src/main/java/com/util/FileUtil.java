@@ -9,9 +9,9 @@ import java.util.Objects;
 
 public class FileUtil {
 
-  
+
     public static List<String> getFiles(String filePath, String filter) {
-    
+
         //Predicate<String> fileFilter = fileName->fileName.endsWith(filter)&&!fileName.startsWith("~");
         //List<String> filelist = new ArrayList<>();
         //try
@@ -32,19 +32,19 @@ public class FileUtil {
         //{
         //    e.printStackTrace();
         //}
-    
-    
+
+
         File root = new File(filePath);
 
-        FileFilter fileFilter =pathName -> pathName.getName().endsWith(filter)&&!pathName.getName().startsWith("~");
+        FileFilter fileFilter = pathName -> pathName.getName().endsWith(filter) && !pathName.getName().startsWith("~");
 
 
         File[] files = root.listFiles(fileFilter);
-        if(Objects.isNull(files)){
+        if (Objects.isNull(files)) {
             return null;
         }
         List<String> filelist = new ArrayList<>();
-        Arrays.stream(files).forEach(file->{
+        Arrays.stream(files).forEach(file -> {
             if (file.isDirectory()) {
                 getFiles(file.getAbsolutePath(), filter);
                 System.out.println("显示" + filePath + "下所有子目录及其文件" + file.getAbsolutePath());
@@ -119,4 +119,30 @@ public class FileUtil {
 
 
     }
+
+    public static void deleteAllFile(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            throw new RuntimeException("要删除的文件夹不存在");
+        }
+        if (!file.isDirectory()) {
+            throw new RuntimeException("要删除的不是文件夹");
+        }
+        deleteFile(file);
+    }
+
+    public static void deleteFile(File file) {
+        if (file.isFile()) {//判断是否为文件，是，则删除
+            System.out.println(file.getAbsoluteFile());//打印路径
+            file.delete();
+        } else {//不为文件，则为文件夹
+            String[] childFilePath = file.list();//获取文件夹下所有文件相对路径
+            for (String path : childFilePath) {
+                File childFile = new File(file.getAbsoluteFile() + "/" + path);
+                deleteFile(childFile);//递归，对每个都进行判断
+            }
+            file.delete();
+        }
+    }
+
 }

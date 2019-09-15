@@ -152,7 +152,7 @@ public class XlsxToXmlUtil {
             System.out.println(xlsxPath);
             String xmlPath = FileUtil.getTemplatesPah();
 
-
+            //TODO 先删除文件夹下所有文件，防止有错误的文件留在里面
             write(xlsxPath, xmlPath);
             write(xlsxPath + File.separator + "type", xmlPath);
 
