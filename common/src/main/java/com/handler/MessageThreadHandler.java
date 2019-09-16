@@ -3,7 +3,11 @@ package com.handler;
 import com.Constant;
 import com.controller.ControllerFactory;
 import com.controller.ControllerHandler;
-import com.controller.fun.*;
+import com.controller.fun.Fun0;
+import com.controller.fun.Fun1;
+import com.controller.fun.Fun2;
+import com.controller.fun.Fun3;
+import com.controller.fun.Fun4;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.exception.StatusException;
 import com.exception.exceptionNeedSendToClient.ServerBusinessException;
@@ -11,6 +15,7 @@ import com.pojo.Packet;
 import com.rpc.RpcHolder;
 import com.rpc.RpcRequest;
 import com.rpc.RpcResponse;
+import com.thread.schedule.ScheduleTask;
 import com.util.ExceptionUtil;
 import com.util.ProtostuffUtil;
 import com.util.SpringUtils;
@@ -22,7 +27,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Slf4j
-public class MessageThreadHandler implements Runnable {
+public class MessageThreadHandler extends ScheduleAble implements Runnable {
     // 执行器ID
     protected String handlerId;
     // 心跳频率10毫秒
@@ -32,14 +37,21 @@ public class MessageThreadHandler implements Runnable {
 
     protected final ConcurrentLinkedQueue<Packet> pulseQueues = new ConcurrentLinkedQueue<>();
 
+    public ThreadLocal<MessageThreadHandler> threadHandlerThreadLocal = new InheritableThreadLocal<>();
+    
+    
     @Override
     public void run() {
         for (; ; ) {
             stopWatch.start();
-
+    
+            threadHandlerThreadLocal.set(this);
+            
             // 执行心跳
             pulse();
-
+            // 执行任务调度心跳
+            pulseSchedule();
+            
             stopWatch.stop();
 
             try {
@@ -165,6 +177,13 @@ public class MessageThreadHandler implements Runnable {
     public void setHandlerId(String handlerId) {
         this.handlerId = handlerId;
     }
-
-
+    
+    
+    @Override
+    void pulseSchedule(){
+        if (!schedulerList.isEmpty()) {
+            ScheduleTask poll = schedulerList.poll();
+            poll.execute();
+        }
+    }
 }

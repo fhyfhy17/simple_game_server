@@ -14,7 +14,7 @@ public abstract class MessageGroup {
     private volatile boolean running = false;
     protected int handlerCount = 8; // 执行器数量
     private String name;
-    public List<MessageThreadHandler> hanlderList = new ArrayList<>();
+    public List<MessageThreadHandler> handlerList= new ArrayList<>();
     public List<MessageThreadHandler> unionHandlerList = new ArrayList<>();
     
 
@@ -43,12 +43,15 @@ public abstract class MessageGroup {
     public void initHandlers() {
         for (int i = 0; i < this.handlerCount; i++) {
             MessageThreadHandler handler = getMessageThreadHandler();
-            new Thread(handler, this.name +"-common"+ i).start();
-            hanlderList.add(handler);
+            handler.schedulerListInit();
+            new Thread(handler, this.name +"-common-"+ i).start();
+            handlerList.add(handler);
+            
             MessageThreadHandler unionHandler = getUnionMessageThreadHandler();
             if(unionHandler!=null){
-                new Thread(handler, this.name+"-union" + i).start();
-                unionHandlerList.add(handler);
+                unionHandler.schedulerListInit();
+                new Thread(unionHandler, this.name+"-union-" + i).start();
+                unionHandlerList.add(unionHandler);
             }
             
         }
@@ -74,7 +77,7 @@ public abstract class MessageGroup {
             index = (int) (Math.abs(msg.getUid()) % handlerCount);
         }
 
-        MessageThreadHandler handler = hanlderList.get(index);
+        MessageThreadHandler handler = handlerList.get(index);
         handler.messageReceived(msg);
     }
 

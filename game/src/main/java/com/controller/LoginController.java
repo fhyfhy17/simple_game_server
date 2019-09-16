@@ -3,10 +3,14 @@ package com.controller;
 import com.annotation.Controllor;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.net.msg.LOGIN_MSG;
+import com.pojo.OnlineContext;
 import com.pojo.Packet;
 import com.pojo.Player;
+import com.rpc.interfaces.gameToBus.GameToBus;
 import com.rpc.interfaces.gameToBus.GameToGame;
 import com.service.PlayerService;
+import com.thread.schedule.ScheduleTask;
+import com.util.ContextUtil;
 import com.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Controller
 @Slf4j
-public class LoginController extends BaseController implements GameToGame {
+public class LoginController extends BaseController implements GameToGame, GameToBus{
     @Autowired
     private PlayerService playerService;
 
@@ -44,6 +48,9 @@ public class LoginController extends BaseController implements GameToGame {
         result.whenCompleteAsync((playerInfo, throwable) -> {
             ExceptionUtil.doThrow(throwable);
             builder.setPlayerInfo(playerInfo);
+            // 通知bus登陆信息
+            putOnline(new OnlineContext(playerInfo.getUid(),playerInfo.getPlayerId(),context.getGate(),ContextUtil.id));
+           
             HandlerExecutionChain.applyPostHandle(
                     new Packet(context.getUid(), context.getId(), null, context.getFrom(), context.getGate(), context.getRpc())
                     , builder.build());

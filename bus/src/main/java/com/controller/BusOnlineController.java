@@ -22,7 +22,6 @@ public class BusOnlineController extends BaseController implements GameToBus{
     private BusOnlineService busOnlineService;
 
     @Controllor
-    @Suspendable
     @Override
     public Object putOnline(OnlineContext onlineContext) {
         busOnlineService.putOnlineContext(onlineContext);
@@ -30,7 +29,6 @@ public class BusOnlineController extends BaseController implements GameToBus{
     }
 
     @Controllor
-    @Suspendable
     @Override
     public Object offline(long uid) {
         busOnlineService.delOnlineContext(uid);
