@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Map;
 //工会service
 //TODO  关于bus设计成多线程还是单线程还没有想好，单线程不用处理同步，多线程速度有优势，但速度的优势也不是很大，如果有访问别的线程数据
 // 的情况发生，比较麻烦
+@Order(1)
 public class UnionService extends BaseService {
 
     private Map<Long, UnionEntry> unionMap = Maps.newHashMap();
@@ -45,7 +47,7 @@ public class UnionService extends BaseService {
 
     @Override
     public void onStart() {
-
+        loadUnions();
     }
 
     @Override

@@ -38,7 +38,7 @@ public abstract class ServerManager {
             try {
                 zookeeperConfig.init();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("", e);
             }
         }).start();
         //启动消息注册器
