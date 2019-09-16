@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -25,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Component
@@ -39,7 +39,9 @@ public class CacheCenter {
     private final Map<String, BaseEntry> cacheMap = new HashMap<>();
     @Autowired
     private MongoTemplate mongoTemplate;
-    private Executor saveThread = Executors.newFixedThreadPool(6);
+    @Autowired
+    @Qualifier("saveDbThreadPool")
+    private Executor saveDbThreadPool;
 
     public void add(BaseEntry baseEntry) {
         synchronized (lock) {
@@ -91,7 +93,7 @@ public class CacheCenter {
                     List<BaseEntry> baseEntries = split.get(i);
                     StopWatch stopWatch = new StopWatch();
                     int finalI = i;
-                    saveThread.execute(() -> {
+                    saveDbThreadPool.execute(() -> {
 
                         stopWatch.reset();
                         stopWatch.start();
