@@ -3,11 +3,7 @@ package com.handler;
 import com.Constant;
 import com.controller.ControllerFactory;
 import com.controller.ControllerHandler;
-import com.controller.fun.Fun0;
-import com.controller.fun.Fun1;
-import com.controller.fun.Fun2;
-import com.controller.fun.Fun3;
-import com.controller.fun.Fun4;
+import com.controller.fun.*;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.exception.StatusException;
 import com.exception.exceptionNeedSendToClient.ServerBusinessException;
@@ -37,20 +33,20 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
     protected final ConcurrentLinkedQueue<Packet> pulseQueues = new ConcurrentLinkedQueue<>();
 
-    public ThreadLocal<MessageThreadHandler> threadHandlerThreadLocal = new InheritableThreadLocal<>();
-    
-    
+
     @Override
     public void run() {
         for (; ; ) {
             stopWatch.start();
-    
-            threadHandlerThreadLocal.set(this);
-            
+
+            ContextHolder.setScheduleAble(this);
+
             // 执行心跳
             pulse();
             // 执行任务调度心跳
             pulseSchedule();
+
+            ContextHolder.clear();
             
             stopWatch.stop();
 
@@ -177,10 +173,10 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
     public void setHandlerId(String handlerId) {
         this.handlerId = handlerId;
     }
-    
-    
+
+
     @Override
-    void pulseSchedule(){
+    void pulseSchedule() {
         if (!schedulerList.isEmpty()) {
             ScheduleTask poll = schedulerList.poll();
             poll.execute();

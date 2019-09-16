@@ -2,6 +2,7 @@ package com.controller;
 
 import com.annotation.Controllor;
 import com.controller.interceptor.HandlerExecutionChain;
+import com.handler.ContextHolder;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.OnlineContext;
 import com.pojo.Packet;
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Controller
 @Slf4j
-public class LoginController extends BaseController implements GameToGame, GameToBus{
+public class LoginController extends BaseController implements GameToGame, GameToBus {
     @Autowired
     private PlayerService playerService;
 
@@ -30,7 +31,7 @@ public class LoginController extends BaseController implements GameToGame, GameT
         LOGIN_MSG.GTC_PLAYER_LIST.Builder builder = LOGIN_MSG.GTC_PLAYER_LIST.newBuilder();
 
         CompletableFuture<List<LOGIN_MSG.PLAYER_INFO>> result = playerService.playerList(context.getUid());
-        result.whenCompleteAsync((list, throwable) -> {
+        result.whenComplete((list, throwable) -> {
             ExceptionUtil.doThrow(throwable);
             builder.addAllPlayers(list);
             HandlerExecutionChain.applyPostHandle(
@@ -45,12 +46,21 @@ public class LoginController extends BaseController implements GameToGame, GameT
     public Object gameLogin(UidContext context, LOGIN_MSG.CTG_GAME_LOGIN_PLAYER req) {
         LOGIN_MSG.GTC_GAME_LOGIN_PLAYER.Builder builder = LOGIN_MSG.GTC_GAME_LOGIN_PLAYER.newBuilder();
         CompletableFuture<LOGIN_MSG.PLAYER_INFO> result = playerService.login(req.getPlayerId());
-        result.whenCompleteAsync((playerInfo, throwable) -> {
+        result.whenComplete((playerInfo, throwable) -> {
             ExceptionUtil.doThrow(throwable);
             builder.setPlayerInfo(playerInfo);
+            log.info(Thread.currentThread().getName() + "执行了一下");
             // 通知bus登陆信息
-            putOnline(new OnlineContext(playerInfo.getUid(),playerInfo.getPlayerId(),context.getGate(),ContextUtil.id));
-           
+            putOnline(new OnlineContext(playerInfo.getUid(), playerInfo.getPlayerId(), context.getGate(), ContextUtil.id));
+
+            ContextHolder.getScheduleAble().scheduleOnce(new ScheduleTask() {
+                @Override
+                public void execute() {
+                    log.info(Thread.currentThread().getName() + "   12345");
+                }
+            }, 4);
+
+
             HandlerExecutionChain.applyPostHandle(
                     new Packet(context.getUid(), context.getId(), null, context.getFrom(), context.getGate(), context.getRpc())
                     , builder.build());

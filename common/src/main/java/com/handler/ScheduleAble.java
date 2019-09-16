@@ -3,15 +3,7 @@ package com.handler;
 import com.thread.schedule.ScheduleJob;
 import com.thread.schedule.ScheduleTask;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.ScheduleBuilder;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.Date;
@@ -37,7 +29,7 @@ public abstract class ScheduleAble{
 	 * 延迟delay毫秒之后执行任务
 	 *
 	 * @param task
-	 * @param delay
+	 * @param delay 毫秒
 	 */
 	public void scheduleOnce(ScheduleTask task, long delay) {
 		task.triggerAt = System.currentTimeMillis() + delay;

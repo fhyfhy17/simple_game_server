@@ -24,4 +24,6 @@ public class Constant {
     public static final String RPC_RESPONSE = "rpcResponse";
 
     public static final String IO_THREAD_NAME = "ioThreadPool";
+
+    public static final String CONTEXT_SCHEDULE_ABLE = "contextScheduleAble";
 }

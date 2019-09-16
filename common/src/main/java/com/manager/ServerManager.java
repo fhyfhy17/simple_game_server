@@ -9,13 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 public abstract class ServerManager {
 
     private TypeEnum.ServerStatus serverStatus = TypeEnum.ServerStatus.STARTING;
 
-    @Autowired
+    @Autowired(required = false)
     private List<BaseService> services;
 
     @Autowired
@@ -29,7 +30,9 @@ public abstract class ServerManager {
         getVerticle().init();
 
         //启动service的start方法
-        services.forEach(BaseService::onStart);
+        if (!Objects.isNull(services)) {
+            services.forEach(BaseService::onStart);
+        }
         //启动连接
         new Thread(() -> {
             try {

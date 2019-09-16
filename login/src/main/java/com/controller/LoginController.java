@@ -36,7 +36,7 @@ public class LoginController extends BaseController implements GameToLogin {
         CompletableFuture<UserEntry> user = loginService.login(username, password);
 
         builder.setSessionId(sessionId);
-        user.whenCompleteAsync((userEntry, throwable) -> {
+        user.whenComplete((userEntry, throwable) -> {
             ExceptionUtil.doThrow(throwable);
             if (!Objects.isNull(userEntry)) {
                 builder.setUid(userEntry.getId());
