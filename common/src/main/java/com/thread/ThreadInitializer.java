@@ -34,15 +34,15 @@ public class ThreadInitializer {
                 new NamedThreadFactory("saveDb 线程", false));
         return saveBbThreadPool;
     }
-    
-    @Bean(name = "messageDealThreadPool")
+
+    @Bean(name = "singleScheduleTaskThreadPool")
     public Executor getMessageDealThreadPool() {
-        ThreadPool messageDealThreadPool = new ThreadPool(4,
-                4,
+        ThreadPool singleScheduleTaskThreadPool = new ThreadPool(1,
+                1,
                 0,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(),
-                new NamedThreadFactory("messageDeal 线程", false));
-        return messageDealThreadPool;
+                new NamedThreadFactory("singleScheduleTask 线程", true));
+        return singleScheduleTaskThreadPool;
     }
 }
