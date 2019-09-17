@@ -31,18 +31,8 @@ public class ThreadInitializer {
                 0,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(),
-                new NamedThreadFactory("saveDb 线程", false));
+                new NamedThreadFactory("saveDb 线程", true));
         return saveBbThreadPool;
     }
-
-    @Bean(name = "singleScheduleTaskThreadPool")
-    public Executor getMessageDealThreadPool() {
-        ThreadPool singleScheduleTaskThreadPool = new ThreadPool(1,
-                1,
-                0,
-                TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(),
-                new NamedThreadFactory("singleScheduleTask 线程", true));
-        return singleScheduleTaskThreadPool;
-    }
+    
 }

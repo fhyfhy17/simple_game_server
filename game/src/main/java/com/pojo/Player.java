@@ -1,5 +1,6 @@
 package com.pojo;
 
+import com.enums.TypeEnum;
 import com.module.*;
 import lombok.Data;
 
@@ -15,7 +16,7 @@ public class Player {
     private BagModule bagModule;
     private NoCellBagModule noCellBagModule;
     private MailModule mailModule;
-
+    private TypeEnum.PlayerStatus playerStatus = TypeEnum.PlayerStatus.SWITCH;
 
     private List<BaseModule> modules;
 

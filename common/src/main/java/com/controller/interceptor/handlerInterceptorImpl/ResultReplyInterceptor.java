@@ -1,6 +1,5 @@
 package com.controller.interceptor.handlerInterceptorImpl;
 
-import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerInterceptor;
 import com.google.protobuf.Message;
 import com.manager.ServerInfoManager;
@@ -9,8 +8,6 @@ import com.util.ContextUtil;
 import com.util.ProtoUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Order(5)
 @Component

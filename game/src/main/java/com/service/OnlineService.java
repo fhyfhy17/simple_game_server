@@ -2,6 +2,7 @@ package com.service;
 
 import com.annotation.EventListener;
 import com.entry.BaseEntry;
+import com.enums.TypeEnum;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.module.BaseModule;
@@ -28,7 +29,9 @@ public class OnlineService extends BaseService {
     }
 
     public void putPlayer(Player player) {
+        //TODO  player的状态，这里offline只是删除，添加，将来有切服，下线操作时可以做的细致点
         playerMap.put(player.getPlayerId(), player);
+        player.setPlayerStatus(TypeEnum.PlayerStatus.ONLINE);
     }
 
     public void putPlayer(long uid, Player player) {
@@ -53,13 +56,7 @@ public class OnlineService extends BaseService {
         }
         DBUtil.forceEntrySave(list,true);
     }
-
-
-    public void onServerStop() {
-        for (Player player : playerMap.values()) {
-            offline(player.getPlayerId());
-        }
-    }
+    
 
     @Override
     public void onStart() {
@@ -68,6 +65,12 @@ public class OnlineService extends BaseService {
 
     @Override
     public void onClose() {
-
+        for(Player player : playerMap.values()){
+            for(BaseModule module : player.getModules()){
+                module.getRepository().save(module.getEntry());
+            }
+        }
+        playerMap.clear();
+        userIdPlayerIdMap.clear();
     }
 }

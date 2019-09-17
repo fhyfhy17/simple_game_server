@@ -6,6 +6,7 @@ import com.dao.*;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
 import com.lock.zk.ZkDistributedLock;
+import com.manager.GameServerManager;
 import com.manager.ServerInfoManager;
 import com.mongoListener.MongoEventListener;
 import com.net.msg.LOGIN_MSG;
@@ -15,6 +16,7 @@ import com.pojo.Packet;
 import com.rpc.RpcProxy;
 import com.rpc.RpcRequest;
 import com.rpc.interfaces.gameToBus.GameToBus;
+import com.thread.schedule.ScheduleTask;
 import com.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -165,6 +167,30 @@ public class WebTestEnter {
     }
     
     private PlayerEntry playerEntry;
+    @Autowired
+    private GameServerManager gameServerManager;
+    
+    @RequestMapping("/test/sche1")
+    public void sche1() {
+        gameServerManager.getStartStopScheduleAble().scheduleOnce(new ScheduleTask(){
+            @Override
+            public void execute(){
+                log.info("这是 sche1");
+            }
+        },1);
+    }
+    
+    @RequestMapping("/test/sche2")
+    public void sche2() {
+        gameServerManager.getStartStopScheduleAble().scheduleCron(new ScheduleTask(){
+            @Override
+            public void execute(){
+                log.info("这是 sche2");
+            }
+        },"*/2 * * * * ?");
+    }
+    
+    
     
     @RequestMapping("/test/a")
     public void test() {

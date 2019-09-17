@@ -5,6 +5,7 @@ import com.Constant;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.ServerInfoManager;
 import com.pojo.ServerInfo;
+import com.service.BaseService;
 import com.util.ContextUtil;
 import com.util.StringUtil;
 import com.util.Util;
@@ -19,15 +20,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
+
 @Configuration
 @Slf4j
-public class ZookeeperConfig {
+public class ZookeeperConfig extends BaseService{
 
     @Autowired
     private ServerInfo serverInfo;
 
     private ZkDistributedLock lock;
-
+    private CuratorFramework curator;
+    private PathChildrenCache childrenCache;
+    
+    
     @Bean("curator")
     public CuratorFramework getCurator() {
         RetryPolicy retryPolicy = new RetryForever(200);
@@ -43,14 +49,14 @@ public class ZookeeperConfig {
     public void init() throws Exception {
 
 
-        CuratorFramework curator = getCurator();
+        curator = getCurator();
         curator.start();
 
         //递规创建路径，用在第一次在系统中启动时创建路径
         curator.checkExists().creatingParentContainersIfNeeded().forPath(Constant.ZOOKEEPER_PATH);
 
         //加入路径监听
-        final PathChildrenCache childrenCache = new PathChildrenCache(curator, Constant.ZOOKEEPER_PATH, true);
+        childrenCache = new PathChildrenCache(curator, Constant.ZOOKEEPER_PATH, true);
         try {
             childrenCache.start();
         } catch (Exception e) {
@@ -72,11 +78,30 @@ public class ZookeeperConfig {
                     }
                 }
         );
+    
         ZookeeperUtil.connectZookeeper(serverInfo);
-        lock = new ZkDistributedLock(ContextUtil.zkIpPort, 1000, "textLock");
+        lock = new ZkDistributedLock(ContextUtil.zkIpPort, 1000, "testLock");
     }
 
     public ZkDistributedLock getZkLock() {
         return lock;
+    }
+    
+    @Override
+    public void onStart(){
+    
+    }
+    
+    
+
+    public void onClose(){
+        childrenCache.clear();
+        try{
+            childrenCache.close();
+        }
+        catch(IOException e){
+            log.error("",e);
+        }
+        curator.close();
     }
 }

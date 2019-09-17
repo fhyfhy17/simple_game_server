@@ -1,6 +1,8 @@
 package com.node;
 
 import com.BaseReceiver;
+import com.manager.ServerInfoManager;
+import com.pojo.ServerInfo;
 import com.util.ContextUtil;
 import com.util.IpUtil;
 import com.util.SerializeUtil;
@@ -8,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
+
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -42,7 +46,19 @@ public class Node {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        zmqContext.destroy();
+        for(ServerInfo serverInfo : ServerInfoManager.getAllServerInfos().values()){
+            RemoteNode remoteNode=ServerInfoManager.getRemoteNode(serverInfo.getServerId());
+            if(!Objects.isNull(remoteNode)){
+                remoteNode.stop();
+            }
+        }
+        try {
+            zmqPull.close();
+            zmqContext.destroy();
+        } catch (Exception e) {
+            log.info("本机节点close");
+        }
+       
     }
 
     // 初始化消息监听服务

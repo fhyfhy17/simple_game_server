@@ -1,9 +1,15 @@
-package com.handler;
+package com.thread.schedule;
 
-import com.thread.schedule.ScheduleJob;
-import com.thread.schedule.ScheduleTask;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.*;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.ScheduleBuilder;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.Date;
@@ -33,23 +39,14 @@ public abstract class ScheduleAble{
 	 */
 	public void scheduleOnce(ScheduleTask task, long delay) {
 		task.triggerAt = System.currentTimeMillis() + delay;
-		
 		// 定义trigger
 		SimpleScheduleBuilder sche = SimpleScheduleBuilder.repeatSecondlyForever();
 		// 循环次数 设置为0 代表不多余循环只执行一次
 		sche.withRepeatCount(0);
-		
 		// 添加任务
 		schedule(task, sche, delay);
 	}
 	
-	/**
-	 * 时间调度任务
-	 *
-	 * @param task
-	 * @param scheduleBuilder
-	 * @param delay
-	 */
 	private void schedule(ScheduleTask task,ScheduleBuilder<?> scheduleBuilder,long delay) {
 		try {
 			// 开始执行时间
@@ -79,7 +76,7 @@ public abstract class ScheduleAble{
 		}
 	}
 	
-	abstract void pulseSchedule();
+	public abstract void pulseSchedule();
 	/**
 	 * 从指定的delay毫秒延迟之后，开始以重复的速率每period毫秒执行
 	 *

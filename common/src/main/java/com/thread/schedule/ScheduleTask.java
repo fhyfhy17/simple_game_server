@@ -60,6 +60,7 @@ public abstract class ScheduleTask {
 		
 		//设置参数
 		param = new Param(params);
+		
 		//设置jobKey
 		if(getJobName() == null) {
 			jobKey = new JobKey(Key.createUniqueName(getJobGroup()), getJobGroup());
@@ -76,8 +77,7 @@ public abstract class ScheduleTask {
 	}
 	
 	/**
-	 * 下次执行时间
-	 * @return
+	 * @return 下次执行时间
 	 */
 	public long getNextExecuteTime() {
 		//cron调度返回下次执行时间

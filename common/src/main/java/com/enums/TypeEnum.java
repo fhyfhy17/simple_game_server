@@ -84,12 +84,25 @@ public interface TypeEnum {
         BUS,//
         ;
     }
-
+    
+    /**
+     * 服务器启动状态
+     */
     enum ServerStatus implements TypeEnum {
         STARTING,//启动中
         OPEN,//启动完毕
         CLOSING,//关闭中
         ;
     }
+    
+    /**
+     * Player状态
+     */
+    enum PlayerStatus implements TypeEnum {
+        ONLINE,//在线
+        SWITCH,//切换服中，下线中，被挤中，不接受消息
+        ;
+    }
+    
 
 }

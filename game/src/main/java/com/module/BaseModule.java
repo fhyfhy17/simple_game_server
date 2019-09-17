@@ -5,6 +5,7 @@ import com.pojo.Player;
 import com.util.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.repository.CrudRepository;
 
 @Getter
 @Setter
@@ -24,6 +25,8 @@ public abstract class BaseModule{
 
     public abstract BaseEntry getEntry();
 
+    public abstract CrudRepository getRepository();
+    
     public void onDaily() {
 
     }

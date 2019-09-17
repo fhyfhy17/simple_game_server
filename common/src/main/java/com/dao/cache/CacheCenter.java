@@ -1,11 +1,11 @@
 package com.dao.cache;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.entry.BaseEntry;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.util.StringUtil;
+import com.util.Util;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,67 +71,76 @@ public class CacheCenter {
             }
         }
     }
-
-
+    
     @Scheduled(fixedDelay = 1000 * 5)// 5秒执行一次
     public void batchSave() {
 
         synchronized (lock) {
 
             List<BaseEntry> list = Lists.newArrayList(cacheMap.values());
-
+            cacheMap.clear();
             //按class分组，因为mongo的批量只支持单集合批量
             Map<Class, List<BaseEntry>> collect = list.stream()
                     .collect(Collectors.groupingBy(x -> x.getClass().asSubclass(BaseEntry.class)));
-
+            if(collect.size()<=0){
+                return;
+            }
             log.info("共有 {} 个集合等待更新", collect.size());
 
             //开始保存
-            for (List<BaseEntry> value : collect.values()) {
-
-                List<List<BaseEntry>> split = CollectionUtil.split(value, value.size() / 20);//每次批量分成20份
-                for (int i = 1; i < split.size() + 1; i++) {
-                    List<BaseEntry> baseEntries = split.get(i);
-                    StopWatch stopWatch = new StopWatch();
-                    int finalI = i;
-                    saveDbThreadPool.execute(() -> {
-
-                        stopWatch.reset();
-                        stopWatch.start();
-                        Class<? extends BaseEntry> clazz = baseEntries.get(0).getClass().asSubclass(BaseEntry.class);
-                        String name = clazz.getSimpleName() + finalI;
-                        log.info("开始执行 {}  一共有 {} 条", name, baseEntries.size());
-                        BulkOperations ops = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, clazz);
-
-                        for (BaseEntry baseEntry : baseEntries) {
-                            Map<String, Object> updateMap = null;
-                            ObjectMapper objectMapper = new ObjectMapper();
-                            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-                            try {
-                                String json = objectMapper.writeValueAsString(baseEntry);
-                                updateMap = objectMapper.readValue(json, Map.class);
-                            } catch (IOException e) {
-                                log.error("批量入库，转码报错 {} -> {}", name, baseEntry.getId(), e);
-                            }
-                            Update update = new Update();
-                            if (Objects.isNull(updateMap)) {
-                                continue;
-                            }
-                            for (Map.Entry<String, Object> stringObjectEntry : updateMap.entrySet()) {
-                                if (stringObjectEntry.getKey().equals("id")) {
+            for (Map.Entry<Class,List<BaseEntry>> classListEntry : collect.entrySet()) {
+                List<BaseEntry> value = classListEntry.getValue();
+                Class key=classListEntry.getKey();
+    
+                Map<Integer,List<BaseEntry>> integerListMap=Util.spiltList(value,50);//每次批量分成50个数据一份
+                Collection<List<BaseEntry>> values=integerListMap.values();
+                int count = 0;
+                for(List<BaseEntry> baseEntries : values){
+                    int finalI = count++;
+                    try{
+                        saveDbThreadPool.execute(() -> {
+                            StopWatch stopWatch = new StopWatch();
+                            stopWatch.reset();
+                            stopWatch.start();
+    
+                            String name = key.toString() + finalI;
+                            log.info("开始执行 {}  一共有 {} 条", name, baseEntries.size());
+                            BulkOperations ops = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, key);
+    
+                            for (BaseEntry baseEntry : baseEntries) {
+                                Map<String, Object> updateMap = null;
+                                ObjectMapper objectMapper = new ObjectMapper();
+                                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        
+                                try {
+                                    String json = objectMapper.writeValueAsString(baseEntry);
+                                    updateMap = objectMapper.readValue(json, Map.class);
+                                } catch (IOException e) {
+                                    log.error("批量入库，转码报错 {} -> {}", name, baseEntry.getId(), e);
+                                }
+                                Update update = new Update();
+                                if (Objects.isNull(updateMap)) {
                                     continue;
                                 }
-                                update.set(stringObjectEntry.getKey(), stringObjectEntry.getValue());
+                                for (Map.Entry<String, Object> stringObjectEntry : updateMap.entrySet()) {
+                                    if (stringObjectEntry.getKey().equals("id")) {
+                                        continue;
+                                    }
+                                    update.set(stringObjectEntry.getKey(), stringObjectEntry.getValue());
+                                }
+        
+                                ops.upsert(new Query(Criteria.where("id").is(baseEntry.getId())), update);
                             }
-
-                            ops.upsert(new Query(Criteria.where("id").is(baseEntry.getId())), update);
-                        }
-                        ops.execute();
-                        stopWatch.stop();
-                        log.info("结束执行 {}  ，用时 {} 毫秒", name, stopWatch.getTime());
-
-                    });
+                            ops.execute();
+                            stopWatch.stop();
+                            log.info("结束执行 {}  ，用时 {} 毫秒", name, stopWatch.getTime());
+    
+                        });
+        
+                    }catch(Exception e){
+                        log.error("入库报错",e);
+                    }
+                
                 }
             }
         }

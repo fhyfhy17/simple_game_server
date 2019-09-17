@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,7 +34,12 @@ public class PlayerModule extends BaseModule {
     public BaseEntry getEntry() {
         return playerEntry;
     }
-
+    
+    @Override
+    public CrudRepository getRepository(){
+        return playerRepository;
+    }
+    
     @Override
     public void onLogin() {
 

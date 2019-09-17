@@ -17,11 +17,11 @@ public class HandlerExecutionChain {
 
     private static List<HandlerInterceptor> interceptorList;
 
-    public static boolean applyPreHandle(Packet message,ControllerHandler handler) {
+    public static boolean applyPreHandle(Packet message,ControllerHandler handler,Object[] param) {
         if (!ObjectUtils.isEmpty(interceptorList)) {
             for (int i = 0; i < interceptorList.size(); i++) {
                 HandlerInterceptor interceptor = interceptorList.get(i);
-                if (!interceptor.preHandle(message, handler)) {
+                if (!interceptor.preHandle(message, handler,param)) {
                     return false;
                 }
             }

@@ -10,14 +10,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 @Getter
 @Setter
 @Order(2)
-public class NoCellBagModule extends BaseModule
-{
+public class NoCellBagModule extends BaseModule{
 
     private NoCellBagEntry noCellBagEntry;
     @Autowired
@@ -40,7 +40,12 @@ public class NoCellBagModule extends BaseModule
     public BaseEntry getEntry() {
         return noCellBagEntry;
     }
-
+    
+    @Override
+    public CrudRepository getRepository(){
+        return noCellBagRepository;
+    }
+    
     @Override
     public void onLogin() {
 

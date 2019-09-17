@@ -11,6 +11,7 @@ import com.pojo.Packet;
 import com.rpc.RpcHolder;
 import com.rpc.RpcRequest;
 import com.rpc.RpcResponse;
+import com.thread.schedule.ScheduleAble;
 import com.thread.schedule.ScheduleTask;
 import com.util.ExceptionUtil;
 import com.util.ProtostuffUtil;
@@ -100,11 +101,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                         throw new IllegalStateException("收到不存在的Rpc消息，消息KEY=" + key);
                     }
                 }
-
-                //拦截器前
-                if (!HandlerExecutionChain.applyPreHandle(packet, handler)) {
-                    continue;
-                }
+             
                 Object result = null;
                 Object[] m;
                 if (!isRpc) {
@@ -112,7 +109,10 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 } else {
                     m = rpcRequest.getParameters();
                 }
-
+                //拦截器前
+                if (!HandlerExecutionChain.applyPreHandle(packet, handler,m)) {
+                    continue;
+                }
                 //
                 switch (handler.getFunType()) {
                     case Fun0:
@@ -176,7 +176,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
 
     @Override
-    void pulseSchedule() {
+    public void pulseSchedule() {
         if (!schedulerList.isEmpty()) {
             ScheduleTask poll = schedulerList.poll();
             poll.execute();

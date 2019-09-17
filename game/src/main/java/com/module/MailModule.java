@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
@@ -25,8 +26,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Order(2)
-public class MailModule extends BaseModule
-{
+public class MailModule extends BaseModule{
 
     private MailEntry mailEntry;
     @Autowired
@@ -53,7 +53,12 @@ public class MailModule extends BaseModule
     public BaseEntry getEntry() {
         return mailEntry;
     }
-
+    
+    @Override
+    public CrudRepository getRepository(){
+        return mailRepository;
+    }
+    
     private void scanCenterMail() {
         List<CenterMailEntry> centerMails = mailService.findByDate();
         for (CenterMailEntry centerMail : centerMails) {

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,8 +41,13 @@ public class BagModule extends BaseModule
     public BaseEntry getEntry() {
         return bagEntry;
     }
-
-
+    
+    @Override
+    public CrudRepository getRepository(){
+        return bagRepository;
+    }
+    
+    
     @Override
     public void onLogin() {
 

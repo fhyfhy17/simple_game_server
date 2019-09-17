@@ -81,4 +81,25 @@ public class Util {
             return itemInfo.build();
         }).collect(Collectors.toList());
     }
+    
+    /**
+     * 将一个List 分成N个子List， 每个子List里有 toIndex 个元素
+     */
+    public static <T> Map<Integer,List<T>> spiltList(List<T> oldList,int toIndex){
+        int listSize=oldList.size();
+        Map<Integer,List<T>> map=new HashMap<>();
+        int keyToken=0;
+        for(int i=0;i<oldList.size();i+=toIndex)
+        {
+            if(i + toIndex>listSize)
+            {
+                toIndex=listSize - i;
+            }
+            List<T> newList=oldList.subList(i,i + toIndex);
+            map.put(keyToken,newList);
+            keyToken++;
+        }
+        
+        return map;
+    }
 }
