@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -11,14 +12,19 @@ import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
 
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static org.quartz.JobKey.jobKey;
+
 @Slf4j
 public abstract class ScheduleAble{
 	protected ConcurrentLinkedQueue<ScheduleTask> schedulerList = new ConcurrentLinkedQueue<>(); // 待处理的时间调度队列
 	//任务队列调度器
 	public Scheduler scheduler;
+	
 	
 	public void schedulerListInit() {
 		try {
@@ -133,4 +139,46 @@ public abstract class ScheduleAble{
 		schedule(task, sche, delay);
 	}
 	
+	
+	
+	/**
+	 * 删除所在port上默认jobGroup中指定jobName的job
+	 * @param jobName
+	 * @throws SchedulerException
+	 */
+	public void deleteSchedulerJob(String jobName) throws SchedulerException {
+		scheduler.deleteJob(jobKey(jobName, null));
+	}
+	
+	/**
+	 * 删除所在port上的指定jobName和jobGroupName的job
+	 * @param jobName
+	 * @param jobGroupName
+	 * @throws SchedulerException
+	 */
+	public void deleteSchedulerJob(String jobName, String jobGroupName) throws SchedulerException {
+		scheduler.deleteJob(jobKey(jobName, jobGroupName));
+	}
+	
+	/**
+	 * 删除所在指定 jobKey 的 job
+	 * @throws SchedulerException
+	 */
+	public void deleteSchedulerJob(JobKey jobKey) throws SchedulerException {
+		scheduler.deleteJob(jobKey);
+	}
+	
+	/**
+	 * 通过group名删除所在port上的所有group内的scheduler
+	 * @param jobGroupName
+	 * @throws SchedulerException
+	 */
+	public void deleteSchedulerJobsByGroup(String jobGroupName) throws SchedulerException {
+		//for (String group : port.scheduler.getJobGroupNames()) {
+		//	if(!group.equals(jobGroupName)) continue;
+		//	for(JobKey jobKey : port.scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith(group))) {
+		//		port.scheduler.deleteJob(jobKey);
+		//	}
+		//}
+	}
 }

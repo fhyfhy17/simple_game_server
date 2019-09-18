@@ -5,18 +5,22 @@ import com.config.ZookeeperConfig;
 import com.controller.ControllerFactory;
 import com.dao.cache.CacheCenter;
 import com.enums.TypeEnum;
+import com.handler.ContextHolder;
 import com.node.Node;
 import com.service.BaseService;
 import com.thread.schedule.DefaultScheduleAble;
 import com.thread.schedule.ScheduleAble;
+import com.thread.schedule.ScheduleTask;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class ServerManager implements ApplicationListener<ContextClosedEvent>{
@@ -26,7 +30,7 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
     @Autowired
     private CacheCenter cacheCenter;
     
-    private TypeEnum.ServerStatus serverStatus = TypeEnum.ServerStatus.STARTING;
+    private volatile TypeEnum.ServerStatus serverStatus = TypeEnum.ServerStatus.STARTING;
 
     @Autowired(required = false)
     private List<BaseService> services;
@@ -37,16 +41,15 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
     public abstract BaseVerticle getVerticle();
     
     @Getter
-    private ScheduleAble startStopScheduleAble;
+    private ScheduleAble mainThreadSchedule;
  
     
     //服务器启动
     public void onServerStart() {
-        //启动监控启动成功
-        startStopScheduleAble = new DefaultScheduleAble();
-        startStopScheduleAble.schedulerListInit();
-        new Thread(startStopScheduleAble::pulseSchedule,"startStopWatch 线程").start();
-        
+        //计数监控启动
+        StartWatch startWatch = new StartWatch();
+        AtomicInteger count=startWatch.init();
+    
         //启动node
         getVerticle().init();
 
@@ -57,7 +60,7 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
         //启动连接
         new Thread(() -> {
             try {
-                zookeeperConfig.init();
+                zookeeperConfig.init(count);
             } catch (Exception e) {
                 log.error("", e);
             }
@@ -65,6 +68,9 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
         
         //启动消息注册器
         ControllerFactory.init();
+        
+        //启动器计数
+        startWatch.count();
     
     }
     
@@ -90,12 +96,47 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
         cacheCenter.batchSave();
         
         try {
-            Thread.sleep(3 * 1000);
+            Thread.sleep( 1000);
         } catch (InterruptedException e) {
             log.error("", e);
         }
     }
-
+    
+    /**
+     * 启动监控器
+     */
+    private class StartWatch{
+        private AtomicInteger count;
+        public AtomicInteger init(){
+            mainThreadSchedule= new DefaultScheduleAble();
+            mainThreadSchedule.schedulerListInit();
+            new Thread(mainThreadSchedule::pulseSchedule,"startStopWatch 线程").start();
+            count = new AtomicInteger(0);
+            return count;
+        }
+        
+        
+        public void count(){
+            mainThreadSchedule.schedulePeriod(new ScheduleTask(){
+                @Override
+                public void execute(){
+                    ScheduleTask scheduleTask=ContextHolder.getScheduleTask();
+                    if(count.get()==0){
+                        log.info("服务器启动成功");
+                        try{
+                            mainThreadSchedule.deleteSchedulerJob(scheduleTask.jobKey);
+                        } catch(SchedulerException e){
+                            log.error("",e);
+                        }
+                        //这要不要做成个事件
+                        serverStatus = TypeEnum.ServerStatus.OPEN;
+                    }
+                }
+            },0,200);
+        }
+        
+    }
+    
     public TypeEnum.ServerStatus getServerStatus() {
         return serverStatus;
     }

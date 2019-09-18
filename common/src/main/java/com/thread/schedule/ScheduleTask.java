@@ -1,6 +1,7 @@
 package com.thread.schedule;
 
 import com.pojo.Param;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
@@ -11,6 +12,7 @@ import java.util.concurrent.ScheduledFuture;
 /**
  * 时间调度任务
  */
+@Slf4j
 public abstract class ScheduleTask {
 	public static final int STATE_INITIALIZED = 0;		//新建实例
 	public static final int STATE_WAITING = 1;			//等待执行
@@ -35,6 +37,18 @@ public abstract class ScheduleTask {
 	public long triggerPeriod;		//触发间隔,cron类型为0
 	public String triggerCronStr;	//cron时间串，""表示非cron触发
 	
+	public String jobName=null;
+	public String jobGroup=null;
+	
+	public ScheduleTask(){
+	
+	}
+	
+	public ScheduleTask(String jobName,String jobGroup){
+		this.jobName=jobName;
+		this.jobGroup=jobGroup;
+	}
+	
 	/**
 	 * 执行调度任务
 	 */
@@ -44,7 +58,7 @@ public abstract class ScheduleTask {
 	 * 获取job名
 	 */
 	public String getJobName() {
-		return null;
+		return jobName;
 	}
 	
 	/**
@@ -52,7 +66,7 @@ public abstract class ScheduleTask {
 	 * @return
 	 */
 	public String getJobGroup() {
-		return null;
+		return jobGroup;
 	}
 	
 	public ScheduleTask(Object... params) {
@@ -67,7 +81,7 @@ public abstract class ScheduleTask {
 		} else {
 			jobKey = JobKey.jobKey(getJobName(), getJobGroup());
 		}
-		
+		log.info("创建了一个任务，任务的key是 = {}  jobName={} groupName={}",jobKey,jobName,jobGroup);
 		//设置创建时间
 		this.createdAt = System.currentTimeMillis();
 	}

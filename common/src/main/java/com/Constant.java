@@ -26,4 +26,6 @@ public class Constant {
     public static final String IO_THREAD_NAME = "ioThreadPool";
 
     public static final String CONTEXT_SCHEDULE_ABLE = "contextScheduleAble";
+    
+    public static final String CONTEXT_SCHEDULE_TASK = "contextScheduleTask";
 }

@@ -21,6 +21,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Configuration
 @Slf4j
@@ -32,7 +34,6 @@ public class ZookeeperConfig extends BaseService{
     private ZkDistributedLock lock;
     private CuratorFramework curator;
     private PathChildrenCache childrenCache;
-    
     
     @Bean("curator")
     public CuratorFramework getCurator() {
@@ -46,8 +47,8 @@ public class ZookeeperConfig extends BaseService{
     }
 
 
-    public void init() throws Exception {
-
+    public void init(AtomicInteger count) throws Exception {
+        count.incrementAndGet();
 
         curator = getCurator();
         curator.start();
@@ -62,12 +63,16 @@ public class ZookeeperConfig extends BaseService{
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
+    
+        final AtomicBoolean first = new AtomicBoolean(true);
         childrenCache.getListenable().addListener(
                 (client, event) -> {
                     switch (event.getType()) {
                         case CHILD_ADDED:
+                            if(first.get()){
+                                first.set(false);
+                                count.decrementAndGet();
+                            }
                             ServerInfoManager.addServer(Util.transToServerInfo(event.getData().getPath()));
                             break;
                         case CHILD_REMOVED:

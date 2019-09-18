@@ -3,6 +3,7 @@ package com.handler;
 import com.Constant;
 import com.pojo.Param;
 import com.thread.schedule.ScheduleAble;
+import com.thread.schedule.ScheduleTask;
 
 import java.util.Objects;
 
@@ -20,6 +21,17 @@ public class ContextHolder {
         Param param = getParam();
         param.put(Constant.CONTEXT_SCHEDULE_ABLE, scheduleAble);
     }
+    
+    public static ScheduleTask getScheduleTask() {
+        Param param = getParam();
+        return param.get(Constant.CONTEXT_SCHEDULE_TASK);
+    }
+    
+    public static void setScheduleTask(ScheduleTask scheduleTask) {
+        Param param = getParam();
+        param.put(Constant.CONTEXT_SCHEDULE_TASK, scheduleTask);
+    }
+    
 
     public static Param getParam() {
         Param context = contextThreadLocal.get();

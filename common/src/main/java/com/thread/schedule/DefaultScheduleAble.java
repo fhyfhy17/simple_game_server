@@ -1,5 +1,6 @@
 package com.thread.schedule;
 
+import com.handler.ContextHolder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -15,7 +16,11 @@ public class DefaultScheduleAble extends ScheduleAble
 				if(Objects.isNull(poll)){
 					continue;
 				}
+				ContextHolder.setScheduleTask(poll);
+				
 				poll.execute();
+				
+				ContextHolder.clear();
 				try{
 					Thread.sleep(10);
 				}
