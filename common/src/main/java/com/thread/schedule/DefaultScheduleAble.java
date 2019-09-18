@@ -20,12 +20,12 @@ public class DefaultScheduleAble extends ScheduleAble
 				
 				poll.execute();
 				
-				ContextHolder.clear();
 				try{
 					Thread.sleep(10);
-				}
-				catch(InterruptedException e){
+				} catch(InterruptedException e){
 					log.error("",e);
+				} finally {
+					ContextHolder.clear();
 				}
 			}
 		}

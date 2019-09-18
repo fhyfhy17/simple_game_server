@@ -47,8 +47,6 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
             // 执行任务调度心跳
             pulseSchedule();
 
-            ContextHolder.clear();
-            
             stopWatch.stop();
 
             try {
@@ -60,6 +58,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
             } catch (InterruptedException e) {
                 log.error("线程中断", e);
             } finally {
+                ContextHolder.clear();
                 stopWatch.reset();
             }
         }
