@@ -5,6 +5,7 @@ import com.thread.schedule.ScheduleTask;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+//做个例子吧，暂时用不到，这个是要取个有jobName 或者有groupName的ScheduleTask，之后再优化 ScheduleTask的构造函数吧
 public class StartStopWatchScheduleTask extends ScheduleTask{
 	
 	
