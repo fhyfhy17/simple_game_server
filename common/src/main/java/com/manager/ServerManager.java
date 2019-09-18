@@ -134,7 +134,7 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
                         serverStatus = TypeEnum.ServerStatus.OPEN;
                     }
                 }
-            },1000,200);
+            },2000,200);//由于计数器不是最后启动的，子类还有启动方法，所以可能count的数目不对，所以这里延迟两秒，后续看这个能放到子类不
         }
         
     }

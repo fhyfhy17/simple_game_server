@@ -25,10 +25,11 @@ public class GateServerManager extends ServerManager {
     public void onServerStart() {
         super.onServerStart();
         //启动netty
-        NettyServer nettyServer = new NettyServer();
-        nettyServer.init(count);
+        new Thread(()->{
+            NettyServer nettyServer = new NettyServer();
+            nettyServer.init(count);
+        }).start();
         setServerStatus(TypeEnum.ServerStatus.OPEN);
-        //TODO 要改变zookeeper里的状态，不是open的不能发消息
     }
     
     @Override
