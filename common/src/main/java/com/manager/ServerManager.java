@@ -12,12 +12,14 @@ import com.thread.schedule.ScheduleAble;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
 
 import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public abstract class ServerManager {
+public abstract class ServerManager implements ApplicationListener<ContextClosedEvent>{
 
     @Autowired
     private Node node;
