@@ -12,10 +12,12 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Slf4j
@@ -26,8 +28,9 @@ public class NettyServer {
     private AtomicBoolean started = new AtomicBoolean(false);
 
 
-    public void init() {
+    public void init(AtomicInteger count) {
         log.info("启动netty");
+        count.incrementAndGet();
         if (started.compareAndSet(false, true)) {
             bossGroup = new NioEventLoopGroup();
             workerGroup = new NioEventLoopGroup();
@@ -50,7 +53,10 @@ public class NettyServer {
                         .childOption(ChannelOption.TCP_NODELAY, true);
 
                 ChannelFuture f = b.bind(SpringUtils.getBean(SocketAddress.class)).sync();
-
+                f.addListener((GenericFutureListener<ChannelFuture>)future->{
+                    log.info("Netty 启动成功");
+                    count.decrementAndGet();
+                });
                 f.channel().closeFuture().sync();
             } catch (InterruptedException e) {
                 log.error("", e);

@@ -42,13 +42,13 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
     
     @Getter
     private ScheduleAble threadSchedule;//专门一个的线程，放schedule的
- 
     
+    protected AtomicInteger count;
     //服务器启动
     public void onServerStart() {
         //计数监控启动
         StartWatch startWatch = new StartWatch();
-        AtomicInteger count=startWatch.init();
+        count=startWatch.init();
     
         //启动node
         getVerticle().init();
@@ -134,12 +134,16 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
                         serverStatus = TypeEnum.ServerStatus.OPEN;
                     }
                 }
-            },0,200);
+            },1000,200);
         }
         
     }
     
     public TypeEnum.ServerStatus getServerStatus() {
         return serverStatus;
+    }
+    
+    public void setServerStatus(TypeEnum.ServerStatus serverStatus){
+        this.serverStatus = serverStatus;
     }
 }
