@@ -142,8 +142,4 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
     public TypeEnum.ServerStatus getServerStatus() {
         return serverStatus;
     }
-
-    public void setServerStatus(TypeEnum.ServerStatus serverStatus) {
-        this.serverStatus = serverStatus;
-    }
 }
