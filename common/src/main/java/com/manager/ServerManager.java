@@ -41,7 +41,7 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
     public abstract BaseVerticle getVerticle();
     
     @Getter
-    private ScheduleAble mainThreadSchedule;
+    private ScheduleAble threadSchedule;//专门一个的线程，放schedule的
  
     
     //服务器启动
@@ -106,25 +106,27 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
      * 启动监控器
      */
     private class StartWatch{
+        
         private AtomicInteger count;
+        
         public AtomicInteger init(){
-            mainThreadSchedule= new DefaultScheduleAble();
-            mainThreadSchedule.schedulerListInit();
-            new Thread(mainThreadSchedule::pulseSchedule,"startStopWatch 线程").start();
+            threadSchedule= new DefaultScheduleAble();
+            threadSchedule.schedulerListInit();
+            new Thread(threadSchedule::pulseSchedule,"startStopWatch 线程").start();
             count = new AtomicInteger(0);
             return count;
         }
         
         
         public void count(){
-            mainThreadSchedule.schedulePeriod(new ScheduleTask(){
+            threadSchedule.schedulePeriod(new ScheduleTask(){
                 @Override
                 public void execute(){
                     ScheduleTask scheduleTask=ContextHolder.getScheduleTask();
                     if(count.get()==0){
                         log.info("服务器启动成功");
                         try{
-                            mainThreadSchedule.deleteSchedulerJob(scheduleTask.jobKey);
+                            threadSchedule.deleteSchedulerJob(scheduleTask.jobKey);
                         } catch(SchedulerException e){
                             log.error("",e);
                         }

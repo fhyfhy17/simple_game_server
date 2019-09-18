@@ -172,7 +172,7 @@ public class WebTestEnter {
     
     @RequestMapping("/test/sche1")
     public void sche1() {
-        gameServerManager.getMainThreadSchedule().scheduleOnce(new ScheduleTask(){
+        gameServerManager.getThreadSchedule().scheduleOnce(new ScheduleTask(){
             @Override
             public void execute(){
                 log.info("这是 sche1");
@@ -182,7 +182,7 @@ public class WebTestEnter {
     
     @RequestMapping("/test/sche2")
     public void sche2() {
-        gameServerManager.getMainThreadSchedule().scheduleCron(new ScheduleTask(){
+        gameServerManager.getThreadSchedule().scheduleCron(new ScheduleTask(){
             @Override
             public void execute(){
                 log.info("这是 sche2");
