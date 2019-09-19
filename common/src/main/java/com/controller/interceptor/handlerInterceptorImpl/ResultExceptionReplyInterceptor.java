@@ -3,11 +3,7 @@ package com.controller.interceptor.handlerInterceptorImpl;
 import com.Constant;
 import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerInterceptor;
-import com.manager.ServerInfoManager;
-import com.net.msg.LOGIN_MSG;
 import com.pojo.Packet;
-import com.util.ContextUtil;
-import com.util.ProtoUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +13,7 @@ import org.springframework.stereotype.Component;
 //只针对前端消息，服务之间暂时不需要
 public class ResultExceptionReplyInterceptor implements HandlerInterceptor {
     @Override
-    public void postHandle(Packet message,Object result) {
+    public void postHandle(ControllerHandler handler,Packet message,Object result) {
         if (!Constant.DEFAULT_ERROR_REPLY.equals(result)) {
             return;
         }

@@ -24,18 +24,17 @@ public class ExceptionUtil {
     /**
      * 给前端返回提示性异常
      *
-     * @param handler
-     * @param packet
-     * @param gate
      */
-    public static void sendStatusExceptionToClient(ControllerHandler handler, Packet packet, String gate, StatusException se, boolean isRpcResponse) {
+    public static void sendStatusExceptionToClient(Class<?> returnType, Packet packet, StatusException se) {
 
         // Status报错， 执行方法时，抛出主动定义的错误，方便多层调用时无法中断方法，这里主动回复给有result参数的协议
-        Class<?> returnType = handler.getMethod().getReturnType();
-        if (isRpcResponse || returnType.isAssignableFrom(Message.class)) {
-            Message.Builder builder = ProtoUtil.setFieldByName(ProtoUtil.createBuilerByClassName(returnType.getName()), "result", TipStatus.fail(se.getTip()));
-            Packet message1 = ProtoUtil.buildMessage(builder.build(), packet.getUid(), null);
-            ServerInfoManager.sendMessage(gate, message1);
+        if(!returnType.isAssignableFrom(Message.class)){
+           return;
         }
+      
+        Message.Builder builder = ProtoUtil.setFieldByName(ProtoUtil.createBuilerByClassName(returnType.getName()), "result", TipStatus.fail(se.getTip()));
+        Packet message1 = ProtoUtil.buildMessage(builder.build(), packet.getUid(), null);
+        ServerInfoManager.sendMessage(packet.getGate(), message1);
+        
     }
 }

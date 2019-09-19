@@ -4,7 +4,10 @@ import com.Constant;
 import com.dao.UserRepository;
 import com.entry.UserEntry;
 import com.exception.StatusException;
+import com.template.templates.type.TipType;
 import com.util.IdCreator;
+import com.util.TipStatus;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,12 +22,19 @@ public class LoginService extends BaseService {
     private UserRepository userRepository;
 
     @Async(Constant.IO_THREAD_NAME)
-    public CompletableFuture<UserEntry> login(String username, String password) throws StatusException {
+    public CompletableFuture<UserEntry> login(String username, String password) {
+    
+        CompletableFuture<UserEntry> future = new CompletableFuture<>();
+        
         //TODO 多点登录判断
         Optional<UserEntry> user = userRepository.findByUserNameAndPassWord(username, password);
-
+       
+        if(RandomUtils.nextInt()!=1){
+               throw  new StatusException(TipType.NoPlayer);
+        }
+       
         //TODO 当前是没账号，送账号，正式的要请求SDK或者  通过账号密码系统
-        return CompletableFuture.completedFuture(user.orElseGet(() -> {
+        return future.completeAsync(()->user.orElseGet(() -> {
             UserEntry userEntry = new UserEntry(IdCreator.nextId(UserEntry.class));
             userEntry.setUserName(username);
             userEntry.setPassWord(password);

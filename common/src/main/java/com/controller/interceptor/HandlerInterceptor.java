@@ -1,5 +1,6 @@
 package com.controller.interceptor;
 
+import com.annotation.Controllor;
 import com.controller.ControllerHandler;
 import com.google.protobuf.Message;
 import com.pojo.Packet;
@@ -13,6 +14,6 @@ public interface HandlerInterceptor {
         return true;
     }
 
-    default void postHandle(Packet message, Object result) {
+    default void postHandle(ControllerHandler handler,Packet message,Object result) {
     }
 }

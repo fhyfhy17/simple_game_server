@@ -73,13 +73,11 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
         while (!pulseQueues.isEmpty()) {
             ControllerHandler handler = null;
             Packet packet = null;
-            String gate = null;
             boolean isRpc = false;
             RpcRequest rpcRequest = null;
             try {
                 packet = pulseQueues.poll();
                 final int cmdId = packet.getId();
-                gate = packet.getGate();
                 if (Constant.RPC_RESPONSE.equals(packet.getRpc())) {
                     SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(), RpcResponse.class));
                     continue;
@@ -140,16 +138,17 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
                 ////拦截器后
                 if (!Objects.isNull(result)) {
-                    HandlerExecutionChain.applyPostHandle(packet, result);
+                    HandlerExecutionChain.applyPostHandle(handler,packet, result);
                 }
             } catch (StatusException se) {
                 try {
                     //如果是rpc报错，把错误返回给发送方。
                     if (isRpc) {
-                        HandlerExecutionChain.applyPostHandle(packet, null);
-                    } else {//rpc response和protobuf协议要区分
-                        boolean isRpcResponse = Constant.RPC_RESPONSE.equals(packet.getRpc());
-                        ExceptionUtil.sendStatusExceptionToClient(handler, packet, gate, se, isRpcResponse);
+                        HandlerExecutionChain.applyPostHandle(handler,packet, null);
+                    } else {
+                        //报错推到前端
+                        if(handler!=null)
+                        ExceptionUtil.sendStatusExceptionToClient(handler.getMethod().getReturnType(), packet, se);
                     }
                 } catch (Exception e) {
                     log.error("", e);

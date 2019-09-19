@@ -30,11 +30,11 @@ public class HandlerExecutionChain {
         return true;
     }
 
-    public static void applyPostHandle(Packet message, Object result) {
+    public static void applyPostHandle(ControllerHandler handler,Packet message, Object result) {
         if (!ObjectUtils.isEmpty(interceptorList)) {
             for (int i = 0; i < interceptorList.size(); i++) {
                 HandlerInterceptor interceptor = interceptorList.get(i);
-                interceptor.postHandle(message, result);
+                interceptor.postHandle(handler,message, result);
             }
         }
     }

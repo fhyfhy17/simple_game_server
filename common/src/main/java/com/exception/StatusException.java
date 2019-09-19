@@ -1,5 +1,8 @@
 package com.exception;
 
+import lombok.ToString;
+
+@ToString
 public class StatusException extends RuntimeException {
 
     int tip;
@@ -22,4 +25,5 @@ public class StatusException extends RuntimeException {
     public int getTip() {
         return tip;
     }
+    
 }

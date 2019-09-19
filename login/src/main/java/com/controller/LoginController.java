@@ -27,28 +27,25 @@ public class LoginController extends BaseController implements GameToLogin {
     private LoginService loginService;
 
     @Controllor
-    public Object login(UidContext context, LOGIN_MSG.CTG_LOGIN req) throws StatusException {
+    public CompletableFuture<LOGIN_MSG.GTC_LOGIN> login(UidContext context, LOGIN_MSG.CTG_LOGIN req) throws StatusException {
         String username = req.getUsername();
         String password = req.getPassword();
         String sessionId = req.getSessionId();
 
         LOGIN_MSG.GTC_LOGIN.Builder builder = LOGIN_MSG.GTC_LOGIN.newBuilder();
         CompletableFuture<UserEntry> user = loginService.login(username, password);
-
+        
         builder.setSessionId(sessionId);
-        user.whenComplete((userEntry, throwable) -> {
-            ExceptionUtil.doThrow(throwable);
+        return user.thenApply(userEntry->{
             if (!Objects.isNull(userEntry)) {
                 builder.setUid(userEntry.getId());
                 builder.setResult(TipStatus.suc());
             } else {
                 builder.setResult(TipStatus.fail(TipType.AccountError));
+                
             }
-            HandlerExecutionChain.applyPostHandle(
-                    new Packet(context.getUid(),context.getId(),null,context.getFrom(),context.getGate(),context.getRpc())
-                    ,builder.build());
+            return builder.build();
         });
-        return null;
     }
 
 

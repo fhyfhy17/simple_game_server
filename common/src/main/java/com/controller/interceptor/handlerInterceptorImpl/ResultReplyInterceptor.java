@@ -1,5 +1,6 @@
 package com.controller.interceptor.handlerInterceptorImpl;
 
+import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerInterceptor;
 import com.google.protobuf.Message;
 import com.manager.ServerInfoManager;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 //结果拦截器 （根据执行完消息返回的结果，执行回消息操作）
 public class ResultReplyInterceptor implements HandlerInterceptor {
     @Override
-    public void postHandle(Packet message, Object result) {
+    public void postHandle(ControllerHandler handler,Packet message,Object result) {
 
         if(!Message.class.isAssignableFrom(result.getClass())){
             return;
