@@ -1,6 +1,5 @@
 package com.util;
 
-import com.controller.ControllerHandler;
 import com.exception.StatusException;
 import com.google.protobuf.Message;
 import com.manager.ServerInfoManager;
@@ -26,9 +25,8 @@ public class ExceptionUtil {
      *
      */
     public static void sendStatusExceptionToClient(Class<?> returnType, Packet packet, StatusException se) {
-
         // Status报错， 执行方法时，抛出主动定义的错误，方便多层调用时无法中断方法，这里主动回复给有result参数的协议
-        if(!returnType.isAssignableFrom(Message.class)){
+        if (!Message.class.isAssignableFrom(returnType)) {
            return;
         }
       
