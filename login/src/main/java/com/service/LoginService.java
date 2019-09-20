@@ -20,8 +20,6 @@ public class LoginService extends BaseService {
     @Async(Constant.IO_THREAD_NAME)
     public CompletableFuture<UserEntry> login(String username, String password) {
     
-        CompletableFuture<UserEntry> future = new CompletableFuture<>();
-        
         //TODO 多点登录判断
         Optional<UserEntry> user = userRepository.findByUserNameAndPassWord(username, password);
 //       测试异步异常
@@ -30,7 +28,7 @@ public class LoginService extends BaseService {
 //        }
 //
         //TODO 当前是没账号，送账号，正式的要请求SDK或者  通过账号密码系统
-        return future.completeAsync(()->user.orElseGet(() -> {
+        return CompletableFuture.completedFuture(user.orElseGet(() -> {
             UserEntry userEntry = new UserEntry(IdCreator.nextId(UserEntry.class));
             userEntry.setUserName(username);
             userEntry.setPassWord(password);

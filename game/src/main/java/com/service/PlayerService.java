@@ -4,13 +4,13 @@ import com.Constant;
 import com.alibaba.fastjson.JSONObject;
 import com.annotation.EventListener;
 import com.annotation.ServiceLog;
-import com.aop.ServiceLogAspect;
 import com.dao.PlayerRepository;
 import com.dao.UserRepository;
 import com.entry.PlayerEntry;
 import com.entry.UserEntry;
 import com.exception.StatusException;
 import com.google.common.collect.Lists;
+import com.handler.ContextHolder;
 import com.module.BaseModule;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.Player;
@@ -67,10 +67,14 @@ public class PlayerService extends BaseService {
         return player;
 
     }
+    @Async(Constant.IO_THREAD_NAME)
+    public void testPool(){
+        System.out.println(Thread.currentThread().getName()+" " +ContextHolder.getScheduleAble());
+    }
+    
     
     @Async(Constant.IO_THREAD_NAME)
     public CompletableFuture<List<LOGIN_MSG.PLAYER_INFO>> playerList(long uid) throws StatusException{
-        CompletableFuture<List<LOGIN_MSG.PLAYER_INFO>> future = new CompletableFuture<>();
         
         UserEntry user = userRepository.findById(uid).orElseThrow(() -> new StatusException(TipType.NoUid));
         List<Long> playerIds = user.getPlayerIds();
@@ -87,7 +91,7 @@ public class PlayerService extends BaseService {
             // 存储到角色列表
             user.getPlayerIds().add(playerId);
             userRepository.save(user);
-            return future.completeAsync(()->list);
+            return CompletableFuture.completedFuture(list);
         }
         
         for (Long playerId : playerIds) {
@@ -96,7 +100,7 @@ public class PlayerService extends BaseService {
             list.add(buildPlayerInfo(playerEntry).build());
        
         }
-        return future.completeAsync(()->list);
+        return CompletableFuture.completedFuture(list);
     }
 
     public LOGIN_MSG.PLAYER_INFO.Builder buildPlayerInfo(PlayerEntry playerEntry) {

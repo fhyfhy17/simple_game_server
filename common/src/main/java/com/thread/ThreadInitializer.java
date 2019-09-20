@@ -1,5 +1,6 @@
 package com.thread;
 
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import com.thread.threadPool.NamedThreadFactory;
 import com.thread.threadPool.ThreadPool;
 import org.springframework.context.annotation.Bean;
@@ -13,15 +14,15 @@ import java.util.concurrent.TimeUnit;
 public class ThreadInitializer {
 
     @Bean(name = "ioThreadPool")
-    public ThreadOrderingExecutor getOrderingExecutor() {
+    public Executor getOrderingExecutor() {
         ThreadPool ioThreadPool = new ThreadPool(4,
                 4,
                 0,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(),
                 new NamedThreadFactory("IO 线程", true));
-
-        return new ThreadOrderingExecutor(ioThreadPool);
+            
+        return TtlExecutors.getTtlExecutor(new ThreadOrderingExecutor(ioThreadPool));
     }
     
     @Bean(name = "saveDbThreadPool")

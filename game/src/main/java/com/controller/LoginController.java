@@ -34,7 +34,7 @@ public class LoginController extends BaseController implements GameToGame, GameT
         });
 
     }
-
+    
     @Controllor
     public CompletableFuture<LOGIN_MSG.GTC_GAME_LOGIN_PLAYER> gameLogin(UidContext context, LOGIN_MSG.CTG_GAME_LOGIN_PLAYER req) {
         LOGIN_MSG.GTC_GAME_LOGIN_PLAYER.Builder builder = LOGIN_MSG.GTC_GAME_LOGIN_PLAYER.newBuilder();

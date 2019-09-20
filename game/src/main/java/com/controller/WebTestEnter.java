@@ -16,6 +16,7 @@ import com.pojo.Packet;
 import com.rpc.RpcProxy;
 import com.rpc.RpcRequest;
 import com.rpc.interfaces.gameToBus.GameToBus;
+import com.service.PlayerService;
 import com.thread.schedule.ScheduleTask;
 import com.util.*;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -72,6 +74,14 @@ public class WebTestEnter {
     
     @Autowired
     private MongoTemplate mongoTemplate;
+    
+    @Autowired
+    private PlayerService playerService;
+    @RequestMapping("/test/poolThreadLocalTest")
+    public void poolThreadLocalTest() {
+        playerService.testPool();
+    }
+    
 
     @RequestMapping("/test/self")
     public void self() {

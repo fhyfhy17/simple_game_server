@@ -1,6 +1,7 @@
 package com.handler;
 
 import com.Constant;
+import com.alibaba.ttl.TransmittableThreadLocal;
 import com.pojo.Param;
 import com.thread.schedule.ScheduleAble;
 import com.thread.schedule.ScheduleTask;
@@ -10,7 +11,7 @@ import java.util.Objects;
 public class ContextHolder {
 
 
-    private static final ThreadLocal<Param> contextThreadLocal = new InheritableThreadLocal<>();
+    private static final TransmittableThreadLocal<Param> contextThreadLocal = new TransmittableThreadLocal<>();
 
     public static ScheduleAble getScheduleAble() {
         Param param = getParam();
