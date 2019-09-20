@@ -3,6 +3,7 @@ package com.rpc.interfaces.gameToBus;
 import co.paralleluniverse.fibers.Suspendable;
 import com.annotation.Rpc;
 import com.entry.PlayerEntry;
+import com.entry.UnionEntry;
 import com.pojo.OnlineContext;
 import com.pojo.Tuple;
 
@@ -10,16 +11,11 @@ public interface GameToBus{
 	
 	@Suspendable
 	@Rpc(needResponse = true)
-	default Tuple<Boolean,Throwable> createUnion(long playerId,String unionName) {
+	default Tuple<UnionEntry, Throwable> createUnion(long playerId, String unionName) {
 		return null;
 	}
-	
-	@Suspendable
-	@Rpc(needResponse = true)
-	default RpcResult<Boolean,Throwable> ccc(long playerId,String unionName) {
-		return null;
-	}
-	
+
+
 	@Suspendable
 	@Rpc(needResponse = true)
     default String needResponse(String a) {

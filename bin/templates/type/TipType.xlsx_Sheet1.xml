@@ -13,5 +13,6 @@
     <tr id="10" name="visitOverTime" describe="访问超时"/>
     <tr id="11" name="SystemError" describe="系统错误"/>
     <tr id="12" name="groupSendCantHaveReturnValue" describe="群发不能有返回值"/>
+    <tr id="13" name="unionNameExist" describe="帮派名字存在"/>
 </root>
 

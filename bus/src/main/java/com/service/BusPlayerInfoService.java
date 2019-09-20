@@ -1,19 +1,15 @@
 package com.service;
 
 import com.entry.PlayerEntry;
-import com.entry.UnionEntry;
 import com.pojo.PlayerInfo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -38,18 +34,10 @@ public class BusPlayerInfoService extends BaseService {
 
     @Override
     public void onStart() {
-
         //加载所有帮派中的角色信息
-        Map<Long, UnionEntry> unionMap = unionService.getUnionMap();
-        for (UnionEntry unionEntry : unionMap.values()) {
-            List<Long> playerList = unionEntry.getPlayerList();
-            Query query = new Query();
-            query.addCriteria(Criteria.where("id").in(playerList));
-            List<PlayerEntry> allInUnion = mongoTemplate.find(query, PlayerEntry.class);
-            for (PlayerEntry playerEntry : allInUnion) {
-                playerInfoMap.put(playerEntry.getId(), new PlayerInfo(playerEntry.getId(), playerEntry.getUid()
-                        , playerEntry.getLevel(), playerEntry.getExp(), playerEntry.getCoin(), playerEntry.getUnionId()));
-            }
+        for (PlayerEntry playerEntry : unionService.getAllUnionPlayer()) {
+            playerInfoMap.put(playerEntry.getId(), new PlayerInfo(playerEntry.getId(), playerEntry.getUid()
+                    , playerEntry.getLevel(), playerEntry.getExp(), playerEntry.getCoin(), playerEntry.getUnionId()));
         }
     }
 

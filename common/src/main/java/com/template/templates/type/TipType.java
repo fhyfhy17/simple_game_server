@@ -26,11 +26,13 @@ public class TipType {
 
     public static final int GroupSendCantHaveReturnValue = 12;//群发不能有返回值
 
+    public static final int UnionNameExist = 13;//帮派名字存在
+
 
     public static final int FIRST_ID = 1;//第一个ID
 
-    public static final int LAST_ID = 12;//最后一个ID
+    public static final int LAST_ID = 13;//最后一个ID
 
-    public static final int TYPE_SIZE = 12;//ID数量
+    public static final int TYPE_SIZE = 13;//ID数量
 
 }

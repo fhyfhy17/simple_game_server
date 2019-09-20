@@ -4,11 +4,11 @@ import com.dao.PlayerUnionRepository;
 import com.entry.BaseEntry;
 import com.entry.PlayerEntry;
 import com.entry.PlayerUnionEntry;
+import com.entry.UnionEntry;
 import com.enums.TypeEnum;
-import com.exception.StatusException;
+import com.pojo.Tuple;
 import com.rpc.RpcProxy;
 import com.rpc.interfaces.gameToBus.GameToBus;
-import com.rpc.interfaces.gameToBus.RpcResult;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,17 +52,29 @@ public class UnionModule extends BaseModule {
         }
         return playerUnionEntry.getUnionId();
     }
-    
-    public void createUnion() throws StatusException{
+
+    public void createUnion() throws Throwable {
         //有帮派返回
         //条件不足返回
         //player 直接扣钱
         //向bus发rpc
         GameToBus gameToBus=rpcProxy.proxy(GameToBus.class,player.getPlayerId(),TypeEnum.ServerTypeEnum.BUS,player.getUid());
-        RpcResult<Boolean,Throwable> ccc=gameToBus.ccc(player.getPlayerId(),"ccc");
-        ccc.onSuccess();
-    
-    
+
+        //rpc调用要对结果进行异常判断，失败把之前的操作进行补偿
+        Tuple<UnionEntry, Throwable> result = gameToBus.createUnion(player.getPlayerId(), "123");
+        if (result.getValue() != null) {
+            //player 把钱加回来
+            throw result.getValue();
+        }
+
+        //继续创建帮派流程
+        UnionEntry unionEntry = result.getKey();
+        playerUnionEntry.setUnionId(unionEntry.getId());
+        playerUnionEntry.setUnionLevel(unionEntry.getLevel());
+        playerUnionEntry.setUnionName(unionEntry.getName());
+
+        playerUnionRepository.save(playerUnionEntry);
+
     }
     
     

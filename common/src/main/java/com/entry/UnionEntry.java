@@ -30,5 +30,10 @@ public class UnionEntry extends BaseEntry {
 
     private Date createTime = new Date();
 
+    private String name;
+
+    private int level = 1;
+
+    private int exp;
 }
 
