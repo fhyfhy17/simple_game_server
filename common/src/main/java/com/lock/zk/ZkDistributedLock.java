@@ -1,6 +1,6 @@
 package com.lock.zk;
 
-import com.util.Pair;
+import com.pojo.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;

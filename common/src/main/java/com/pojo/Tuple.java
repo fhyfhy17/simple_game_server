@@ -1,23 +1,27 @@
-package com.util;
+package com.pojo;
 
-import reactor.util.annotation.NonNull;
 import reactor.util.annotation.Nullable;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-public class Pair<T1, T2> implements Iterable<Object>, Serializable {
+/**
+ * 和Pair的区别的 ，这个可以为空，Pair不可以为空
+ */
+public class Tuple<T1, T2> implements Iterable<Object>, Serializable {
 
-    private static final long serialVersionUID = -3518082018884860684L;
+    private static final long serialVersionUID = -351808204523422L;
 
-    @NonNull
+
     final T1 t1;
-    @NonNull
     final T2 t2;
 
-    public Pair(T1 t1, T2 t2) {
-        this.t1 = Objects.requireNonNull(t1, "t1");
-        this.t2 = Objects.requireNonNull(t2, "t2");
+    public Tuple(T1 t1,T2 t2) {
+        this.t1 = t1;
+        this.t2 = t2;
     }
 
 
@@ -81,7 +85,7 @@ public class Pair<T1, T2> implements Iterable<Object>, Serializable {
             return false;
         }
 
-        Pair<?, ?> pair = (Pair<?, ?>) o;
+        Tuple<?, ?> pair = (Tuple<?, ?>) o;
 
         return t1.equals(pair.t1) && t2.equals(pair.t2);
 

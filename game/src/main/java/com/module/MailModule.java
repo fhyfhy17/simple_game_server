@@ -62,22 +62,34 @@ public class MailModule extends BaseModule{
     private void scanCenterMail() {
         List<CenterMailEntry> centerMails = mailService.findByDate();
         for (CenterMailEntry centerMail : centerMails) {
-            //已经领过的
-            if (mailEntry.getHasCenterMailIds().contains(centerMail.getId())) {
-                continue;
-            }
-            //个人邮件或群体邮件，不是发给自己的
-            if ((centerMail.getType() == CenterMailType.Personal || centerMail.getType() == CenterMailType.Multiple)
-                    && !centerMail.getReceiverId().contains(player.getPlayerId())) {
-                continue;
-            }
-
-            // 插入个人邮件
-            MailPo mail = mailService.createMail(centerMail.getMailTemplateId());
-            mailEntry.getMailList().add(mail);
+            checkAndAdd(centerMail);
         }
     }
-
+    
+    private void checkAndAdd(CenterMailEntry centerMail){
+        //已经领过的
+        if (mailEntry.getHasCenterMailIds().contains(centerMail.getId())) {
+            return;
+        }
+        //个人邮件或群体邮件，不是发给自己的
+        if ((centerMail.getType() == CenterMailType.Personal || centerMail.getType() == CenterMailType.Multiple)
+                && !centerMail.getReceiverId().contains(player.getPlayerId())) {
+            return;
+        }
+    
+        // 插入个人邮件
+        MailPo mail = mailService.createMail(centerMail.getMailTemplateId());
+        mailEntry.getMailList().add(mail);
+    }
+    
+    /**
+     * 发世界邮件的逻辑是，由GM系统，或者游戏系统群发给各game，各game通过mailservice转到个人
+     * 只通知在线的人，离线的上线会加载。  确保世界邮件会及时通知，产生小红点等。
+     */
+    public void onCenterMail(CenterMailEntry centerMailEntry){
+        checkAndAdd(centerMailEntry);
+    }
+    
     public void addMail(int mailTemplateId) {
         MailPo mail = mailService.createMail(mailTemplateId);
         mailEntry.getMailList().add(mail);
@@ -97,6 +109,7 @@ public class MailModule extends BaseModule{
         for (MailPo mailPo : mailEntry.getMailList()) {
             if (mailPo.getMailId() == mailId) {
                 mailPo.setHasRead(true);
+                mailPo.setReadTime(System.currentTimeMillis());
             }
         }
     }
@@ -111,6 +124,7 @@ public class MailModule extends BaseModule{
         }
         if (!Objects.isNull(mail)) {
             mail.setHasReceived(true);
+            mail.setHasReceivedTime(System.currentTimeMillis());
             boolean b = player.getBagModule().getBag().addItemRefuse(mail.getItemList());
             if (!b) {
                 throw new StatusException(TipType.BagNotEnough);

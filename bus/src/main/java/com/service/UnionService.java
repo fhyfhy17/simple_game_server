@@ -1,8 +1,11 @@
 package com.service;
 
 import com.dao.UnionRepository;
+import com.entry.PlayerEntry;
 import com.entry.UnionEntry;
 import com.google.common.collect.Maps;
+import com.rpc.interfaces.gameToBus.GameToBus;
+import com.rpc.interfaces.gameToBus.RpcResult;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +22,7 @@ import java.util.Map;
 //TODO  关于bus设计成多线程还是单线程还没有想好，单线程不用处理同步，多线程速度有优势，但速度的优势也不是很大，如果有访问别的线程数据
 // 的情况发生，比较麻烦
 @Order(1)
-public class UnionService extends BaseService {
+public class UnionService extends BaseService implements GameToBus{
 
     private Map<Long, UnionEntry> unionMap = Maps.newHashMap();
 
@@ -53,5 +56,10 @@ public class UnionService extends BaseService {
     @Override
     public void onClose() {
 
+    }
+    
+    @Override
+    public RpcResult<Boolean,Throwable> ccc(long playerId,String unionName){
+        return new RpcResult<>(true,null);
     }
 }

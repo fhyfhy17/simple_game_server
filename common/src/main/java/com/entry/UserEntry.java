@@ -1,6 +1,5 @@
 package com.entry;
 
-import com.annotation.SeqClassName;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,6 @@ import java.util.List;
 @Document
 @Getter
 @Setter
-@SeqClassName(name = "seq.UserEntry")
 public class UserEntry extends BaseEntry {
 
     public UserEntry(long id) {

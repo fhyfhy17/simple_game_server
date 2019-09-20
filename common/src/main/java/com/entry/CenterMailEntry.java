@@ -1,6 +1,5 @@
 package com.entry;
 
-import com.annotation.SeqClassName;
 import com.entry.po.ItemInfo;
 import com.google.common.collect.Lists;
 import lombok.Getter;
@@ -13,7 +12,6 @@ import java.util.List;
 @Document
 @Getter
 @Setter
-@SeqClassName(name = "seq.CenterMailEntry")
 @ToString
 public class CenterMailEntry extends BaseEntry {
 

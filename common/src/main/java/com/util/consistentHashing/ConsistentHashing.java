@@ -3,7 +3,7 @@ package com.util.consistentHashing;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import com.util.Pair;
+import com.pojo.Pair;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.Charset;

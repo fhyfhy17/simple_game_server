@@ -1,6 +1,5 @@
 package com.entry;
 
-import com.annotation.SeqClassName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,7 +15,6 @@ import java.util.List;
 @Document
 @Getter
 @Setter
-@SeqClassName(name = "seq.UnionEntry")
 @ToString
 public class UnionEntry extends BaseEntry {
 

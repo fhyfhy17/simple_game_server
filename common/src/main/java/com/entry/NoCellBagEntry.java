@@ -1,6 +1,5 @@
 package com.entry;
 
-import com.annotation.SeqClassName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,7 +11,6 @@ import java.util.Map;
 @Document
 @Getter
 @Setter
-@SeqClassName(name = "seq.NoCellBagEntry")
 @ToString
 public class NoCellBagEntry extends BaseEntry {
 

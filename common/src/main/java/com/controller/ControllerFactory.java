@@ -5,7 +5,7 @@ import com.annotation.Rpc;
 import com.controller.fun.*;
 import com.google.common.collect.Maps;
 import com.google.protobuf.Message;
-import com.util.Pair;
+import com.pojo.Pair;
 import com.util.ProtoUtil;
 import com.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;

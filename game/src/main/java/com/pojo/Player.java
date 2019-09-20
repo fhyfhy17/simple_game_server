@@ -16,6 +16,8 @@ public class Player {
     private BagModule bagModule;
     private NoCellBagModule noCellBagModule;
     private MailModule mailModule;
+    private UnionModule unionModule;
+    
     private TypeEnum.PlayerStatus playerStatus = TypeEnum.PlayerStatus.SWITCH;
 
     private List<BaseModule> modules;

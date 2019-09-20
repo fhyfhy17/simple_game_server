@@ -15,5 +15,7 @@ public class MailPo {
 
     private List<ItemInfo> itemList = Lists.newArrayList();
     private long mailTime; //接收mail时间
+    private long readTime; //读时间
+    private long hasReceivedTime; //领取物品时间
 
 }
