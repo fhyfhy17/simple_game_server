@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Rpc
-{
-	boolean needResponse()  default true;
+public @interface Rpc {
+    boolean needResponse();
 }
