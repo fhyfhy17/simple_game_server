@@ -4,7 +4,6 @@ import com.Constant;
 import com.config.ZookeeperConfig;
 import com.dao.*;
 import com.entry.PlayerEntry;
-import com.enums.TypeEnum;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.GameServerManager;
 import com.manager.ServerInfoManager;
@@ -15,7 +14,6 @@ import com.node.RemoteNode;
 import com.pojo.Packet;
 import com.rpc.RpcProxy;
 import com.rpc.RpcRequest;
-import com.rpc.interfaces.gameToBus.GameToBus;
 import com.service.PlayerService;
 import com.thread.schedule.ScheduleTask;
 import com.util.*;
@@ -24,13 +22,11 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //import com.config.RedissonConfig;
@@ -103,34 +99,32 @@ public class WebTestEnter {
 
     @RequestMapping("/test/rpc")
     public void rpc() {
-        //GameToBus gameToBus=rpcProxy.serviceProxy(GameToBus.class,123,TypeEnum.ServerTypeEnum.LOGIN,123);
-        //String s=gameToBus.needResponse("你好哇");
-        StopWatch stopWatch = new StopWatch();
-    
-        stopWatch.start();
-        CountDownLatch countDownLatch =new CountDownLatch(10);
-        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.BUS, 123);
-        for (int i = 0; i < 10; i++) {
-            new Thread(() -> {
-                for (int j = 0; j < 100; j++) {
-
-                    gameToBus.needResponse("");
-                    //log.info("发送 RPC 请求时间  "+ System.currentTimeMillis());
-                }
-                countDownLatch.countDown();
-            }).start();
-            
-        }
-        try
-        {
-            countDownLatch.await();
-        }
-        catch(InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        stopWatch.stop();
-        log.info("共用时："+stopWatch.getTime());
+//        StopWatch stopWatch = new StopWatch();
+//
+//        stopWatch.start();
+//        CountDownLatch countDownLatch =new CountDownLatch(10);
+//        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.BUS, 123);
+//        for (int i = 0; i < 10; i++) {
+//            new Thread(() -> {
+//                for (int j = 0; j < 100; j++) {
+//
+//                    gameToBus.needResponse("");
+//                    //log.info("发送 RPC 请求时间  "+ System.currentTimeMillis());
+//                }
+//                countDownLatch.countDown();
+//            }).start();
+//
+//        }
+//        try
+//        {
+//            countDownLatch.await();
+//        }
+//        catch(InterruptedException e)
+//        {
+//            e.printStackTrace();
+//        }
+//        stopWatch.stop();
+//        log.info("共用时："+stopWatch.getTime());
     }
     
     @RequestMapping("/test/testinsert")
@@ -168,13 +162,13 @@ public class WebTestEnter {
     public void insertt() {
       playerRepository.insert(new PlayerEntry(201));
     }
-    
-    
-    @RequestMapping("/test/noneed")
-    public void noneed() {
-        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.BUS, 123);
-        gameToBus.noNeedResponse0();
-    }
+
+
+//    @RequestMapping("/test/noneed")
+//    public void noneed() {
+//        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.BUS, 123);
+//        gameToBus.noNeedResponse0();
+//    }
     
     private PlayerEntry playerEntry;
     @Autowired

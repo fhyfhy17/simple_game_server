@@ -60,9 +60,9 @@ public class ProtoUtil {
         return messageResult;
     }
 
-    public static Packet buildRpcResponseMessage(byte[] data, long uid, @Nullable String from, int code) {
+    public static Packet buildRpcResponseMessage(byte[] data, long uid, @Nullable String from) {
         Packet messageResult = new Packet();
-        messageResult.setId(code);
+        messageResult.setId(-2);
         messageResult.setUid(uid);
         messageResult.setFrom(null == from ? ContextUtil.id : from);
         messageResult.setData(data);

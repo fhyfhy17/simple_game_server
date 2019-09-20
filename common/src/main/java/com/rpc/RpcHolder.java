@@ -69,18 +69,14 @@ public class RpcHolder {
 
     public void receiveResponse(RpcResponse rpcResponse) {
         String requestId = rpcResponse.getRequestId();
-        int code = rpcResponse.getCode();
         FutureContext futureContext = requestContext.remove(requestId);
 
         if (Objects.isNull(futureContext)) {
             log.error("rpcResponseFuture,原因是收到了多条同requestID 回复 requestId = {}，也有可能是超时被删", requestId);
             return;
         }
-        if (code > 0) {
-            futureContext.future.setException(new StatusException(code));
-        } else {
-            futureContext.future.set(rpcResponse);
-        }
+
+        futureContext.future.set(rpcResponse);
 
     }
 

@@ -16,12 +16,16 @@ public class Tuple<T1, T2> implements Iterable<Object>, Serializable {
     private static final long serialVersionUID = -351808204523422L;
 
 
-    final T1 t1;
-    final T2 t2;
+    T1 t1;
+    T2 t2;
 
     public Tuple(T1 t1,T2 t2) {
         this.t1 = t1;
         this.t2 = t2;
+    }
+
+    public Tuple() {
+
     }
 
 
@@ -34,6 +38,13 @@ public class Tuple<T1, T2> implements Iterable<Object>, Serializable {
         return t2;
     }
 
+    public void setKey(T1 t1) {
+        this.t1 = t1;
+    }
+
+    public void setValue(T2 t2) {
+        this.t2 = t2;
+    }
 
     /**
      * Get the object at the given index.

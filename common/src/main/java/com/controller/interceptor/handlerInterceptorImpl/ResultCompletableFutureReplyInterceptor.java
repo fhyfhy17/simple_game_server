@@ -1,13 +1,11 @@
 package com.controller.interceptor.handlerInterceptorImpl;
 
-import com.Constant;
 import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.controller.interceptor.HandlerInterceptor;
 import com.exception.StatusException;
 import com.pojo.Packet;
 import com.util.ExceptionUtil;
-import com.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -34,16 +32,8 @@ public class ResultCompletableFutureReplyInterceptor implements HandlerIntercept
                 if(throwable.getCause() instanceof StatusException){
                     StatusException se = (StatusException)throwable.getCause();
                     try{
-						//收到rpcRequest报的错
-						if(StringUtil.contains(message.getRpc(),Constant.RPC_REQUEST)){
-							message.setId(se.getTip());
-							HandlerExecutionChain.applyPostHandle(handler,message, null);
-							return;
-						}
-	
 						Type actualTypeArgument=((ParameterizedType)handler.getMethod().getGenericReturnType()).getActualTypeArguments()[0];
 	
-						//其它报错
 						ExceptionUtil.sendStatusExceptionToClient((Class)actualTypeArgument,message,se);
 	
 						log.error("异步status",throwable);

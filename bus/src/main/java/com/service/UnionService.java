@@ -6,7 +6,6 @@ import com.entry.UnionEntry;
 import com.exception.StatusException;
 import com.google.common.collect.Maps;
 import com.pojo.Tuple;
-import com.rpc.interfaces.gameToBus.GameToBus;
 import com.template.templates.type.TipType;
 import com.util.IdCreator;
 import lombok.Getter;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 //TODO  关于bus设计成多线程还是单线程还没有想好，单线程不用处理同步，多线程速度有优势，但速度的优势也不是很大，如果有访问别的线程数据
 // 的情况发生，比较麻烦
 @Order(1)
-public class UnionService extends BaseService implements GameToBus{
+public class UnionService extends BaseService {
 
     @Getter
     private Map<Long, UnionEntry> unionMap = Maps.newHashMap();
@@ -74,19 +73,24 @@ public class UnionService extends BaseService implements GameToBus{
     }
 
 
-    @Override
     public Tuple<UnionEntry, Throwable> createUnion(long playerId, String unionName) {
-        for (UnionEntry unionEntry : unionMap.values()) {
-            if (unionEntry.getName().equals(unionName)) {
-                throw new StatusException(TipType.UnionNameExist);
+        Tuple<UnionEntry, Throwable> result = new Tuple<>();
+        try {
+            for (UnionEntry unionEntry : unionMap.values()) {
+                if (unionEntry.getName().equals(unionName)) {
+                    throw new StatusException(TipType.UnionNameExist);
+                }
             }
+
+            UnionEntry unionEntry = new UnionEntry(IdCreator.nextId(UnionEntry.class));
+            unionEntry.setLeaderId(playerId);
+            unionRepository.save(unionEntry);
+            result.setKey(unionEntry);
+        } catch (Exception e) {
+            result.setValue(e);
         }
 
-        UnionEntry unionEntry = new UnionEntry(IdCreator.nextId(UnionEntry.class));
-
-        unionRepository.save(unionEntry);
-
-        return null;
+        return result;
     }
 
     @Override

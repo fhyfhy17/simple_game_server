@@ -35,5 +35,7 @@ public class UnionEntry extends BaseEntry {
     private int level = 1;
 
     private int exp;
+
+    private long leaderId;
 }
 

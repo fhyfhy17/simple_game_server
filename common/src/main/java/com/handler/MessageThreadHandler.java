@@ -3,11 +3,7 @@ package com.handler;
 import com.Constant;
 import com.controller.ControllerFactory;
 import com.controller.ControllerHandler;
-import com.controller.fun.Fun0;
-import com.controller.fun.Fun1;
-import com.controller.fun.Fun2;
-import com.controller.fun.Fun3;
-import com.controller.fun.Fun4;
+import com.controller.fun.*;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.exception.StatusException;
 import com.pojo.Packet;
@@ -22,6 +18,7 @@ import com.util.SpringUtils;
 import com.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
+import org.quartz.SchedulerException;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -47,7 +44,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
             // 执行心跳
             pulse();
-            
+
             // 执行任务调度心跳
             pulseSchedule();
 
@@ -75,21 +72,21 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
     public void pulse() {
         while (!pulseQueues.isEmpty()) {
-            
+
             ControllerHandler handler = null;
             Packet packet = null;
-            boolean isRpc = false;
             RpcRequest rpcRequest = null;
             try {
                 packet = pulseQueues.poll();
-                final int cmdId = packet.getId();
+
                 if (Constant.RPC_RESPONSE.equals(packet.getRpc())) {
                     SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(), RpcResponse.class));
                     continue;
                 }
-                isRpc = StringUtil.contains(packet.getRpc(), Constant.RPC_REQUEST);
+                boolean isRpc = StringUtil.contains(packet.getRpc(), Constant.RPC_REQUEST);
 
                 if (!isRpc) {
+                    final int cmdId = packet.getId();
                     handler = ControllerFactory.getControllerMap().get(cmdId);
                     if (handler == null) {
                         throw new IllegalStateException("收到不存在的消息，消息ID=" + cmdId);
@@ -103,7 +100,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                         throw new IllegalStateException("收到不存在的Rpc消息，消息KEY=" + key);
                     }
                 }
-             
+
                 Object result = null;
                 Object[] m;
                 if (!isRpc) {
@@ -112,7 +109,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                     m = rpcRequest.getParameters();
                 }
                 //拦截器前
-                if (!HandlerExecutionChain.applyPreHandle(packet, handler,m)) {
+                if (!HandlerExecutionChain.applyPreHandle(packet, handler, m)) {
                     continue;
                 }
                 //
@@ -143,20 +140,17 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
                 ////拦截器后
                 if (!Objects.isNull(result)) {
-                    HandlerExecutionChain.applyPostHandle(handler,packet, result);
+                    HandlerExecutionChain.applyPostHandle(handler, packet, result);
                 }
-                
+
             } catch (StatusException se) {
                 try {
-                    //如果是rpc报错，把错误返回给发送方。
-                    //TODO 这应该无论报什么错都返回， 不然调用方 hang 住了，虽然那边有超时，但不能都通过那控制。
-                    if (isRpc) {
-                        HandlerExecutionChain.applyPostHandle(handler,packet, null);
-                    } else {
-                        //报错推到前端
-                        if(handler!=null)
+                    //rpcRequest是不会报错的，因为每个rpcRequest都全部try好，包装错误到消息里了
+
+                    //报错推到前端
+                    if (handler != null)
                         ExceptionUtil.sendStatusExceptionToClient(handler.getMethod().getReturnType(), packet, se);
-                    }
+
                 } catch (Exception e) {
                     log.error("这不允许报错，哪个消息少加了条件？ 检查下rpc gate from哪些没加。", e);
                 }
@@ -165,7 +159,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 log.error("", e);
             }
         }
-    
+
     }
 
 
@@ -182,13 +176,16 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
     public void pulseSchedule() {
         if (!schedulerList.isEmpty()) {
             ScheduleTask poll = schedulerList.poll();
-            //TODO 这里急待统一异常处理方法的整理
-            try{
+            try {
                 poll.execute();
-            }catch(Throwable t){
-                log.error("等整理",t);
+            } catch (Throwable t) {
+                log.error("pulseSchedule报错", t);
+                try {
+                    this.scheduler.deleteJob(poll.jobKey);
+                } catch (SchedulerException e) {
+                    log.error("删除schedule报错", e);
+                }
             }
-            
         }
     }
 }
