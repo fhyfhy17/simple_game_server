@@ -51,7 +51,7 @@ public class PlayerService extends BaseService {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("player", player);
-        ServiceLogAspect.THREAD_LOCAL.set(jsonObject);
+        //ServiceLogAspect.THREAD_LOCAL.set(jsonObject);
         return CompletableFuture.completedFuture(buildPlayerInfo(player.getPlayerModule().getPlayerEntry()).build());
     }
 
@@ -67,28 +67,36 @@ public class PlayerService extends BaseService {
         return player;
 
     }
-
+    
     @Async(Constant.IO_THREAD_NAME)
-    public CompletableFuture<List<LOGIN_MSG.PLAYER_INFO>> playerList(long uid) {
+    public CompletableFuture<List<LOGIN_MSG.PLAYER_INFO>> playerList(long uid) throws StatusException{
+        CompletableFuture<List<LOGIN_MSG.PLAYER_INFO>> future = new CompletableFuture<>();
+        
         UserEntry user = userRepository.findById(uid).orElseThrow(() -> new StatusException(TipType.NoUid));
         List<Long> playerIds = user.getPlayerIds();
+        List<LOGIN_MSG.PLAYER_INFO> list = Lists.newArrayList();
+        
         if (CollectionUtils.isEmpty(playerIds)) {
             // 创建一个角色并存储
             long playerId = IdCreator.nextId(PlayerEntry.class);
             PlayerEntry playerEntry = new PlayerEntry(playerId);
             playerEntry.setName("游客" + playerId);
             playerEntry.setUid(uid);
+            PlayerEntry save=playerRepository.save(playerEntry);
+            list.add(buildPlayerInfo(save).build());
             // 存储到角色列表
             user.getPlayerIds().add(playerId);
             userRepository.save(user);
-            playerIds = user.getPlayerIds();
+            return future.completeAsync(()->list);
         }
-        List<LOGIN_MSG.PLAYER_INFO> list = Lists.newArrayList();
+        
         for (Long playerId : playerIds) {
+            
             PlayerEntry playerEntry = playerRepository.findById(playerId).orElseThrow(() -> new StatusException(TipType.NoPlayer));
             list.add(buildPlayerInfo(playerEntry).build());
+       
         }
-        return CompletableFuture.completedFuture(list);
+        return future.completeAsync(()->list);
     }
 
     public LOGIN_MSG.PLAYER_INFO.Builder buildPlayerInfo(PlayerEntry playerEntry) {

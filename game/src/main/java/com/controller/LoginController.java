@@ -1,18 +1,15 @@
 package com.controller;
 
 import com.annotation.Controllor;
-import com.controller.interceptor.HandlerExecutionChain;
 import com.handler.ContextHolder;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.OnlineContext;
-import com.pojo.Packet;
 import com.pojo.Player;
 import com.rpc.interfaces.gameToBus.GameToBus;
 import com.rpc.interfaces.gameToBus.GameToGame;
 import com.service.PlayerService;
 import com.thread.schedule.ScheduleTask;
 import com.util.ContextUtil;
-import com.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,45 +24,38 @@ public class LoginController extends BaseController implements GameToGame, GameT
     private PlayerService playerService;
 
     @Controllor
-    public Object playerList(UidContext context, LOGIN_MSG.CTG_PLAYER_LIST req) {
+    public CompletableFuture<LOGIN_MSG.GTC_PLAYER_LIST> playerList(UidContext context, LOGIN_MSG.CTG_PLAYER_LIST req) {
         LOGIN_MSG.GTC_PLAYER_LIST.Builder builder = LOGIN_MSG.GTC_PLAYER_LIST.newBuilder();
 
         CompletableFuture<List<LOGIN_MSG.PLAYER_INFO>> result = playerService.playerList(context.getUid());
-        result.whenComplete((list, throwable) -> {
-            ExceptionUtil.doThrow(throwable);
+        return result.thenApply((list) ->{
             builder.addAllPlayers(list);
-            HandlerExecutionChain.applyPostHandle(
-                    new Packet(context.getUid(), context.getId(), null, context.getFrom(), context.getGate(), context.getRpc())
-                    , builder.build());
+            return builder.build();
         });
 
-        return null;
     }
 
     @Controllor
-    public Object gameLogin(UidContext context, LOGIN_MSG.CTG_GAME_LOGIN_PLAYER req) {
+    public CompletableFuture<LOGIN_MSG.GTC_GAME_LOGIN_PLAYER> gameLogin(UidContext context, LOGIN_MSG.CTG_GAME_LOGIN_PLAYER req) {
         LOGIN_MSG.GTC_GAME_LOGIN_PLAYER.Builder builder = LOGIN_MSG.GTC_GAME_LOGIN_PLAYER.newBuilder();
         CompletableFuture<LOGIN_MSG.PLAYER_INFO> result = playerService.login(req.getPlayerId());
-        result.whenComplete((playerInfo, throwable) -> {
-            ExceptionUtil.doThrow(throwable);
+        return result.thenApply((playerInfo)->{
             builder.setPlayerInfo(playerInfo);
+            //异步的话，这还是IO线程
             log.info(Thread.currentThread().getName() + "执行了一下");
             // 通知bus登陆信息
             putOnline(new OnlineContext(playerInfo.getUid(), playerInfo.getPlayerId(), context.getGate(), ContextUtil.id));
-
+            //这是调回通信线程
             ContextHolder.getScheduleAble().scheduleOnce(new ScheduleTask() {
                 @Override
                 public void execute() {
                     log.info(Thread.currentThread().getName() + "   12345");
+                    //throw new StatusException(3);
                 }
             }, 4);
-
-
-            HandlerExecutionChain.applyPostHandle(
-                    new Packet(context.getUid(), context.getId(), null, context.getFrom(), context.getGate(), context.getRpc())
-                    , builder.build());
+            
+            return builder.build();
         });
-        return builder.build();
     }
 
     @Controllor

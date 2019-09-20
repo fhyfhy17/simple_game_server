@@ -3,10 +3,13 @@ package com.handler;
 import com.Constant;
 import com.controller.ControllerFactory;
 import com.controller.ControllerHandler;
-import com.controller.fun.*;
+import com.controller.fun.Fun0;
+import com.controller.fun.Fun1;
+import com.controller.fun.Fun2;
+import com.controller.fun.Fun3;
+import com.controller.fun.Fun4;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.exception.StatusException;
-import com.exception.exceptionNeedSendToClient.ServerBusinessException;
 import com.pojo.Packet;
 import com.rpc.RpcHolder;
 import com.rpc.RpcRequest;
@@ -44,6 +47,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
             // 执行心跳
             pulse();
+            
             // 执行任务调度心跳
             pulseSchedule();
 
@@ -71,6 +75,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
     public void pulse() {
         while (!pulseQueues.isEmpty()) {
+            
             ControllerHandler handler = null;
             Packet packet = null;
             boolean isRpc = false;
@@ -140,9 +145,11 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 if (!Objects.isNull(result)) {
                     HandlerExecutionChain.applyPostHandle(handler,packet, result);
                 }
+                
             } catch (StatusException se) {
                 try {
                     //如果是rpc报错，把错误返回给发送方。
+                    //TODO 这应该无论报什么错都返回， 不然调用方 hang 住了，虽然那边有超时，但不能都通过那控制。
                     if (isRpc) {
                         HandlerExecutionChain.applyPostHandle(handler,packet, null);
                     } else {
@@ -151,16 +158,14 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                         ExceptionUtil.sendStatusExceptionToClient(handler.getMethod().getReturnType(), packet, se);
                     }
                 } catch (Exception e) {
-                    log.error("", e);
+                    log.error("这不允许报错，哪个消息少加了条件？ 检查下rpc gate from哪些没加。", e);
                 }
-            } catch (ServerBusinessException sbe) {
-                // 业务报错，
-                log.error("", sbe);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 // 系统报错
                 log.error("", e);
             }
         }
+    
     }
 
 
@@ -177,7 +182,13 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
     public void pulseSchedule() {
         if (!schedulerList.isEmpty()) {
             ScheduleTask poll = schedulerList.poll();
-            poll.execute();
+            //TODO 这里急待统一异常处理方法的整理
+            try{
+                poll.execute();
+            }catch(Throwable t){
+                log.error("等整理",t);
+            }
+            
         }
     }
 }

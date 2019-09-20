@@ -2,10 +2,11 @@ package com.controller.resolver.resolverImpl;
 
 import com.controller.resolver.ActionMethodArgumentResolver;
 import com.controller.resolver.MethodParameter;
-import com.exception.exceptionNeedSendToClient.NoPlayerException;
+import com.exception.StatusException;
 import com.pojo.Packet;
 import com.pojo.Player;
 import com.service.OnlineService;
+import com.template.templates.type.TipType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class PlayerMethodArgumentResolver implements ActionMethodArgumentResolve
     public Object resolveArgument(MethodParameter parameter, Packet message) throws Exception {
         Player playerByUid = onlineService.getPlayerByUid(message.getUid());
         if (Objects.isNull(playerByUid)) {
-            throw new NoPlayerException("查询player时为空： uid为：" + message.getUid());
+            throw new StatusException(TipType.NoPlayer);
         }
 
         return playerByUid;

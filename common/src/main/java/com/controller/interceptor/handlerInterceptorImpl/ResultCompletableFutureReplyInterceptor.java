@@ -5,7 +5,6 @@ import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.controller.interceptor.HandlerInterceptor;
 import com.exception.StatusException;
-import com.exception.exceptionNeedSendToClient.ServerBusinessException;
 import com.pojo.Packet;
 import com.util.ExceptionUtil;
 import com.util.StringUtil;
@@ -34,21 +33,24 @@ public class ResultCompletableFutureReplyInterceptor implements HandlerIntercept
             if(throwable!=null){
                 if(throwable.getCause() instanceof StatusException){
                     StatusException se = (StatusException)throwable.getCause();
-                    //收到rpcRequest报的错
-                    if(StringUtil.contains(message.getRpc(),Constant.RPC_REQUEST)){
-                        message.setId(se.getTip());
-                        HandlerExecutionChain.applyPostHandle(handler,message, null);
-                        return;
-                    }
-    
-                    Type actualTypeArgument=((ParameterizedType)handler.getMethod().getGenericReturnType()).getActualTypeArguments()[0];
-                   
-                    //其它报错
-                    ExceptionUtil.sendStatusExceptionToClient((Class)actualTypeArgument,message,se);
-                    
-                    log.error("异步status",throwable);
-                }else if(throwable instanceof ServerBusinessException){
-                    log.error("异步业务报错", throwable);
+                    try{
+						//收到rpcRequest报的错
+						if(StringUtil.contains(message.getRpc(),Constant.RPC_REQUEST)){
+							message.setId(se.getTip());
+							HandlerExecutionChain.applyPostHandle(handler,message, null);
+							return;
+						}
+	
+						Type actualTypeArgument=((ParameterizedType)handler.getMethod().getGenericReturnType()).getActualTypeArguments()[0];
+	
+						//其它报错
+						ExceptionUtil.sendStatusExceptionToClient((Class)actualTypeArgument,message,se);
+	
+						log.error("异步status",throwable);
+	
+					}catch(Throwable e){
+						log.error("这不允许报错，看看忘添加的条件。 ",e);
+					}
                 }else {
                     log.error("异步报错", throwable);
                 }
