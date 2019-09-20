@@ -53,7 +53,7 @@ public class UnionModule extends BaseModule {
         return playerUnionEntry.getUnionId();
     }
 
-    public void createUnion() throws Throwable {
+    public void createUnion(String unionName) throws Throwable {
         //有帮派返回
         //条件不足返回
         //player 直接扣钱
@@ -61,7 +61,7 @@ public class UnionModule extends BaseModule {
         GameToBus gameToBus=rpcProxy.proxy(GameToBus.class,player.getPlayerId(),TypeEnum.ServerTypeEnum.BUS,player.getUid());
 
         //rpc调用要对结果进行异常判断，失败把之前的操作进行补偿
-        Tuple<UnionEntry, Throwable> result = gameToBus.createUnion(player.getPlayerId(), "123");
+        Tuple<UnionEntry, Throwable> result = gameToBus.createUnion(player.getPlayerId(), unionName);
         if (result.getValue() != null) {
             //player 把钱加回来
             throw result.getValue();

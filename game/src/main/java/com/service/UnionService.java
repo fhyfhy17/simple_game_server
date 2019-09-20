@@ -1,6 +1,7 @@
 package com.service;
 
 import com.annotation.EventListener;
+import com.pojo.Player;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,10 @@ public class UnionService extends BaseService {
         }
         return onlineService.getPlayer(playerId).getUnionModule().getUnionId();
     }
-    
+
+    public void createUnion(Player player, String unionName) throws Throwable {
+        player.getUnionModule().createUnion(unionName);
+    }
     
     @Override
     public void onStart() {
