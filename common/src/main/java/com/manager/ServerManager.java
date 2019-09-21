@@ -77,19 +77,25 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
     
     //服务器关闭
     public void onServerStop() {
+
+        try {
+            node.stop();
+        } catch (Exception e) {
+            log.error("", e);
+        }
+
+        //停两秒等残留的所有消息都执行完
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            log.error("", e);
+        }
+
         log.info("停服中 --------------------------------");
         //关闭service的stop方法
         if(!Objects.isNull(services)){
             services.forEach(BaseService::onClose);
         }
-    
-        try{
-            node.stop();
-        }
-        catch(Exception e){
-            log.error("",e);
-        }
-    
     
         log.info("开始强制入库");
         //强制入库

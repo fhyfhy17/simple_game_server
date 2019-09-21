@@ -16,6 +16,8 @@ public class GateServerManager extends ServerManager {
     @Autowired
     private GateVerticle verticle;
 
+    private NettyServer nettyServer;
+
     @Override
     public BaseVerticle getVerticle() {
         return verticle;
@@ -28,12 +30,14 @@ public class GateServerManager extends ServerManager {
         new Thread(()->{
             NettyServer nettyServer = new NettyServer();
             nettyServer.init(count);
+            this.nettyServer = nettyServer;
         }).start();
         setServerStatus(TypeEnum.ServerStatus.OPEN);
     }
     
     @Override
     public void onServerStop() {
+        this.nettyServer.stop();
         super.onServerStop();
         log.info("停服完成 -------------------------------------------------------");
     }
