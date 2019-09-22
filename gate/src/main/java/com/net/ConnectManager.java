@@ -8,8 +8,8 @@ import com.manager.ServerInfoManager;
 import com.net.handler.GateMessageHandler;
 import com.net.msg.LOGIN_MSG;
 import com.net.msg.Options;
-import com.pojo.Packet;
 import com.pojo.NettyMessage;
+import com.pojo.Packet;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @Slf4j
@@ -38,15 +38,15 @@ public class ConnectManager {
     @Value("${netty.needCheck}")
     private boolean needCheck;
 
-    @PostConstruct
-    public void startup() {
+
+    public void startup(AtomicInteger count) {
         m = new MessageGroup(TypeEnum.GroupEnum.GATE_GROUP.name()) {
             @Override
             public MessageThreadHandler getMessageThreadHandler() {
                 return new GateMessageHandler();
             }
         };
-        m.startup();
+        m.startup(count);
     }
 
     public Session initConnect(Channel channel) {

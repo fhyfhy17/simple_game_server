@@ -1,8 +1,9 @@
 package com.manager;
 
 import com.BaseVerticle;
+import com.GateReceiver;
 import com.GateVerticle;
-import com.enums.TypeEnum;
+import com.net.ConnectManager;
 import com.net.NettyServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,12 @@ public class GateServerManager extends ServerManager {
 
     private NettyServer nettyServer;
 
+    @Autowired
+    private ConnectManager connectManager;
+
+    @Autowired
+    private GateReceiver gateReceiver;
+
     @Override
     public BaseVerticle getVerticle() {
         return verticle;
@@ -32,7 +39,9 @@ public class GateServerManager extends ServerManager {
             nettyServer.init(count);
             this.nettyServer = nettyServer;
         }).start();
-        setServerStatus(TypeEnum.ServerStatus.OPEN);
+        connectManager.startup(count);
+        gateReceiver.startup(count);
+
     }
     
     @Override

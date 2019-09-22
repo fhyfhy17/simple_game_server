@@ -8,7 +8,7 @@ import com.handler.MessageThreadHandler;
 import com.pojo.Packet;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Component
@@ -17,15 +17,15 @@ public class GameReceiver extends BaseReceiver {
 
     private DisruptorEnum type = DisruptorEnum.GAME_MESSAGE;
 
-    @PostConstruct
-    public void startup() {
+    @Override
+    public void startup(AtomicInteger count) {
         m = new MessageGroup(TypeEnum.GroupEnum.GAME_GROUP.name()) {
             @Override
             public MessageThreadHandler getMessageThreadHandler() {
                 return new GameMessageHandler();
             }
         };
-        m.startup();
+        m.startup(count);
 
 //        DisruptorCreater disruptorCreater = new DisruptorCreater(type.name(), MessageWorkerHandler.class);
 //        disruptorCreater.create();

@@ -7,21 +7,21 @@ import com.net.handler.GateToClientMessageHandler;
 import com.pojo.Packet;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class GateReceiver extends BaseReceiver {
     private MessageGroup m;
 
-    @PostConstruct
-    public void startup() {
+    @Override
+    public void startup(AtomicInteger count) {
         m = new MessageGroup(TypeEnum.GroupEnum.GATE_TO_CLIENT_GROUP.name()) {
             @Override
             public MessageThreadHandler getMessageThreadHandler() {
                 return new GateToClientMessageHandler();
             }
         };
-        m.startup();
+        m.startup(count);
     }
 
     @Override

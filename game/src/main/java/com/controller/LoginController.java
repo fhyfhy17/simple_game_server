@@ -46,13 +46,13 @@ public class LoginController extends BaseController implements GameToGame, GameT
             // 通知bus登陆信息
             putOnline(new OnlineContext(playerInfo.getUid(), playerInfo.getPlayerId(), context.getGate(), ContextUtil.id));
             //这是调回通信线程
-            ContextHolder.getScheduleAble().scheduleOnce(new ScheduleTask() {
+            ContextHolder.getScheduleAble().schedulePeriod(new ScheduleTask() {
                 @Override
                 public void execute() {
                     log.info(Thread.currentThread().getName() + "   12345");
                     //throw new StatusException(3);
                 }
-            }, 4);
+            }, 4, 500);
             
             return builder.build();
         });

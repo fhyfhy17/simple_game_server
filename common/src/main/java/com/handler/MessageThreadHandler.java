@@ -39,17 +39,12 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
     public void run() {
         for (; ; ) {
             stopWatch.start();
-
             ContextHolder.setScheduleAble(this);
-
             // 执行心跳
             pulse();
-
             // 执行任务调度心跳
             pulseSchedule();
-
             stopWatch.stop();
-
             try {
                 if (stopWatch.getTime() < interval) {
                     Thread.sleep(interval - stopWatch.getTime());
@@ -95,7 +90,6 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                     rpcRequest = ProtostuffUtil.deserializeObject(packet.getData(), RpcRequest.class);
                     String key = rpcRequest.getClassName() + "_" + rpcRequest.getMethodName();
                     handler = ControllerFactory.getRpcControllerMap().get(key);
-                    //log.info("收到 RPC 请求时间  "+ System.currentTimeMillis());
                     if (handler == null) {
                         throw new IllegalStateException("收到不存在的Rpc消息，消息KEY=" + key);
                     }
@@ -174,7 +168,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
     @Override
     public void pulseSchedule() {
-        if (!schedulerList.isEmpty()) {
+        while (!schedulerList.isEmpty()) {
             ScheduleTask poll = schedulerList.poll();
             try {
                 poll.execute();

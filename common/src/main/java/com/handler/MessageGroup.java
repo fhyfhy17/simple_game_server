@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class MessageGroup {
@@ -27,7 +28,8 @@ public abstract class MessageGroup {
         this.handlerCount = handlerCount;
     }
 
-    public void startup() {
+    public void startup(AtomicInteger count) {
+        count.incrementAndGet();
         // 正在运行
         if (running) {
             return;
@@ -38,6 +40,7 @@ public abstract class MessageGroup {
 
         // 初始化hanlder
         this.initHandlers();
+        count.decrementAndGet();
     }
     
     public void initHandlers() {
@@ -55,6 +58,7 @@ public abstract class MessageGroup {
             }
             
         }
+
     }
 
     public abstract MessageThreadHandler getMessageThreadHandler();

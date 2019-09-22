@@ -1,8 +1,8 @@
 package com.manager;
 
 import com.BaseVerticle;
+import com.BusReceiver;
 import com.BusVerticle;
-import com.enums.TypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
@@ -15,6 +15,9 @@ public class BusServerManager extends ServerManager {
     @Autowired
     private BusVerticle verticle;
 
+    @Autowired
+    private BusReceiver busReceiver;
+
     @Override
     public BaseVerticle getVerticle() {
         return verticle;
@@ -23,8 +26,7 @@ public class BusServerManager extends ServerManager {
     @Override
     public void onServerStart() {
         super.onServerStart();
-        setServerStatus(TypeEnum.ServerStatus.OPEN);
-        //TODO 要改变zookeeper里的状态，不是open的不能发消息
+        busReceiver.startup(count);
     }
     
     @Override
