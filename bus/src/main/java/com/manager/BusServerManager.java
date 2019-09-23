@@ -26,7 +26,9 @@ public class BusServerManager extends ServerManager {
     @Override
     public void onServerStart() {
         super.onServerStart();
-        busReceiver.startup(count);
+        busReceiver.start();
+        //启动器计数
+        startWatch.count();
     }
     
     @Override

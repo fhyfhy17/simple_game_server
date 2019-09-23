@@ -44,10 +44,13 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
     private ScheduleAble threadSchedule;//专门一个的线程，放schedule的
     
     protected AtomicInteger count;
+    
+    protected StartWatch startWatch;
+    
     //服务器启动
     public void onServerStart() {
         //计数监控启动
-        StartWatch startWatch = new StartWatch();
+        startWatch = new StartWatch();
         count=startWatch.init();
     
         //启动node
@@ -69,9 +72,6 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
         //启动消息注册器
         ControllerFactory.init();
         
-        //启动器计数
-        startWatch.count();
-    
     }
     
     
@@ -111,7 +111,7 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
     /**
      * 启动监控器
      */
-    private class StartWatch{
+     class StartWatch{
         
         private AtomicInteger count;
         
@@ -140,7 +140,7 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
                         serverStatus = TypeEnum.ServerStatus.OPEN;
                     }
                 }
-            },2000,200);//由于计数器不是最后启动的，子类还有启动方法，所以可能count的数目不对，所以这里延迟两秒，后续看这个能放到子类不
+            },1000,200);
         }
         
     }

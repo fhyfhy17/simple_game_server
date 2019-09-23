@@ -8,8 +8,6 @@ import com.pojo.Packet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 @Component
 @Slf4j
@@ -18,7 +16,7 @@ public class BusReceiver extends BaseReceiver {
 
 
     @Override
-    public void startup(AtomicInteger count) {
+    public void start() {
         m = new MessageGroup(TypeEnum.GroupEnum.BUS_GROUP.name(), 1) {
             @Override
             public MessageThreadHandler getMessageThreadHandler() {
@@ -35,7 +33,7 @@ public class BusReceiver extends BaseReceiver {
 
 
         };
-        m.startup(count);
+        m.startup();
 
     }
 

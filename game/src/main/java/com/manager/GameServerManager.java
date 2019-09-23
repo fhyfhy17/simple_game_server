@@ -26,7 +26,9 @@ public class GameServerManager extends ServerManager {
     @Override
     public void onServerStart() {
         super.onServerStart();
-        gameReceiver.startup(count);
+        gameReceiver.start();
+        //启动器计数
+        startWatch.count();
     }
     
     @Override

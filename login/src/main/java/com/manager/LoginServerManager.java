@@ -26,7 +26,9 @@ public class LoginServerManager extends ServerManager {
     @Override
     public void onServerStart() {
         super.onServerStart();
-        loginReceiver.startup(count);
+        loginReceiver.start();
+        //启动器计数
+        startWatch.count();
     }
     
     @Override

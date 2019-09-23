@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @Slf4j
@@ -39,14 +38,14 @@ public class ConnectManager {
     private boolean needCheck;
 
 
-    public void startup(AtomicInteger count) {
+    public void start() {
         m = new MessageGroup(TypeEnum.GroupEnum.GATE_GROUP.name()) {
             @Override
             public MessageThreadHandler getMessageThreadHandler() {
                 return new GateMessageHandler();
             }
         };
-        m.startup(count);
+        m.startup();
     }
 
     public Session initConnect(Channel channel) {
