@@ -1,5 +1,6 @@
 package com;
 
+import com.manager.BattleServerManager;
 import com.util.SpringUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,8 +26,8 @@ public class Battle implements CommandLineRunner {
 
     @EventListener
     void afterSpringBoot(ApplicationReadyEvent event) throws Exception {
-        BusServerManager busServerManager = SpringUtils.getBean(BusServerManager.class);
-        busServerManager.onServerStart();
+        BattleServerManager battleServerManager = SpringUtils.getBean(BattleServerManager.class);
+        battleServerManager.onServerStart();
     }
 }
 
