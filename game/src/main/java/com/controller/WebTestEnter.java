@@ -4,6 +4,7 @@ import com.Constant;
 import com.config.ZookeeperConfig;
 import com.dao.*;
 import com.entry.PlayerEntry;
+import com.enums.TypeEnum;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.GameServerManager;
 import com.manager.ServerInfoManager;
@@ -12,8 +13,10 @@ import com.net.msg.LOGIN_MSG;
 import com.net.msg.Options;
 import com.node.RemoteNode;
 import com.pojo.Packet;
+import com.pojo.Tuple;
 import com.rpc.RpcProxy;
 import com.rpc.RpcRequest;
+import com.rpc.interfaces.gameToBus.GameToLogin;
 import com.service.PlayerService;
 import com.thread.schedule.ScheduleTask;
 import com.util.*;
@@ -77,7 +80,13 @@ public class WebTestEnter {
     public void poolThreadLocalTest() {
         playerService.testPool();
     }
-    
+
+    @RequestMapping("/test/testResponse")
+    public void testResponse() {
+        GameToLogin gameToLogin = rpcProxy.proxy(GameToLogin.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
+        Tuple<String, Throwable> objects = gameToLogin.testResponse(2222L);
+        log.info(objects.getKey());
+    }
 
     @RequestMapping("/test/self")
     public void self() {

@@ -2,16 +2,14 @@ package com.controller;
 
 
 import com.annotation.Controllor;
-import com.controller.interceptor.HandlerExecutionChain;
 import com.entry.UserEntry;
 import com.exception.StatusException;
 import com.net.msg.LOGIN_MSG;
-import com.pojo.Packet;
+import com.pojo.Tuple;
 import com.rpc.interfaces.gameToBus.GameToLogin;
 import com.service.LoginService;
 import com.template.templates.type.TipType;
 import com.util.CountUtil;
-import com.util.ExceptionUtil;
 import com.util.TipStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +55,9 @@ public class LoginController extends BaseController implements GameToLogin {
 
     }
 
-
+    @Controllor
+    @Override
+    public Tuple<String, Throwable> testResponse(Long playerId) {
+        return new Tuple<>(playerId + "abc", null);
+    }
 }

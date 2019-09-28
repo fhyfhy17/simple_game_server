@@ -10,7 +10,7 @@ public interface GameToBus {
 
     @Suspendable
     @Rpc(needResponse = true)
-    default Tuple<UnionEntry, Throwable> createUnion(long playerId, String unionName) {
+    default Tuple<UnionEntry, Throwable> createUnion(Long playerId, String unionName) {
         return null;
     }
 
@@ -23,7 +23,7 @@ public interface GameToBus {
 
     @Suspendable
     @Rpc(needResponse = false)
-    default Object offline(long uid) {
+    default Object offline(Long uid) {
         return null;
     }
 

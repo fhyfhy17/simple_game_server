@@ -27,7 +27,7 @@ public class BusOnlineController extends BaseController implements GameToBus {
 
     @Controllor
     @Override
-    public Object offline(long uid) {
+    public Object offline(Long uid) {
         busOnlineService.delOnlineContext(uid);
         return null;
     }

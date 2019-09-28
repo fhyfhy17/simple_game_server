@@ -18,7 +18,7 @@ public class UnionController extends BaseController implements GameToBus {
 
     @Controllor
     @Override
-    public Tuple<UnionEntry, Throwable> createUnion(long playerId, String unionName) {
+    public Tuple<UnionEntry, Throwable> createUnion(Long playerId, String unionName) {
         return unionService.createUnion(playerId, unionName);
     }
 }
