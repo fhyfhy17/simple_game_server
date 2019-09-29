@@ -28,6 +28,6 @@ public class BattleReceiver extends BaseReceiver {
     
     @Override
     public void onReceive(Packet message){
-    
+        m.messageReceived(message);
     }
 }

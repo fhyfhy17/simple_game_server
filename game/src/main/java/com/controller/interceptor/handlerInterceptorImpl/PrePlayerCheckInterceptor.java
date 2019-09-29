@@ -1,4 +1,4 @@
-package com.controller.resolver.resolverImpl;
+package com.controller.interceptor.handlerInterceptorImpl;
 
 import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerInterceptor;

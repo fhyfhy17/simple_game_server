@@ -28,11 +28,13 @@ public class TipType {
 
     public static final int UnionNameExist = 13;//帮派名字存在
 
+    public static final int NoBattlePlayer = 14;//没有BattlePlayer
+
 
     public static final int FIRST_ID = 1;//第一个ID
 
-    public static final int LAST_ID = 13;//最后一个ID
+    public static final int LAST_ID = 14;//最后一个ID
 
-    public static final int TYPE_SIZE = 13;//ID数量
+    public static final int TYPE_SIZE = 14;//ID数量
 
 }

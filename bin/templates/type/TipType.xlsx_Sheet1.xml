@@ -6,13 +6,14 @@
   <tr id="3" name="GoldLess" describe="金币不足" />
   <tr id="4" name="NoPlayer" describe="没有Player" />
   <tr id="5" name="accountError" describe="账户错误" />
-    <tr id="6" name="mailNoExist" describe="邮件不存在"/>
-    <tr id="7" name="bagNotEnough" describe="背包空间不足"/>
-    <tr id="8" name="mailHasItem" describe="邮件有物品，不能删除"/>
-    <tr id="9" name="NoUid" describe="没有用户"/>
-    <tr id="10" name="visitOverTime" describe="访问超时"/>
-    <tr id="11" name="SystemError" describe="系统错误"/>
-    <tr id="12" name="groupSendCantHaveReturnValue" describe="群发不能有返回值"/>
-    <tr id="13" name="unionNameExist" describe="帮派名字存在"/>
+  <tr id="6" name="mailNoExist" describe="邮件不存在" />
+  <tr id="7" name="bagNotEnough" describe="背包空间不足" />
+  <tr id="8" name="mailHasItem" describe="邮件有物品，不能删除" />
+  <tr id="9" name="NoUid" describe="没有用户" />
+  <tr id="10" name="visitOverTime" describe="访问超时" />
+  <tr id="11" name="SystemError" describe="系统错误" />
+  <tr id="12" name="groupSendCantHaveReturnValue" describe="群发不能有返回值" />
+  <tr id="13" name="unionNameExist" describe="帮派名字存在" />
+  <tr id="14" name="noBattlePlayer" describe="没有BattlePlayer" />
 </root>
 

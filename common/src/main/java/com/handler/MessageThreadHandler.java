@@ -12,6 +12,7 @@ import com.rpc.RpcRequest;
 import com.rpc.RpcResponse;
 import com.thread.schedule.ScheduleAble;
 import com.thread.schedule.ScheduleTask;
+import com.util.ControllorUtil;
 import com.util.ExceptionUtil;
 import com.util.ProtostuffUtil;
 import com.util.SpringUtils;
@@ -106,29 +107,10 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 if (!HandlerExecutionChain.applyPreHandle(packet, handler, m)) {
                     continue;
                 }
-                //
-                switch (handler.getFunType()) {
-                    case Fun0:
-                        result = (((Fun0) handler.getFun()).apply(handler.getAction()));
-                        break;
-                    case Fun1:
-                        result = (((Fun1) handler.getFun()).apply(handler.getAction(), m[0]));
-                        break;
-                    case Fun2:
-                        result = (((Fun2) handler.getFun()).apply(handler.getAction(), m[0], m[1]));
-                        break;
-                    case Fun3:
-                        result = (((Fun3) handler.getFun()).apply(handler.getAction(), m[0], m[1], m[2]));
-                        break;
-                    case Fun4:
-                        result = (((Fun4) handler.getFun()).apply(handler.getAction(), m[0], m[1], m[2], m[3]));
-                        break;
-                    default:
-                        System.out.println("default");
-                        break;
-                }
-
-
+            
+                //执行方法
+                result=ControllorUtil.handleMethod(handler,m);
+    
                 ////针对method的每个参数进行处理， 处理多参数,返回result（这是老的invoke执行controller 暂时废弃）
                 //Message result = (Message) com.handler.invokeForController(packet);
 
@@ -140,11 +122,9 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
             } catch (StatusException se) {
                 try {
                     //rpcRequest是不会报错的，因为每个rpcRequest都全部try好，包装错误到消息里了
-
                     //报错推到前端
                     if (handler != null)
                         ExceptionUtil.sendStatusExceptionToClient(handler.getMethod().getReturnType(), packet, se);
-
                 } catch (Exception e) {
                     log.error("这不允许报错，哪个消息少加了条件？ 检查下rpc gate from哪些没加。", e);
                 }

@@ -12,13 +12,15 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class RpcProxy {
     @Autowired
     private RpcHolder rpcHolder;
+    
+    private static final AtomicInteger requestId = new AtomicInteger(0);
 
     //rpc使用限制
     // 1 群发必须是不能改变属性的，无返回的。如果有类似于，帮派升级了给每个人加钱这种，即改变属性又群发的，必须改成发邮件
@@ -90,7 +92,7 @@ public class RpcProxy {
         String name = method.getDeclaringClass().getName();
         String methodName = method.getName();
         RpcRequest rpcRequest = new RpcRequest();
-        rpcRequest.setId(Constant.RPC_REQUEST + UUID.randomUUID().toString());
+        rpcRequest.setId(Constant.RPC_REQUEST +"_"+requestId.incrementAndGet()+"_"+name+"_"+methodName);
         rpcRequest.setClassName(name);
         rpcRequest.setMethodName(methodName);
         rpcRequest.setParameters(args);
