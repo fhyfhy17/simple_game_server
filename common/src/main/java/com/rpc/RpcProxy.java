@@ -92,7 +92,10 @@ public class RpcProxy {
         String name = method.getDeclaringClass().getName();
         String methodName = method.getName();
         RpcRequest rpcRequest = new RpcRequest();
-        rpcRequest.setId(Constant.RPC_REQUEST +"_"+requestId.incrementAndGet()+"_"+name+"_"+methodName);
+        rpcRequest.setId(Constant.RPC_REQUEST +"_"+requestId.getAndUpdate((val)->{
+            int newVal = val + 1;
+            return (Integer.MAX_VALUE == newVal) ? 0 : newVal;
+        })+"_"+name+"_"+methodName);
         rpcRequest.setClassName(name);
         rpcRequest.setMethodName(methodName);
         rpcRequest.setParameters(args);

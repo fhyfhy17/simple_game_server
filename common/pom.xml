@@ -42,7 +42,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>4.1.14</version>
+            <version>4.6.8</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
