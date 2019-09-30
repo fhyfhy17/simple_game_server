@@ -7,6 +7,7 @@ import com.mongoListener.MongoEventListener;
 import com.pojo.Player;
 import com.service.OnlineService;
 import com.template.templates.type.CenterMailType;
+import com.util.support.Cat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +40,7 @@ public class WebEnter {
         } else {
             List<Long> playerLongIds = Lists.newArrayList();
 
-            String[] split = playerIds.split(",");
+            String[] split = playerIds.split(Cat.comma);
             for (String s : split) {
                 playerLongIds.add(Long.parseLong(s));
             }

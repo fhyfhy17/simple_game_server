@@ -10,6 +10,7 @@ import com.util.ContextUtil;
 import com.util.StringUtil;
 import com.util.Util;
 import com.util.ZookeeperUtil;
+import com.util.support.Cat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -39,7 +40,7 @@ public class ZookeeperConfig extends BaseService{
     public CuratorFramework getCurator() {
         RetryPolicy retryPolicy = new RetryForever(200);
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-                .connectString(StringUtil.getSplitePrefix(ContextUtil.zkIpPort, ":"))
+                .connectString(StringUtil.getSplitePrefix(ContextUtil.zkIpPort,Cat.colon))
                 .namespace("sgs")
                 .sessionTimeoutMs(60 * 1000)
                 .retryPolicy(retryPolicy).build();

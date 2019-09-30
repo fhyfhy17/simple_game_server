@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.util.StringUtil;
 import com.util.Util;
+import com.util.support.Cat;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
@@ -65,7 +66,7 @@ public class CacheCenter {
     public void clearWhenDeleteAllForPlayer(long id) {
         synchronized (lock) {
             for (String key : cacheMap.keySet()) {
-                if (StringUtil.getSpliteSuffix(key, ":").equals(String.valueOf(id))) {
+                if (StringUtil.getSpliteSuffix(key,Cat.colon).equals(String.valueOf(id))) {
                     cacheMap.remove(key);
                 }
             }

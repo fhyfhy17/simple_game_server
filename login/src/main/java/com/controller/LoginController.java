@@ -10,7 +10,7 @@ import com.rpc.interfaces.gameToBus.GameToLogin;
 import com.service.LoginService;
 import com.template.templates.type.TipType;
 import com.util.CountUtil;
-import com.util.TipStatus;
+import com.util.support.TipStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

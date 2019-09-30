@@ -3,6 +3,7 @@ package com.aop;
 import com.alibaba.fastjson.JSON;
 import com.google.protobuf.Message;
 import com.pojo.Player;
+import com.util.support.Cat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -71,7 +72,7 @@ public class LogAspect {
         for (int i = 0; i < params.length; i++) {
             Object param = params[i];
             sb.append(parseObject(param));
-            sb.append(";");
+            sb.append(Cat.semicolon);
         }
         return sb.toString();
     }

@@ -5,7 +5,7 @@ import com.enums.TypeEnum;
 import com.pojo.ServerInfo;
 import com.util.ContextUtil;
 import com.util.IpUtil;
-import com.util.Snowflake;
+import com.util.support.Snowflake;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

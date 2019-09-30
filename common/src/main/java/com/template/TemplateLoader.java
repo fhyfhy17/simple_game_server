@@ -1,6 +1,7 @@
 package com.template;
 
 import com.template.templates.AbstractTemplate;
+import com.util.support.Cat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Attribute;
@@ -110,15 +111,15 @@ public class TemplateLoader {
                     }
                     if (typeClass == String.class) {
                         if (wrapCount == 0) {
-                            String[] vs = fieldValue.split(",");
+                            String[] vs = fieldValue.split(Cat.comma);
                             List<String> list = new ArrayList<>();
                             Collections.addAll(list, vs);
                             val = list;
                         } else {
                             List<List<String>> list = new ArrayList<>();
-                            String[] vs = fieldValue.split(";");
+                            String[] vs = fieldValue.split(Cat.semicolon);
                             for (String v : vs) {
-                                String[] temp = v.split(",");
+                                String[] temp = v.split(Cat.comma);
                                 List<String> a = new ArrayList<>();
                                 Collections.addAll(a, temp);
                                 list.add(a);
@@ -127,17 +128,17 @@ public class TemplateLoader {
                         }
                     } else if (typeClass == Integer.class) {
                         if (wrapCount == 0) {
-                            String[] vs = fieldValue.split(",");
+                            String[] vs = fieldValue.split(Cat.comma);
 
                             if (vs.length > 0) {
                                 val = Arrays.stream(vs).filter(v -> !(null == v) && !"".equals(v.trim())).map(Integer::parseInt).collect(Collectors.toList());
                             }
                         } else {
                             List<List<Integer>> list = new ArrayList<>();
-                            String[] vs = fieldValue.split(";");
+                            String[] vs = fieldValue.split(Cat.semicolon);
                             for (String v : vs) {
                                 List<Integer> c = new ArrayList<>();
-                                String[] temp = v.split(",");
+                                String[] temp = v.split(Cat.comma);
                                 for (String a : temp) {
                                     if (a != null && !"".equals(a.trim())) {
                                         c.add(Integer.parseInt(a));
@@ -150,16 +151,16 @@ public class TemplateLoader {
 
                     } else if (typeClass == Double.class) {
                         if (wrapCount == 0) {
-                            String[] vs = fieldValue.split(",");
+                            String[] vs = fieldValue.split(Cat.comma);
                             if (vs.length > 0) {
                                 val = Arrays.stream(vs).filter(v -> !(null == v) && !"".equals(v.trim())).map(TemplateLoader::formatDouble).collect(Collectors.toList());
                             }
                         } else {
                             List<List<Double>> list = new ArrayList<>();
-                            String[] vs = fieldValue.split(";");
+                            String[] vs = fieldValue.split(Cat.semicolon);
                             for (String v : vs) {
                                 List<Double> c = new ArrayList<>();
-                                String[] temp = v.split(",");
+                                String[] temp = v.split(Cat.comma);
                                 for (String a : temp) {
                                     if (a != null && !"".equals(a.trim())) {
                                         c.add(formatDouble(a));

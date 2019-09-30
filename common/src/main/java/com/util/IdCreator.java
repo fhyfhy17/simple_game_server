@@ -2,6 +2,7 @@ package com.util;
 
 
 import com.entry.BaseEntry;
+import com.util.support.Snowflake;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.util;
+package com.util.support;
 
 import com.net.msg.COMMON_MSG;
 
