@@ -33,7 +33,7 @@ public class ResultCompletableFutureReplyInterceptor implements HandlerIntercept
                     StatusException se = (StatusException)throwable.getCause();
                     try{
 						Type actualTypeArgument=((ParameterizedType)handler.getMethod().getGenericReturnType()).getActualTypeArguments()[0];
-	
+						//Type actualTypeArgument =TypeUtil.getTypeArgument(TypeUtil.getReturnType(handler.getMethod())); 额，还没上面简洁呢
 						ExceptionUtil.sendStatusExceptionToClient((Class)actualTypeArgument,message,se);
 	
 						log.error("异步status",throwable);
