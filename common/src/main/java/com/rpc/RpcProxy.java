@@ -94,7 +94,7 @@ public class RpcProxy {
         RpcRequest rpcRequest = new RpcRequest();
         rpcRequest.setId(Constant.RPC_REQUEST +"_"+requestId.getAndUpdate((val)->{
             int newVal = val + 1;
-            return (Integer.MAX_VALUE == newVal) ? 0 : newVal;
+            return (Integer.MIN_VALUE == newVal) ? 0 : newVal;
         })+"_"+name+"_"+methodName);
         rpcRequest.setClassName(name);
         rpcRequest.setMethodName(methodName);
