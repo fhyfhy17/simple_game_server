@@ -67,6 +67,7 @@ public class MailService extends BaseService {
     /**
      * 世界邮件的接收处理
      */
+    //TODO  这里要考虑一下是哪个消息线程的消息 ，如果从gm来，那接收的是消息线程中的一个，用这个线程直接操作玩家，不对
     public void onCenterMail(CenterMailEntry centerMailEntry){
         Map<Long,Player> playerMap=onlineService.getPlayerMap();
         switch(centerMailEntry.getType()){
