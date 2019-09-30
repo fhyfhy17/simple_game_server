@@ -127,7 +127,7 @@ public class ControllerFactory {
             site2 = LambdaMetafactory.metafactory(lookup,
                     "apply",
                     MethodType.methodType(Fun0.class),
-                    MethodType.methodType(method.getReturnType(), controller.getClass()),
+                    MethodType.methodType(isVoid?void.class:Object.class,Object.class),
                     lookup.findVirtual(controller.getClass(), method.getName(), MethodType.methodType(method.getReturnType())),
                     MethodType.methodType(method.getReturnType(), controller.getClass())
             );
@@ -152,7 +152,7 @@ public class ControllerFactory {
             site2 = LambdaMetafactory.metafactory(lookup,
                     "apply",
                     MethodType.methodType(Fun1.class),
-                    MethodType.methodType(method.getReturnType(), controller.getClass(), types[0]),
+                    MethodType.methodType(isVoid?void.class:Object.class,Object.class,Object.class),
                     lookup.findVirtual(controller.getClass(), method.getName(), MethodType.methodType(method.getReturnType(), types[0])),
                     MethodType.methodType(method.getReturnType(), controller.getClass(), types[0])
             );
@@ -177,7 +177,7 @@ public class ControllerFactory {
             site2 = LambdaMetafactory.metafactory(lookup,
                     "apply",
                     MethodType.methodType(Fun2.class),
-                    MethodType.methodType(method.getReturnType(), controller.getClass(), types[0], types[1]),
+					MethodType.methodType(isVoid?void.class:Object.class,Object.class,Object.class,Object.class),
                     lookup.findVirtual(controller.getClass(), method.getName(), MethodType.methodType(method.getReturnType(), types[0], types[1])),
                     MethodType.methodType(method.getReturnType(), controller.getClass(), types[0], types[1])
             );
@@ -202,7 +202,7 @@ public class ControllerFactory {
             site2 = LambdaMetafactory.metafactory(lookup,
                     "apply",
                     MethodType.methodType(Fun3.class),
-                    MethodType.methodType(method.getReturnType(), controller.getClass(), types[0], types[1], types[2]),
+					MethodType.methodType(isVoid?void.class:Object.class,Object.class,Object.class,Object.class,Object.class),
                     lookup.findVirtual(controller.getClass(), method.getName(), MethodType.methodType(method.getReturnType(), types[0], types[1], types[2])),
                     MethodType.methodType(method.getReturnType(), controller.getClass(), types[0], types[1], types[2])
             );
@@ -226,7 +226,7 @@ public class ControllerFactory {
             site2 = LambdaMetafactory.metafactory(lookup,
                     "apply",
                     MethodType.methodType(Fun4.class),
-                    MethodType.methodType(method.getReturnType(), controller.getClass(), types[0], types[1], types[2], types[3]),
+					MethodType.methodType(isVoid?void.class:Object.class,Object.class,Object.class,Object.class,Object.class,Object.class),
                     lookup.findVirtual(controller.getClass(), method.getName(), MethodType.methodType(method.getReturnType(), types[0], types[1], types[2], types[3])),
                     MethodType.methodType(method.getReturnType(), controller.getClass(), types[0], types[1], types[2], types[3])
             );
@@ -243,6 +243,9 @@ public class ControllerFactory {
     }
     
     
+    /**
+     * jdk的修改后的处理方法，还未看明白
+     * */
     @SuppressWarnings("unchecked")
     public static BiConsumer createSetter(final MethodHandles.Lookup lookup,
                                           final MethodHandle setter,
