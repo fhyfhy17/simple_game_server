@@ -2,6 +2,7 @@ package com.handler;
 
 import com.enums.TypeEnum;
 import com.pojo.Packet;
+import com.util.ProtoUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -26,7 +27,7 @@ public class LoginMessageGroup extends MessageGroup{
 	
 	@Override
 	public Object hashKey(Packet msg){
-		if (msg.getId() == 10001) {
+		if (msg.getId() == ProtoUtil.getLoginMessageId()) {
 			return msg.getRpc();
 		} else {
 			return msg.getUid();

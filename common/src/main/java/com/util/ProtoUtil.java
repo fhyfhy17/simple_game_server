@@ -76,4 +76,9 @@ public class ProtoUtil {
     public static  int protoGetMessageId(Message message){
         return message.getDescriptorForType().getOptions().getExtension(Options.messageId);
     }
+    
+    public static int getLoginMessageId(){
+        //return LOGIN_MSG.CTG_LOGIN.getDescriptor().getOptions().getExtension(Options.messageId); //这么取耗性能，写死
+        return 10001;
+    }
 }

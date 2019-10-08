@@ -1,14 +1,12 @@
 package com.net;
 
 import com.enums.TypeEnum;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.handler.MessageGroup;
 import com.manager.ServerInfoManager;
 import com.net.handler.GateMessageGroup;
-import com.net.msg.LOGIN_MSG;
-import com.net.msg.Options;
 import com.pojo.NettyMessage;
 import com.pojo.Packet;
+import com.util.ProtoUtil;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
@@ -99,20 +97,14 @@ public class ConnectManager {
     }
 
 
-    public void dealUid(Session session, NettyMessage message) throws InvalidProtocolBufferException {
+    public boolean dealUid(Session session, NettyMessage message) {
         // 登录流程
-        if (message.getId() == LOGIN_MSG.CTG_LOGIN.getDescriptor().getOptions().getExtension(Options.messageId)) {
-            //没有uid的时候，先用session做 区分，hash 分发到login
-            LOGIN_MSG.CTG_LOGIN.Builder cts_login = LOGIN_MSG.CTG_LOGIN.parseFrom(message.getData()).toBuilder();
-            cts_login.setSessionId(session.getId());
-            message.setData(cts_login.build().toByteArray());
-        } else {
-            if (session.getUid() == 0) {
-                //TODO 返回消息，请登录
-                return;
-            }
-            message.setUid(session.getUid());
+        if (message.getId() !=ProtoUtil.getLoginMessageId() && session.getUid() == 0) {
+            //TODO 返回消息，请登录
+            return false;
         }
+        message.setUid(session.getUid());
+        return true;
     }
 
     /**
@@ -131,21 +123,13 @@ public class ConnectManager {
                 return false;
             }
         }
-        try {
-            //处理Uid
-            dealUid(session, message);
-        } catch (InvalidProtocolBufferException e) {
-            log.error("", e);
-            return false;
-        }
-
-        return true;
+        //处理Uid
+        return dealUid(session, message);
 
         // 解密  //TODO 加密解密
 //        if (session.getPacketEncrypt().isEncrypt()) {
 //            session.getPacketEncrypt().decode(packet.getByteArray(), packet.getIncode());
 //        }
-
 
     }
 

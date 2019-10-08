@@ -28,7 +28,7 @@ public class LoginController extends BaseController implements GameToLogin {
     public CompletableFuture<LOGIN_MSG.GTC_LOGIN> login(UidContext context, LOGIN_MSG.CTG_LOGIN req) throws StatusException {
         String username = req.getUsername();
         String password = req.getPassword();
-        String sessionId = req.getSessionId();
+        String sessionId = context.getRpc();//rpc替代sessionId
 
         LOGIN_MSG.GTC_LOGIN.Builder builder = LOGIN_MSG.GTC_LOGIN.newBuilder();
         CompletableFuture<UserEntry> user = loginService.login(username, password);
