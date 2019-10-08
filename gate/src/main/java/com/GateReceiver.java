@@ -1,9 +1,7 @@
 package com;
 
-import com.enums.TypeEnum;
 import com.handler.MessageGroup;
-import com.handler.MessageThreadHandler;
-import com.net.handler.GateToClientMessageHandler;
+import com.net.handler.GateToClientMessageGroup;
 import com.pojo.Packet;
 import org.springframework.stereotype.Component;
 
@@ -13,12 +11,7 @@ public class GateReceiver extends BaseReceiver {
 
     @Override
     public void start() {
-        m = new MessageGroup(TypeEnum.GroupEnum.GATE_TO_CLIENT_GROUP.name()) {
-            @Override
-            public MessageThreadHandler getMessageThreadHandler() {
-                return new GateToClientMessageHandler();
-            }
-        };
+        m = new GateToClientMessageGroup();
         m.startup();
     }
 

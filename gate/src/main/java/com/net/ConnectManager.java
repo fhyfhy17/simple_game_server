@@ -3,9 +3,8 @@ package com.net;
 import com.enums.TypeEnum;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.handler.MessageGroup;
-import com.handler.MessageThreadHandler;
 import com.manager.ServerInfoManager;
-import com.net.handler.GateMessageHandler;
+import com.net.handler.GateMessageGroup;
 import com.net.msg.LOGIN_MSG;
 import com.net.msg.Options;
 import com.pojo.NettyMessage;
@@ -39,12 +38,7 @@ public class ConnectManager {
 
 
     public void start() {
-        m = new MessageGroup(TypeEnum.GroupEnum.GATE_GROUP.name()) {
-            @Override
-            public MessageThreadHandler getMessageThreadHandler() {
-                return new GateMessageHandler();
-            }
-        };
+        m = new GateMessageGroup();
         m.startup();
     }
 
@@ -147,7 +141,7 @@ public class ConnectManager {
 
         return true;
 
-        // 解密  //TODO 加解密甚是爽朗
+        // 解密  //TODO 加密解密
 //        if (session.getPacketEncrypt().isEncrypt()) {
 //            session.getPacketEncrypt().decode(packet.getByteArray(), packet.getIncode());
 //        }

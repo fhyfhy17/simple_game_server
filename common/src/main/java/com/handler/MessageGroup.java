@@ -1,7 +1,5 @@
 package com.handler;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.net.msg.LOGIN_MSG;
 import com.pojo.Packet;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,23 +58,16 @@ public abstract class MessageGroup {
 
     public abstract MessageThreadHandler getMessageThreadHandler();
     
+    public abstract Object hashKey(Packet msg);
+    
     public  MessageThreadHandler getUnionMessageThreadHandler(){
         return null;
     }
     
     public void messageReceived(Packet msg) {
-        int index = 0;
 
         // 分配执行器执行
-        if (msg.getId() == 10001) {
-            try {
-                index = Math.abs(LOGIN_MSG.CTG_LOGIN.parseFrom(msg.getData()).getSessionId().hashCode()) % handlerCount;
-            } catch (InvalidProtocolBufferException e) {
-                log.error("", e);
-            }
-        } else {
-            index = (int) (Math.abs(msg.getUid()) % handlerCount);
-        }
+        int index = Math.abs(hashKey(msg).hashCode()) % handlerCount;
 
         MessageThreadHandler handler = handlerList.get(index);
         handler.messageReceived(msg);
