@@ -149,7 +149,7 @@ public class ConnectManager {
      * @return
      */
     //TODO 待写
-    private boolean loginMultipleCheck(String uid, String sessionId) {
+    private boolean loginMultipleCheck(long uid, String sessionId) {
         if (userIdToConnectMap.containsKey(uid)) {
             Session session = userIdToConnectMap.get(uid);
             if (session != null) {

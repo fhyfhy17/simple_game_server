@@ -32,7 +32,6 @@ public class ResultRpcReplyInterceptor implements HandlerInterceptor {
                         ProtostuffUtil.serializeObject(rpcResponse, RpcResponse.class),
                         message.getUid(),
                         ContextUtil.id));
-        //log.info("响应 发回去 的  "+ System.currentTimeMillis());
     }
 
 }
