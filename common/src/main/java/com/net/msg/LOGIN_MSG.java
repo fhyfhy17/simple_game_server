@@ -37,16 +37,6 @@ public final class LOGIN_MSG {
      */
     com.google.protobuf.ByteString
         getPasswordBytes();
-
-    /**
-     * <code>string sessionId = 3;</code>
-     */
-    java.lang.String getSessionId();
-    /**
-     * <code>string sessionId = 3;</code>
-     */
-    com.google.protobuf.ByteString
-        getSessionIdBytes();
   }
   /**
    * Protobuf type {@code CTG_LOGIN}
@@ -63,7 +53,6 @@ public final class LOGIN_MSG {
     private CTG_LOGIN() {
       username_ = "";
       password_ = "";
-      sessionId_ = "";
     }
 
     @java.lang.Override
@@ -100,12 +89,6 @@ public final class LOGIN_MSG {
               java.lang.String s = input.readStringRequireUtf8();
 
               password_ = s;
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              sessionId_ = s;
               break;
             }
             default: {
@@ -208,40 +191,6 @@ public final class LOGIN_MSG {
       }
     }
 
-    public static final int SESSIONID_FIELD_NUMBER = 3;
-    private volatile java.lang.Object sessionId_;
-    /**
-     * <code>string sessionId = 3;</code>
-     */
-    public java.lang.String getSessionId() {
-      java.lang.Object ref = sessionId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        sessionId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string sessionId = 3;</code>
-     */
-    public com.google.protobuf.ByteString
-        getSessionIdBytes() {
-      java.lang.Object ref = sessionId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        sessionId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -262,9 +211,6 @@ public final class LOGIN_MSG {
       if (!getPasswordBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, password_);
       }
-      if (!getSessionIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, sessionId_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -279,9 +225,6 @@ public final class LOGIN_MSG {
       }
       if (!getPasswordBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, password_);
-      }
-      if (!getSessionIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, sessionId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -303,8 +246,6 @@ public final class LOGIN_MSG {
           .equals(other.getUsername());
       result = result && getPassword()
           .equals(other.getPassword());
-      result = result && getSessionId()
-          .equals(other.getSessionId());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -320,8 +261,6 @@ public final class LOGIN_MSG {
       hash = (53 * hash) + getUsername().hashCode();
       hash = (37 * hash) + PASSWORD_FIELD_NUMBER;
       hash = (53 * hash) + getPassword().hashCode();
-      hash = (37 * hash) + SESSIONID_FIELD_NUMBER;
-      hash = (53 * hash) + getSessionId().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -459,8 +398,6 @@ public final class LOGIN_MSG {
 
         password_ = "";
 
-        sessionId_ = "";
-
         return this;
       }
 
@@ -489,7 +426,6 @@ public final class LOGIN_MSG {
         com.net.msg.LOGIN_MSG.CTG_LOGIN result = new com.net.msg.LOGIN_MSG.CTG_LOGIN(this);
         result.username_ = username_;
         result.password_ = password_;
-        result.sessionId_ = sessionId_;
         onBuilt();
         return result;
       }
@@ -544,10 +480,6 @@ public final class LOGIN_MSG {
         }
         if (!other.getPassword().isEmpty()) {
           password_ = other.password_;
-          onChanged();
-        }
-        if (!other.getSessionId().isEmpty()) {
-          sessionId_ = other.sessionId_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -713,75 +645,6 @@ public final class LOGIN_MSG {
   checkByteStringIsUtf8(value);
         
         password_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object sessionId_ = "";
-      /**
-       * <code>string sessionId = 3;</code>
-       */
-      public java.lang.String getSessionId() {
-        java.lang.Object ref = sessionId_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          sessionId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string sessionId = 3;</code>
-       */
-      public com.google.protobuf.ByteString
-          getSessionIdBytes() {
-        java.lang.Object ref = sessionId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          sessionId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string sessionId = 3;</code>
-       */
-      public Builder setSessionId(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        sessionId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string sessionId = 3;</code>
-       */
-      public Builder clearSessionId() {
-        
-        sessionId_ = getDefaultInstance().getSessionId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string sessionId = 3;</code>
-       */
-      public Builder setSessionIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        sessionId_ = value;
         onChanged();
         return this;
       }
@@ -9544,26 +9407,26 @@ public final class LOGIN_MSG {
   static {
     java.lang.String[] descriptorData = {
       "\n\013login.proto\032\roptions.proto\032\014common.pro" +
-      "to\"I\n\tCTG_LOGIN\022\020\n\010username\030\001 \001(\t\022\020\n\010pas" +
-      "sword\030\002 \001(\t\022\021\n\tsessionId\030\003 \001(\t:\005\230\202\031\221N\"K\n" +
-      "\tGTC_LOGIN\022\013\n\003uid\030\001 \001(\003\022\027\n\006result\030\002 \001(\0132" +
-      "\007.Status\022\021\n\tsessionId\030\003 \001(\t:\005\230\202\031\222N\"\022\n\tCT" +
-      "G_HEART:\005\230\202\031\223N\"\022\n\tGTC_HEART:\005\230\202\031\224N\"\037\n\010CT" +
-      "G_TEST\022\014\n\004word\030\001 \001(\t:\005\230\202\031\225N\"\037\n\010GTC_TEST\022" +
-      "\014\n\004word\030\001 \001(\t:\005\230\202\031\226N\"\033\n\022LTGAME_RESET_COU" +
-      "NT:\005\230\202\031\227N\"\030\n\017CTG_PLAYER_LIST:\005\230\202\031\230N\"7\n\017G" +
-      "TC_PLAYER_LIST\022\035\n\007players\030\001 \003(\0132\014.PLAYER" +
-      "_INFO:\005\230\202\031\231N\"W\n\013PLAYER_INFO\022\013\n\003uid\030\001 \001(\003" +
-      "\022\020\n\010playerId\030\002 \001(\003\022\r\n\005level\030\003 \001(\005\022\014\n\004nam" +
-      "e\030\004 \001(\t\022\014\n\004coin\030\005 \001(\003\"0\n\025CTG_GAME_LOGIN_" +
-      "PLAYER\022\020\n\010playerId\030\001 \001(\003:\005\230\202\031\232N\"Y\n\025GTC_G" +
-      "AME_LOGIN_PLAYER\022 \n\nplayerInfo\030\001 \001(\0132\014.P" +
-      "LAYER_INFO\022\027\n\006result\030\002 \001(\0132\007.Status:\005\230\202\031" +
-      "\233N\"\027\n\016CTG_PlayerInfo:\005\230\202\031\234N\"9\n\016GTC_Playe" +
-      "rInfo\022 \n\nplayerInfo\030\001 \001(\0132\014.PLAYER_INFO:" +
-      "\005\230\202\031\235N\"+\n\025GTC_UNIFIED_EXCEPTION\022\013\n\003msg\030\001" +
-      " \001(\t:\005\230\202\031\236N\"\037\n\tTEST_TIME\022\013\n\003msg\030\001 \001(\t:\005\230" +
-      "\202\031\237NB\030\n\013com.net.msgB\tLOGIN_MSGb\006proto3"
+      "to\"6\n\tCTG_LOGIN\022\020\n\010username\030\001 \001(\t\022\020\n\010pas" +
+      "sword\030\002 \001(\t:\005\230\202\031\221N\"K\n\tGTC_LOGIN\022\013\n\003uid\030\001" +
+      " \001(\003\022\027\n\006result\030\002 \001(\0132\007.Status\022\021\n\tsession" +
+      "Id\030\003 \001(\t:\005\230\202\031\222N\"\022\n\tCTG_HEART:\005\230\202\031\223N\"\022\n\tG" +
+      "TC_HEART:\005\230\202\031\224N\"\037\n\010CTG_TEST\022\014\n\004word\030\001 \001(" +
+      "\t:\005\230\202\031\225N\"\037\n\010GTC_TEST\022\014\n\004word\030\001 \001(\t:\005\230\202\031\226" +
+      "N\"\033\n\022LTGAME_RESET_COUNT:\005\230\202\031\227N\"\030\n\017CTG_PL" +
+      "AYER_LIST:\005\230\202\031\230N\"7\n\017GTC_PLAYER_LIST\022\035\n\007p" +
+      "layers\030\001 \003(\0132\014.PLAYER_INFO:\005\230\202\031\231N\"W\n\013PLA" +
+      "YER_INFO\022\013\n\003uid\030\001 \001(\003\022\020\n\010playerId\030\002 \001(\003\022" +
+      "\r\n\005level\030\003 \001(\005\022\014\n\004name\030\004 \001(\t\022\014\n\004coin\030\005 \001" +
+      "(\003\"0\n\025CTG_GAME_LOGIN_PLAYER\022\020\n\010playerId\030" +
+      "\001 \001(\003:\005\230\202\031\232N\"Y\n\025GTC_GAME_LOGIN_PLAYER\022 \n" +
+      "\nplayerInfo\030\001 \001(\0132\014.PLAYER_INFO\022\027\n\006resul" +
+      "t\030\002 \001(\0132\007.Status:\005\230\202\031\233N\"\027\n\016CTG_PlayerInf" +
+      "o:\005\230\202\031\234N\"9\n\016GTC_PlayerInfo\022 \n\nplayerInfo" +
+      "\030\001 \001(\0132\014.PLAYER_INFO:\005\230\202\031\235N\"+\n\025GTC_UNIFI" +
+      "ED_EXCEPTION\022\013\n\003msg\030\001 \001(\t:\005\230\202\031\236N\"\037\n\tTEST" +
+      "_TIME\022\013\n\003msg\030\001 \001(\t:\005\230\202\031\237NB\030\n\013com.net.msg" +
+      "B\tLOGIN_MSGb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -9584,7 +9447,7 @@ public final class LOGIN_MSG {
     internal_static_CTG_LOGIN_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_CTG_LOGIN_descriptor,
-        new java.lang.String[] { "Username", "Password", "SessionId", });
+        new java.lang.String[] { "Username", "Password", });
     internal_static_GTC_LOGIN_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_GTC_LOGIN_fieldAccessorTable = new

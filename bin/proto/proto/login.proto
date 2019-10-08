@@ -9,7 +9,6 @@ message CTG_LOGIN{
 	option(messageId) = 10001;
 	string username = 1;
 	string password =2;
-	string sessionId = 3;
 }
 message GTC_LOGIN{
 	option(messageId) = 10002;

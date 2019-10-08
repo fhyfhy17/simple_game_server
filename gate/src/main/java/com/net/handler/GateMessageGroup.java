@@ -4,7 +4,9 @@ import com.enums.TypeEnum;
 import com.handler.MessageGroup;
 import com.handler.MessageThreadHandler;
 import com.pojo.Packet;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class GateMessageGroup extends MessageGroup{
 	
 	public GateMessageGroup(){
@@ -26,7 +28,11 @@ public class GateMessageGroup extends MessageGroup{
 	
 	@Override
 	public Object hashKey(Packet msg){
-		return msg.getUid();
+		if (msg.getId() == 10001) {
+			return msg.getRpc();
+		} else {
+			return msg.getUid();
+		}
 	}
 	
 	

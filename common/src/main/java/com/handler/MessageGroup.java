@@ -34,7 +34,7 @@ public abstract class MessageGroup {
         // 开始启动
         running = true;
 
-        // 初始化hanlder
+        // 初始化handler
         this.initHandlers();
     }
     
@@ -57,7 +57,7 @@ public abstract class MessageGroup {
     }
 
     public abstract MessageThreadHandler getMessageThreadHandler();
-    
+   
     public abstract Object hashKey(Packet msg);
     
     public  MessageThreadHandler getUnionMessageThreadHandler(){

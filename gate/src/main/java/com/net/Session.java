@@ -23,4 +23,8 @@ public class Session {
 
         channel.writeAndFlush(msg);
     }
+    
+    public boolean logined(){
+        return uid != 0;
+    }
 }

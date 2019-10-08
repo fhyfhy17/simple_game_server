@@ -151,6 +151,9 @@ public class ConnectManager {
 
     public void dealMessage(Session session, NettyMessage message) {
         if (checkMessage(session, message)) {
+            if(!session.logined()){
+                message.setRpc(session.getId());//借用rpc字段存sessionId用来分消息
+            }
             m.messageReceived(message);
         }
     }
