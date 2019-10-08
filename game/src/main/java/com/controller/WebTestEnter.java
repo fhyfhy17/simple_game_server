@@ -16,7 +16,7 @@ import com.pojo.Packet;
 import com.pojo.Tuple;
 import com.rpc.RpcProxy;
 import com.rpc.RpcRequest;
-import com.rpc.interfaces.gameToBus.GameToLogin;
+import com.rpc.interfaces.player.GameToLogin;
 import com.service.PlayerService;
 import com.thread.schedule.ScheduleTask;
 import com.util.*;
@@ -94,7 +94,7 @@ public class WebTestEnter {
         RpcRequest rpcRequest = new RpcRequest();
 
         rpcRequest.setId(Constant.RPC_REQUEST + UUID.randomUUID().toString());
-        rpcRequest.setClassName("com.rpc.interfaces.gameToBus.GameToGame");
+        rpcRequest.setClassName("com.rpc.interfaces.player.GameToGame");
         rpcRequest.setMethodName("self");
         rpcRequest.setParameters(new Object[]{"a"});
 

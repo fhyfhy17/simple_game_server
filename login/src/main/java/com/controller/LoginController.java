@@ -6,7 +6,7 @@ import com.entry.UserEntry;
 import com.exception.StatusException;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.Tuple;
-import com.rpc.interfaces.gameToBus.GameToLogin;
+import com.rpc.interfaces.player.GameToLogin;
 import com.service.LoginService;
 import com.template.templates.type.TipType;
 import com.util.CountUtil;

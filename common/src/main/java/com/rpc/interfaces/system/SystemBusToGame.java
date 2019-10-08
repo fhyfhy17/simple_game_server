@@ -1,14 +1,13 @@
-package com.rpc.interfaces.gameToBus;
+package com.rpc.interfaces.system;
 
 import co.paralleluniverse.fibers.Suspendable;
 import com.annotation.Rpc;
 
-public interface GameToGame {
+public interface SystemBusToGame {
+
     @Suspendable
     @Rpc(needResponse = false)
-    default Object self(String a) {
+    default Object sendChat(String content) {
         return null;
     }
-
-
 }

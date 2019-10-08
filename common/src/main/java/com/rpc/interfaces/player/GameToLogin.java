@@ -1,4 +1,4 @@
-package com.rpc.interfaces.gameToBus;
+package com.rpc.interfaces.player;
 
 import co.paralleluniverse.fibers.Suspendable;
 import com.annotation.Rpc;

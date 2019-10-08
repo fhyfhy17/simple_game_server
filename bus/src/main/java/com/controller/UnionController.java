@@ -3,7 +3,7 @@ package com.controller;
 import com.annotation.Controllor;
 import com.entry.UnionEntry;
 import com.pojo.Tuple;
-import com.rpc.interfaces.gameToBus.GameToBus;
+import com.rpc.interfaces.player.GameToBus;
 import com.service.UnionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

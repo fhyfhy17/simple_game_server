@@ -8,7 +8,7 @@ import com.entry.UnionEntry;
 import com.enums.TypeEnum;
 import com.pojo.Tuple;
 import com.rpc.RpcProxy;
-import com.rpc.interfaces.gameToBus.GameToBus;
+import com.rpc.interfaces.player.GameToBus;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

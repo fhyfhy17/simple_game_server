@@ -3,7 +3,7 @@ package com.controller;
 import com.annotation.Controllor;
 import com.net.msg.BUS_MSG;
 import com.pojo.OnlineContext;
-import com.rpc.interfaces.gameToBus.GameToBus;
+import com.rpc.interfaces.player.GameToBus;
 import com.service.BusOnlineService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

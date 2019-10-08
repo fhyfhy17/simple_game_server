@@ -5,7 +5,10 @@ import co.paralleluniverse.strands.SettableFuture;
 import com.Constant;
 import com.annotation.Rpc;
 import com.enums.TypeEnum;
+import com.rpc.interfaces.system.SystemBusToBattle;
+import com.rpc.interfaces.system.SystemBusToGame;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationHandler;
@@ -21,6 +24,17 @@ public class RpcProxy {
     private RpcHolder rpcHolder;
     
     private static final AtomicInteger requestId = new AtomicInteger(0);
+
+    @Bean
+    public SystemBusToGame getSystemBusToGame() {
+        return proxyGroupSend(SystemBusToGame.class, TypeEnum.ServerTypeEnum.GAME, 0);
+    }
+
+
+    @Bean
+    public SystemBusToBattle getSystemBusToBattle() {
+        return proxyGroupSend(SystemBusToBattle.class, TypeEnum.ServerTypeEnum.BATTLE, 0);
+    }
 
     //rpc使用限制
     // 1 群发必须是不能改变属性的，无返回的。如果有类似于，帮派升级了给每个人加钱这种，即改变属性又群发的，必须改成发邮件
