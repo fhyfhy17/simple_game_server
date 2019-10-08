@@ -1,16 +1,17 @@
 package com.controller.interceptor.handlerInterceptorImpl;
 
+import cn.hutool.core.util.TypeUtil;
 import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.controller.interceptor.HandlerInterceptor;
 import com.exception.StatusException;
 import com.pojo.Packet;
 import com.util.ExceptionUtil;
+import com.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -27,14 +28,15 @@ public class ResultCompletableFutureReplyInterceptor implements HandlerIntercept
         }
 
         CompletableFuture<Object> completableFuture = (CompletableFuture<Object>) o;
-        completableFuture.whenComplete((result,throwable) -> {
+	 
+		Type actualTypeArgument =TypeUtil.getTypeArgument(TypeUtil.getReturnType(SpringUtils.getRawMethod(handler.getMethod())));
+		completableFuture.whenComplete((result,throwable) -> {
             if(throwable!=null){
                 if(throwable.getCause() instanceof StatusException){
                     StatusException se = (StatusException)throwable.getCause();
                     try{
-						Type actualTypeArgument=((ParameterizedType)handler.getMethod().getGenericReturnType()).getActualTypeArguments()[0];
-						//Type actualTypeArgument =TypeUtil.getTypeArgument(TypeUtil.getReturnType(handler.getMethod())); 额，还没上面简洁呢
-						ExceptionUtil.sendStatusExceptionToClient((Class)actualTypeArgument,message,se);
+						
+						ExceptionUtil.sendStatusExceptionToClient(actualTypeArgument.getClass(),message,se);
 	
 						log.error("异步status",throwable);
 	

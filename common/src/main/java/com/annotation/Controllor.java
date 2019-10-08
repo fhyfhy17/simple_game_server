@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Controllor {
-	boolean isPlayerPacket() default false;
+	boolean isRadioPacket() default false;
 }

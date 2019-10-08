@@ -135,9 +135,9 @@ public class ConnectManager {
 
     public void dealMessage(Session session, NettyMessage message) {
         if (checkMessage(session, message)) {
-            if(!session.logined()){
+            //if(!session.logined()){ //TODO 测试时关闭，重复发登录了，导致没赋值RPC
                 message.setRpc(session.getId());//借用rpc字段存sessionId用来分消息
-            }
+            //}
             m.messageReceived(message);
         }
     }

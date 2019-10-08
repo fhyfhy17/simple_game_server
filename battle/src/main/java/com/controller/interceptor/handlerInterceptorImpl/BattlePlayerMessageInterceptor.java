@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 //玩家的消息转给玩家，不走默认的消息执行
-//玩家的消息转给玩家，现在写在Controllor上了，可以考虑写在protobuf 或者有更好的区别方式
-//TODO 暂时规定，玩家的消息都是protobuf，服务器间都是rpc
 public class BattlePlayerMessageInterceptor implements HandlerInterceptor {
     @Autowired
     private BattleOnlineService battleOnlineService;
@@ -27,7 +25,7 @@ public class BattlePlayerMessageInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(Packet message,ControllerHandler handler,Object[] m){
         Controllor annotation=handler.getClass().getAnnotation(Controllor.class);
-        if(annotation.isPlayerPacket()){
+        if(!annotation.isRadioPacket()){
             BattlePlayer battlePlayer = battleOnlineService.getPlayerByUid(message.getUid());
             if(battlePlayer==null){
                 throw new StatusException(TipType.NoBattlePlayer);
