@@ -5,7 +5,6 @@ import com.enums.TypeEnum;
 import com.node.RemoteNode;
 import com.pojo.Packet;
 import com.pojo.ServerInfo;
-import com.util.ContextUtil;
 import com.util.SerializeUtil;
 import com.util.support.Cat;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +31,13 @@ public class ServerInfoManager {
     public static void addServer(ServerInfo serverInfo) {
 
         String hostAddress = serverInfo.getIp() + Cat.colon + serverInfo.getPort();
-        if (!serverInfo.getServerId().equals(ContextUtil.id)) {
-            RemoteNode remoteNode = new RemoteNode(hostAddress);
-            remotes.put(serverInfo.getServerId(), remoteNode);
-            remoteNode.startup();
-            serverInfos.put(serverInfo.getServerId(), serverInfo);
-            log.info("新服务加入={}  ,所有服务={}", serverInfo.getServerId(), serverInfos);
-        }
+//        if (!serverInfo.getServerId().equals(ContextUtil.id)) {
+        RemoteNode remoteNode = new RemoteNode(hostAddress);
+        remotes.put(serverInfo.getServerId(), remoteNode);
+        remoteNode.startup();
+        serverInfos.put(serverInfo.getServerId(), serverInfo);
+        log.info("新服务加入={}  ,所有服务={}", serverInfo.getServerId(), serverInfos);
+//        }
     }
 
     public static void removeServer(ServerInfo serverInfo) {
