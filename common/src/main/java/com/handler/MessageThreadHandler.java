@@ -3,7 +3,6 @@ package com.handler;
 import com.Constant;
 import com.controller.ControllerFactory;
 import com.controller.ControllerHandler;
-import com.controller.fun.*;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.exception.StatusException;
 import com.pojo.Packet;
@@ -12,11 +11,7 @@ import com.rpc.RpcRequest;
 import com.rpc.RpcResponse;
 import com.thread.schedule.ScheduleAble;
 import com.thread.schedule.ScheduleTask;
-import com.util.ControllorUtil;
-import com.util.ExceptionUtil;
-import com.util.ProtostuffUtil;
-import com.util.SpringUtils;
-import com.util.StringUtil;
+import com.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.quartz.SchedulerException;
@@ -107,12 +102,12 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 if (!HandlerExecutionChain.applyPreHandle(packet, handler, m)) {
                     continue;
                 }
-            
+
                 //执行方法
-                result=ControllorUtil.handleMethod(handler,m);
-    
+                result = ControllorUtil.handleMethod(handler, m);
+
                 ////针对method的每个参数进行处理， 处理多参数,返回result（这是老的invoke执行controller 暂时废弃）
-                //Message result = (Message) com.handler.invokeForController(packet);
+                //Message result = (Message) com.handler.invokeForController(packet);c
 
                 ////拦截器后
                 if (!Objects.isNull(result)) {

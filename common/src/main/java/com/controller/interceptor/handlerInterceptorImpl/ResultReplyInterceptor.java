@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 //结果拦截器 （根据执行完消息返回的结果，执行回消息操作）
 public class ResultReplyInterceptor implements HandlerInterceptor {
     @Override
-    public void postHandle(ControllerHandler handler,Packet message,Object result) {
+    public void postHandle(ControllerHandler handler, Packet message, Object result) {
 
-        if(!Message.class.isAssignableFrom(result.getClass())){
+        if (!Message.class.isAssignableFrom(result.getClass())) {
             return;
         }
 
@@ -26,8 +26,8 @@ public class ResultReplyInterceptor implements HandlerInterceptor {
 
     }
 
-    private Packet buildMessage(Message resultMessage,Packet message) {
-        Packet  messageResult = new Packet();
+    private Packet buildMessage(Message resultMessage, Packet message) {
+        Packet messageResult = new Packet();
         messageResult.setId(ProtoUtil.protoGetMessageId(resultMessage));
         messageResult.setUid(message.getUid());
         messageResult.setFrom(ContextUtil.id);

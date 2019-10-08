@@ -1,7 +1,6 @@
 package com.controller.interceptor;
 
 import com.controller.ControllerHandler;
-import com.google.protobuf.Message;
 import com.pojo.Packet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +16,11 @@ public class HandlerExecutionChain {
 
     private static List<HandlerInterceptor> interceptorList;
 
-    public static boolean applyPreHandle(Packet message,ControllerHandler handler,Object[] param) {
+    public static boolean applyPreHandle(Packet message, ControllerHandler handler, Object[] param) {
         if (!ObjectUtils.isEmpty(interceptorList)) {
             for (int i = 0; i < interceptorList.size(); i++) {
                 HandlerInterceptor interceptor = interceptorList.get(i);
-                if (!interceptor.preHandle(message, handler,param)) {
+                if (!interceptor.preHandle(message, handler, param)) {
                     return false;
                 }
             }
@@ -30,11 +29,11 @@ public class HandlerExecutionChain {
         return true;
     }
 
-    public static void applyPostHandle(ControllerHandler handler,Packet message, Object result) {
+    public static void applyPostHandle(ControllerHandler handler, Packet message, Object result) {
         if (!ObjectUtils.isEmpty(interceptorList)) {
             for (int i = 0; i < interceptorList.size(); i++) {
                 HandlerInterceptor interceptor = interceptorList.get(i);
-                interceptor.postHandle(handler,message, result);
+                interceptor.postHandle(handler, message, result);
             }
         }
     }

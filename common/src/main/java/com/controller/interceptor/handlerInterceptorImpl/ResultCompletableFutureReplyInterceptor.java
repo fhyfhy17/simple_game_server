@@ -22,35 +22,35 @@ import java.util.concurrent.CompletableFuture;
 //结果拦截器 （根据执行完消息返回的结果，执行回消息操作）  CompletableFuture
 public class ResultCompletableFutureReplyInterceptor implements HandlerInterceptor {
     @Override
-    public void postHandle(ControllerHandler handler,Packet message,Object o) {
+    public void postHandle(ControllerHandler handler, Packet message, Object o) {
         if (!CompletableFuture.class.isAssignableFrom(o.getClass())) {
             return;
         }
 
         CompletableFuture<Object> completableFuture = (CompletableFuture<Object>) o;
-	 
-		Type actualTypeArgument =TypeUtil.getTypeArgument(TypeUtil.getReturnType(SpringUtils.getRawMethod(handler.getMethod())));
-		completableFuture.whenComplete((result,throwable) -> {
-            if(throwable!=null){
-                if(throwable.getCause() instanceof StatusException){
-                    StatusException se = (StatusException)throwable.getCause();
-                    try{
-						
-						ExceptionUtil.sendStatusExceptionToClient(actualTypeArgument.getClass(),message,se);
-	
-						log.error("异步status",throwable);
-	
-					}catch(Throwable e){
-						log.error("这不允许报错，看看忘添加的条件。 ",e);
-					}
-                }else {
+
+        Type actualTypeArgument = TypeUtil.getTypeArgument(TypeUtil.getReturnType(SpringUtils.getRawMethod(handler.getMethod())));
+        completableFuture.whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                if (throwable.getCause() instanceof StatusException) {
+                    StatusException se = (StatusException) throwable.getCause();
+                    try {
+
+                        ExceptionUtil.sendStatusExceptionToClient(actualTypeArgument.getClass(), message, se);
+
+                        log.error("异步status", throwable);
+
+                    } catch (Throwable e) {
+                        log.error("这不允许报错，看看忘添加的条件。 ", e);
+                    }
+                } else {
                     log.error("异步报错", throwable);
                 }
             }
-            
+
             if (!Objects.isNull(result)) {
-                HandlerExecutionChain.applyPostHandle(handler,message, result);
+                HandlerExecutionChain.applyPostHandle(handler, message, result);
             }
-        }) ;
+        });
     }
 }

@@ -12,9 +12,9 @@ public abstract class MessageGroup {
     private volatile boolean running = false;
     protected int handlerCount = 8; // 执行器数量
     private String name;
-    public List<MessageThreadHandler> handlerList= new ArrayList<>();
+    public List<MessageThreadHandler> handlerList = new ArrayList<>();
     public List<MessageThreadHandler> unionHandlerList = new ArrayList<>();
-    
+
 
     public MessageGroup(String name) {
         this.name = name;
@@ -37,33 +37,33 @@ public abstract class MessageGroup {
         // 初始化handler
         this.initHandlers();
     }
-    
+
     public void initHandlers() {
         for (int i = 0; i < this.handlerCount; i++) {
             MessageThreadHandler handler = getMessageThreadHandler();
             handler.schedulerListInit();
-            new Thread(handler, this.name +"-common-"+ i).start();
+            new Thread(handler, this.name + "-common-" + i).start();
             handlerList.add(handler);
-            
+
             MessageThreadHandler unionHandler = getUnionMessageThreadHandler();
-            if(unionHandler!=null){
+            if (unionHandler != null) {
                 unionHandler.schedulerListInit();
-                new Thread(unionHandler, this.name+"-union-" + i).start();
+                new Thread(unionHandler, this.name + "-union-" + i).start();
                 unionHandlerList.add(unionHandler);
             }
-            
+
         }
 
     }
 
     public abstract MessageThreadHandler getMessageThreadHandler();
-   
+
     public abstract Object hashKey(Packet msg);
-    
-    public  MessageThreadHandler getUnionMessageThreadHandler(){
+
+    public MessageThreadHandler getUnionMessageThreadHandler() {
         return null;
     }
-    
+
     public void messageReceived(Packet msg) {
 
         // 分配执行器执行
