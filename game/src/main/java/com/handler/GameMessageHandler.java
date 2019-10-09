@@ -17,13 +17,13 @@ public class GameMessageHandler extends MessageThreadHandler {
 	protected void tick(){
 		super.tick();
 		// 执行系统消息分发
-		pulseSystemDisQueues();
+		tickSystemDisQueues();
 	}
 	
 	/**
 	 * 系统消息分发
 	 * */
-	public void pulseSystemDisQueues() {
+	public void tickSystemDisQueues() {
 		while (!tickSystemDisQueues.isEmpty()) {
 			try {
 				Runnable poll=tickSystemDisQueues.poll();
