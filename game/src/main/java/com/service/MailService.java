@@ -41,9 +41,6 @@ public class MailService extends BaseService {
     
     @Autowired
     private OnlineService onlineService;
-
-    @Autowired
-    private RpcProxy rpcProxy;
     
     @Autowired
     private GameReceiver gameReceiver;

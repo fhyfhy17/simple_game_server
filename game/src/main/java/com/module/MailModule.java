@@ -71,6 +71,11 @@ public class MailModule extends BaseModule{
         if (mailEntry.getHasCenterMailIds().contains(centerMail.getId())) {
             return;
         }
+        //时间检查
+        if(centerMail.getMailEndTime() != 0 &&System.currentTimeMillis() > centerMail.getMailEndTime()){
+            return;
+        }
+        
         //个人邮件或群体邮件，不是发给自己的
         if ((centerMail.getType() == CenterMailType.Personal || centerMail.getType() == CenterMailType.Multiple)
                 && !centerMail.getReceiverId().contains(player.getPlayerId())) {
