@@ -118,7 +118,7 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
         public AtomicInteger init(){
             threadSchedule= new DefaultScheduleAble();
             threadSchedule.schedulerListInit();
-            new Thread(threadSchedule::pulseSchedule,"startStopWatch 线程").start();
+            new Thread(threadSchedule::tickSchedule,"startStopWatch 线程").start();
             count = new AtomicInteger(0);
             return count;
         }

@@ -9,7 +9,7 @@ import java.util.Objects;
 public class DefaultScheduleAble extends ScheduleAble
 {
 	@Override
-	public void pulseSchedule(){
+	public void tickSchedule(){
 		for(;;){
 			if(!schedulerList.isEmpty()) {
 				ScheduleTask poll = schedulerList.poll();

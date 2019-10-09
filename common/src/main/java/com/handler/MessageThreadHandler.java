@@ -32,7 +32,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
     private StopWatch stopWatch = new StopWatch();
 
-    protected final ConcurrentLinkedQueue<Packet> pulseQueues = new ConcurrentLinkedQueue<>();
+    protected final ConcurrentLinkedQueue<Packet> tickQueues= new ConcurrentLinkedQueue<>();
 
     @Override
     public void run() {
@@ -58,25 +58,25 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
     protected void tick(){
         // 执行心跳
-        pulse();
+        tickPacket();
         // 执行任务调度心跳
-        pulseSchedule();
+        tickSchedule();
     }
     
     
     public void messageReceived(Packet msg) {
-        pulseQueues.add(msg);
+        tickQueues.add(msg);
     }
   
 
-    public void pulse() {
-        while (!pulseQueues.isEmpty()) {
+    protected void tickPacket() {
+        while (!tickQueues.isEmpty()) {
 
             ControllerHandler handler = null;
             Packet packet = null;
             RpcRequest rpcRequest = null;
             try {
-                packet = pulseQueues.poll();
+                packet = tickQueues.poll();
 
                 if (Constant.RPC_RESPONSE.equals(packet.getRpc())) {
                     SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(), RpcResponse.class));
@@ -150,7 +150,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
 
     @Override
-    public void pulseSchedule() {
+    public void tickSchedule() {
         while (!schedulerList.isEmpty()) {
             ScheduleTask poll = schedulerList.poll();
             try {

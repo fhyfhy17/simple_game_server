@@ -82,7 +82,7 @@ public abstract class ScheduleAble{
 		}
 	}
 	
-	public abstract void pulseSchedule();
+	public abstract void tickSchedule();
 	/**
 	 * 从指定的delay毫秒延迟之后，开始以重复的速率每period毫秒执行
 	 *

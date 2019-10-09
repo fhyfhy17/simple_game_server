@@ -19,9 +19,9 @@ public class GateMessageHandler extends MessageThreadHandler {
     
     @Override
     protected void tick(){
-        while (!pulseQueues.isEmpty()) {
+        while (!tickQueues.isEmpty()) {
             try {
-                Packet message = pulseQueues.poll();
+                Packet message = tickQueues.poll();
                 dispatch(message);
             
             } catch (Exception e) {
