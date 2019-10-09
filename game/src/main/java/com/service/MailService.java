@@ -82,7 +82,7 @@ public class MailService extends BaseService {
                 Long playerIdPersonal = centerMailEntry.getReceiverId().iterator().next();
                 if (playerMap.containsKey(playerIdPersonal)) {
                     Player player=playerMap.get(playerIdPersonal);
-                    gameReceiver.getGameMessageGroup().systemDis(player.getUid(),()->{
+                    gameReceiver.systemDis(player.getUid(),()->{
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
@@ -91,7 +91,7 @@ public class MailService extends BaseService {
                 for(Long playerId : centerMailEntry.getReceiverId()){
                     if(onlineService.getPlayerMap().containsKey(playerId)){
                         Player player=onlineService.getPlayerMap().get(playerId);
-                        gameReceiver.getGameMessageGroup().systemDis(player.getUid(),()->{
+                        gameReceiver.systemDis(player.getUid(),()->{
                             player.getMailModule().onCenterMail(centerMailEntry);
                         });
                     }
@@ -99,7 +99,7 @@ public class MailService extends BaseService {
                 break;
             case CenterMailType.Total:
                 for(Player player : playerMap.values()){
-                    gameReceiver.getGameMessageGroup().systemDis(player.getUid(),()->{
+                    gameReceiver.systemDis(player.getUid(),()->{
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
