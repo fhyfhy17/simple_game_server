@@ -16,19 +16,19 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class GateMessageHandler extends MessageThreadHandler {
+    
     @Override
-    public void pulse() {
+    protected void tick(){
         while (!pulseQueues.isEmpty()) {
             try {
                 Packet message = pulseQueues.poll();
                 dispatch(message);
-
+            
             } catch (Exception e) {
                 log.error("", e);
             }
         }
     }
-
 
     private void dispatch(Packet message) {
         message.setFrom(ContextUtil.id);

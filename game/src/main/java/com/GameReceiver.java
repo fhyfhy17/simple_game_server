@@ -29,8 +29,8 @@ public class GameReceiver extends BaseReceiver {
         m.messageReceived(message);
     }
     
-    public MessageGroup getGameMessageGroup(){
-        return m;
+    public void systemDis(Long uid,Runnable runnable){
+        ((GameMessageGroup)m).systemDis(uid,runnable);
     }
 
 }

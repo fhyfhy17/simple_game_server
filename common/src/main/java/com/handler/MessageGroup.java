@@ -72,14 +72,4 @@ public abstract class MessageGroup {
         MessageThreadHandler handler = handlerList.get(index);
         handler.messageReceived(msg);
     }
-    
-    /**
-	 * 系统消息分发，暂用于系统转到个人
-	 * */
-    public void systemDis(Long uid,Runnable runnable){
-        int index = Math.abs(uid.hashCode()) % handlerCount;
-        MessageThreadHandler handler = handlerList.get(index);
-        handler.systemDisReceived(runnable);
-    }
-
 }

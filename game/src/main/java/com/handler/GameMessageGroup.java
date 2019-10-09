@@ -27,4 +27,12 @@ public class GameMessageGroup extends MessageGroup{
 		return msg.getUid();
 	}
 	
+	/**
+	 * 系统消息分发，暂用于系统转到个人
+	 * */
+	public void systemDis(Long uid,Runnable runnable){
+		int index = Math.abs(uid.hashCode()) % handlerCount;
+		MessageThreadHandler handler = handlerList.get(index);
+		((GameMessageHandler)handler).systemDisReceived(runnable);
+	}
 }

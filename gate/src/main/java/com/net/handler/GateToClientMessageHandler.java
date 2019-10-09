@@ -11,15 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class GateToClientMessageHandler extends MessageThreadHandler {
-
+    
     @Override
-    public void pulse() {
+    protected void tick(){
         while (!pulseQueues.isEmpty()) {
             try {
                 Packet message = pulseQueues.poll();
-
+            
                 dispatch(message);
-
+            
             } catch (Exception e) {
                 log.error("", e);
             }

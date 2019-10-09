@@ -11,7 +11,11 @@ import com.rpc.RpcRequest;
 import com.rpc.RpcResponse;
 import com.thread.schedule.ScheduleAble;
 import com.thread.schedule.ScheduleTask;
-import com.util.*;
+import com.util.ControllorUtil;
+import com.util.ExceptionUtil;
+import com.util.ProtostuffUtil;
+import com.util.SpringUtils;
+import com.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.quartz.SchedulerException;
@@ -22,28 +26,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Slf4j
 public class MessageThreadHandler extends ScheduleAble implements Runnable {
     // 执行器ID
-    protected String handlerId;
+    private String handlerId;
     // 心跳频率10毫秒
     private int interval = 10;
 
     private StopWatch stopWatch = new StopWatch();
 
     protected final ConcurrentLinkedQueue<Packet> pulseQueues = new ConcurrentLinkedQueue<>();
-    
-    protected final ConcurrentLinkedQueue<Runnable> pulseSystemDisQueues= new ConcurrentLinkedQueue<>();
 
     @Override
     public void run() {
         for (; ; ) {
             stopWatch.start();
             ContextHolder.setScheduleAble(this);
-            // 执行心跳
-            pulse();
-            // 执行任务调度心跳
-            pulseSchedule();
-            // 执行系统消息分发
-            pulseSystemDisQueues();
-            
+            tick();
             stopWatch.stop();
             try {
                 if (stopWatch.getTime() < interval) {
@@ -60,12 +56,18 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
         }
     }
 
+    protected void tick(){
+        // 执行心跳
+        pulse();
+        // 执行任务调度心跳
+        pulseSchedule();
+    }
+    
+    
     public void messageReceived(Packet msg) {
         pulseQueues.add(msg);
     }
-    public void systemDisReceived(Runnable runnable) {
-        pulseSystemDisQueues.add(runnable);
-    }
+  
 
     public void pulse() {
         while (!pulseQueues.isEmpty()) {
@@ -160,20 +162,6 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 } catch (SchedulerException e) {
                     log.error("删除schedule报错", e);
                 }
-            }
-        }
-    }
-    
-    /**
-     * 系统消息分发
-     * */
-    public void pulseSystemDisQueues() {
-        while (!pulseSystemDisQueues.isEmpty()) {
-            try {
-                Runnable poll=pulseSystemDisQueues.poll();
-                poll.run();
-            } catch (Throwable e) {
-                log.error("系统消息分发报错", e);
             }
         }
     }
