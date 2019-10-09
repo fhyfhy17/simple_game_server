@@ -63,7 +63,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
     public void messageReceived(Packet msg) {
         pulseQueues.add(msg);
     }
-    public void disReceived(Runnable runnable) {
+    public void systemDisReceived(Runnable runnable) {
         pulseSystemDisQueues.add(runnable);
     }
 
