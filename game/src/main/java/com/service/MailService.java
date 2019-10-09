@@ -1,5 +1,6 @@
 package com.service;
 
+import com.GameReceiver;
 import com.annotation.EventListener;
 import com.dao.CenterMailRepository;
 import com.entry.CenterMailEntry;
@@ -8,7 +9,6 @@ import com.entry.po.ItemInfo;
 import com.entry.po.MailPo;
 import com.pojo.Player;
 import com.rpc.RpcProxy;
-import com.rpc.interfaces.player.GameToSelf;
 import com.template.TemplateManager;
 import com.template.templates.MailTemplate;
 import com.template.templates.type.CenterMailType;
@@ -44,6 +44,9 @@ public class MailService extends BaseService {
 
     @Autowired
     private RpcProxy rpcProxy;
+    
+    @Autowired
+    private GameReceiver gameReceiver;
 
     public List<CenterMailEntry> findByDate() {
 
@@ -78,23 +81,27 @@ public class MailService extends BaseService {
             case CenterMailType.Personal:
                 Long playerIdPersonal = centerMailEntry.getReceiverId().iterator().next();
                 if (playerMap.containsKey(playerIdPersonal)) {
-                    GameToSelf gameToSelf = rpcProxy.proxySelf(GameToSelf.class, playerIdPersonal);
-                    gameToSelf.centerMail(playerIdPersonal, centerMailEntry);
+                    Player player=playerMap.get(playerIdPersonal);
+                    gameReceiver.getGameMessageGroup().systemDis(player.getUid(),()->{
+                        player.getMailModule().onCenterMail(centerMailEntry);
+                    });
                 }
                 break;
             case CenterMailType.Multiple:
                 for(Long playerId : centerMailEntry.getReceiverId()){
                     if(onlineService.getPlayerMap().containsKey(playerId)){
                         Player player=onlineService.getPlayerMap().get(playerId);
-                        GameToSelf gameToSelf = rpcProxy.proxySelf(GameToSelf.class, player.getUid());
-                        gameToSelf.centerMail(player.getPlayerId(), centerMailEntry);
+                        gameReceiver.getGameMessageGroup().systemDis(player.getUid(),()->{
+                            player.getMailModule().onCenterMail(centerMailEntry);
+                        });
                     }
                 }
                 break;
             case CenterMailType.Total:
                 for(Player player : playerMap.values()){
-                    GameToSelf gameToSelf = rpcProxy.proxySelf(GameToSelf.class, player.getPlayerId());
-                    gameToSelf.centerMail(player.getPlayerId(), centerMailEntry);
+                    gameReceiver.getGameMessageGroup().systemDis(player.getUid(),()->{
+                        player.getMailModule().onCenterMail(centerMailEntry);
+                    });
                 }
                 
                 break;

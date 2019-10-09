@@ -28,5 +28,9 @@ public class GameReceiver extends BaseReceiver {
 //        MessageEventProducer.publishMessage(type, message);
         m.messageReceived(message);
     }
+    
+    public MessageGroup getGameMessageGroup(){
+        return m;
+    }
 
 }

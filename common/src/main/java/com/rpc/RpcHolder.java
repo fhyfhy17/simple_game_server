@@ -12,19 +12,20 @@ import com.util.ProtostuffUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Componentß
+@Component
 @Slf4j
 public class RpcHolder {
     private static final int overtime = 5 * 1000; //超时时间
     private ConcurrentHashMap<String, FutureContext> requestContext = new ConcurrentHashMap<>();
 
-    public SettableFuture<RpcResponse> sendRequest(RpcRequest rpcRequest, Object hashKey, TypeEnum.ServerTypeEnum serverType, long uid, boolean needResponse, boolean self) {
+    public SettableFuture<RpcResponse> sendRequest(RpcRequest rpcRequest, Object hashKey, TypeEnum.ServerTypeEnum serverType, long uid, boolean needResponse) {
         String requestId = rpcRequest.getId();
         SettableFuture<RpcResponse> future = null;
         if (needResponse) {
@@ -47,10 +48,6 @@ public class RpcHolder {
 
         Assert.notNull(requestId, "requestId 不能为空");
         Packet packet = ProtoUtil.buildRpcRequestMessage(ProtostuffUtil.serializeObject(rpcRequest, RpcRequest.class), uid, ContextUtil.id, requestId);
-        if (self) {
-            ServerInfoManager.sendMessage(ContextUtil.id, packet);
-            return null;
-        }
 
         if (Objects.isNull(hashKey)) {
             ServerInfoManager.sendMessageForTypeAll(serverType, packet);

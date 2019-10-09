@@ -29,7 +29,8 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
     private StopWatch stopWatch = new StopWatch();
 
     protected final ConcurrentLinkedQueue<Packet> pulseQueues = new ConcurrentLinkedQueue<>();
-
+    
+    protected final ConcurrentLinkedQueue<Runnable> pulseSystemDisQueues= new ConcurrentLinkedQueue<>();
 
     @Override
     public void run() {
@@ -40,6 +41,9 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
             pulse();
             // 执行任务调度心跳
             pulseSchedule();
+            // 执行系统消息分发
+            pulseSystemDisQueues();
+            
             stopWatch.stop();
             try {
                 if (stopWatch.getTime() < interval) {
@@ -59,7 +63,9 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
     public void messageReceived(Packet msg) {
         pulseQueues.add(msg);
     }
-
+    public void disReceived(Runnable runnable) {
+        pulseSystemDisQueues.add(runnable);
+    }
 
     public void pulse() {
         while (!pulseQueues.isEmpty()) {
@@ -107,7 +113,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 result = ControllorUtil.handleMethod(handler, m);
 
                 ////针对method的每个参数进行处理， 处理多参数,返回result（这是老的invoke执行controller 暂时废弃）
-                //Message result = (Message) com.handler.invokeForController(packet);c
+                //Message result = (Message) com.handler.invokeForController(packet);
 
                 ////拦截器后
                 if (!Objects.isNull(result)) {
@@ -154,6 +160,20 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 } catch (SchedulerException e) {
                     log.error("删除schedule报错", e);
                 }
+            }
+        }
+    }
+    
+    /**
+     * 系统消息分发
+     * */
+    public void pulseSystemDisQueues() {
+        while (!pulseSystemDisQueues.isEmpty()) {
+            try {
+                Runnable poll=pulseSystemDisQueues.poll();
+                poll.run();
+            } catch (Throwable e) {
+                log.error("系统消息分发报错", e);
             }
         }
     }

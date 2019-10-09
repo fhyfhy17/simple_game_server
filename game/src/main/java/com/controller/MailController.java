@@ -1,12 +1,10 @@
 package com.controller;
 
 import com.annotation.Controllor;
-import com.entry.CenterMailEntry;
 import com.entry.po.MailPo;
 import com.exception.StatusException;
 import com.net.msg.MAIL_MSG;
 import com.pojo.Player;
-import com.rpc.interfaces.player.GameToSelf;
 import com.service.OnlineService;
 import com.util.Util;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +15,7 @@ import java.util.List;
 
 @Controller
 @Slf4j
-public class MailController extends BaseController implements GameToSelf {
+public class MailController extends BaseController {
 
     @Autowired
     private OnlineService onlineService;
@@ -58,13 +56,5 @@ public class MailController extends BaseController implements GameToSelf {
         builder.addAllItems(Util.transferItemInfoList(mailPo.getItemList()));
         return builder.build();
     }
-
-    @Override
-    public Object centerMail(Long playerId, CenterMailEntry centerMailEntry) {
-        Player player = onlineService.getPlayer(playerId);
-        if (player != null) {
-            player.getMailModule().onCenterMail(centerMailEntry);
-        }
-        return null;
-    }
+    
 }

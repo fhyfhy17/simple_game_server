@@ -72,5 +72,11 @@ public abstract class MessageGroup {
         MessageThreadHandler handler = handlerList.get(index);
         handler.messageReceived(msg);
     }
+    
+    public void systemDis(Long uid,Runnable runnable){
+        int index = Math.abs(uid.hashCode()) % handlerCount;
+        MessageThreadHandler handler = handlerList.get(index);
+        handler.disReceived(runnable);
+    }
 
 }

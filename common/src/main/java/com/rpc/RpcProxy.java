@@ -48,7 +48,7 @@ public class RpcProxy {
                 RpcRequest rpcRequest = makeRequest(method, args);
 
 
-                rpcHolder.sendRequest(rpcRequest, null, null, uid, false, true);
+                rpcHolder.sendRequest(rpcRequest, null, null, uid, false);
                 return null;
             }
 
@@ -74,11 +74,11 @@ public class RpcProxy {
                 RpcRequest rpcRequest = makeRequest(method, args);
                 Rpc rpc = method.getAnnotation(Rpc.class);
                 if (!rpc.needResponse()) {
-                    rpcHolder.sendRequest(rpcRequest, hashKey, serverType, uid, false, false);
+                    rpcHolder.sendRequest(rpcRequest, hashKey, serverType, uid, false);
                     return null;
                 }
 
-                SettableFuture<RpcResponse> rpcResponseSettableFuture = rpcHolder.sendRequest(rpcRequest, hashKey, serverType, uid, true, false);
+                SettableFuture<RpcResponse> rpcResponseSettableFuture = rpcHolder.sendRequest(rpcRequest, hashKey, serverType, uid, true);
                 RpcResponse rpcResponse = rpcResponseSettableFuture.get();
                 return rpcResponse.getData();
             }
