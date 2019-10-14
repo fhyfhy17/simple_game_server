@@ -111,8 +111,7 @@ public class Node {
             if (buf == null || buf.length <= 0) {
                 break;
             }
-
-//            CountUtil.count();
+            
             baseReceiver.onReceive(SerializeUtil.stm(buf));
         }
     }

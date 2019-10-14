@@ -13,6 +13,7 @@ import com.template.TemplateManager;
 import com.template.templates.MailTemplate;
 import com.template.templates.type.CenterMailType;
 import com.util.IdCreator;
+import com.util.MessageThreadUtil;
 import com.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
@@ -41,9 +42,6 @@ public class MailService extends BaseService {
     
     @Autowired
     private OnlineService onlineService;
-    
-    @Autowired
-    private GameReceiver gameReceiver;
 
     public List<CenterMailEntry> findByDate() {
 
@@ -79,7 +77,7 @@ public class MailService extends BaseService {
                 Long playerIdPersonal = centerMailEntry.getReceiverId().iterator().next();
                 if (playerMap.containsKey(playerIdPersonal)) {
                     Player player=playerMap.get(playerIdPersonal);
-                    gameReceiver.systemDis(player.getUid(),()->{
+                    MessageThreadUtil.addSystemDis(player.getUid(),()->{
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
@@ -88,7 +86,7 @@ public class MailService extends BaseService {
                 for(Long playerId : centerMailEntry.getReceiverId()){
                     if(onlineService.getPlayerMap().containsKey(playerId)){
                         Player player=onlineService.getPlayerMap().get(playerId);
-                        gameReceiver.systemDis(player.getUid(),()->{
+                        MessageThreadUtil.addSystemDis(player.getUid(),()->{
                             player.getMailModule().onCenterMail(centerMailEntry);
                         });
                     }
@@ -96,7 +94,7 @@ public class MailService extends BaseService {
                 break;
             case CenterMailType.Total:
                 for(Player player : playerMap.values()){
-                    gameReceiver.systemDis(player.getUid(),()->{
+                    MessageThreadUtil.addSystemDis(player.getUid(),()->{
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
