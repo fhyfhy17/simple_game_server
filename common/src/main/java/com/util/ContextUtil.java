@@ -1,6 +1,8 @@
 package com.util;
 
 
+import com.handler.ContextHolder;
+import com.thread.schedule.ScheduleTask;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -47,4 +49,13 @@ public class ContextUtil {
         return Integer.parseInt(substring);
     }
 
+    public static void test(Runnable runnable) {
+        ContextHolder.getScheduleAble().scheduleOnce(new ScheduleTask() {
+            @Override
+            public void execute() {
+                runnable.run();
+            }
+        }, 1);
+
+    }
 }

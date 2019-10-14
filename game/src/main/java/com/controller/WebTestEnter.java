@@ -5,6 +5,7 @@ import com.config.ZookeeperConfig;
 import com.dao.*;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
+import com.exception.WrapException;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.GameServerManager;
 import com.manager.ServerInfoManager;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //import com.config.RedissonConfig;
@@ -88,6 +90,25 @@ public class WebTestEnter {
         log.info(objects.getKey());
     }
 
+
+    @RequestMapping("/test/test2")
+    public void test2() {
+        GameToLogin gameToLogin = rpcProxy.proxy(GameToLogin.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
+        Tuple<String, Throwable> objects = gameToLogin.testResponse(2222L);
+        CompletableFuture<String> future = gameToLogin.test2(33444L);
+        future.whenComplete((result, throwable) -> {
+
+            ContextUtil.test(() -> {
+                if (throwable != null) {
+                    throw new WrapException("报了啥啥错，", throwable);
+                } else {
+                    System.out.println(result);
+                }
+            });
+
+        });
+        log.info(objects.getKey());
+    }
     @RequestMapping("/test/self")
     public void self() {
         //TODO 给自己发个RPC请求，这个以后可以摘出来，做成一个功能。 另看能不能集成在RPC访问对端报错，发送方加后续处理那

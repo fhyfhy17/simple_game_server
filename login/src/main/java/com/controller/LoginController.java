@@ -58,14 +58,16 @@ public class LoginController extends BaseController implements GameToLogin {
     @Controllor
     @Override
     public Tuple<String, Throwable> testResponse(Long playerId) {
-        try
-        {
+        try {
             Thread.sleep(6000L);
-        }
-        catch(InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return new Tuple<>(playerId + "abc", null);
+    }
+
+    @Override
+    public CompletableFuture<String> test2(Long playerId) {
+        return CompletableFuture.completedFuture("aaaa" + playerId);
     }
 }
