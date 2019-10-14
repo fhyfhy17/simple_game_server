@@ -31,7 +31,7 @@ public class BusMessageGroup extends MessageGroup{
 	public void messageReceived(Packet msg) {
 		
 		// 分配执行器执行
-		MessageThreadHandler handler = handlerList.get(0);
+		MessageThreadHandler handler = handlerList.iterator().next();
 		handler.messageReceived(msg);
 	}
 }

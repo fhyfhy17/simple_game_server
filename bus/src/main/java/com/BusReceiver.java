@@ -1,5 +1,6 @@
 package com;
 
+import com.enums.TypeEnum;
 import com.handler.BusMessageGroup;
 import com.handler.MessageGroup;
 import com.pojo.Packet;
@@ -15,7 +16,7 @@ public class BusReceiver extends BaseReceiver {
 
     @Override
     public void start() {
-        m = new BusMessageGroup();
+        m = new BusMessageGroup(TypeEnum.GroupEnum.BUS_GROUP.name(),1);
         m.startup();
 
     }
