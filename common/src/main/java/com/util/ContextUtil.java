@@ -48,14 +48,5 @@ public class ContextUtil {
         String substring = ContextUtil.id.substring(ContextUtil.id.indexOf("-") + 1);
         return Integer.parseInt(substring);
     }
-
-    public static void test(Runnable runnable) {
-        ContextHolder.getScheduleAble().scheduleOnce(new ScheduleTask() {
-            @Override
-            public void execute() {
-                runnable.run();
-            }
-        }, 1);
-
-    }
+    
 }

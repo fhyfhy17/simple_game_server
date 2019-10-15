@@ -30,4 +30,6 @@ public class Constant {
     public static final String CONTEXT_SCHEDULE_TASK = "contextScheduleTask";
     
     public static final String SCHEDULE_PULSE_PARAM = "schedulePulseParam";
+    
+    public static final String CONTEXT_CALL = "contextCall";
 }

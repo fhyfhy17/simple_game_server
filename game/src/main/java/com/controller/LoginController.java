@@ -54,6 +54,11 @@ public class LoginController extends BaseController implements GameToGame, GameT
                 }
             }, 4, 500);
             
+            //这是回调调用，用于异步的消息切回本线程
+            ContextHolder.callBack(()->{
+            
+            });
+            
             return builder.build();
         });
     }

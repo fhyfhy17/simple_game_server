@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 public class RpcResponse {
 	private String requestId;
 	private Object data;
+	private Throwable throwable;
 }

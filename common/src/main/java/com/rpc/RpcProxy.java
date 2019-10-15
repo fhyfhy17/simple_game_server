@@ -1,12 +1,11 @@
 package com.rpc;
 
+import cn.hutool.core.collection.CollUtil;
 import com.Constant;
 import com.annotation.Rpc;
 import com.enums.TypeEnum;
-import com.exception.StatusException;
 import com.rpc.interfaces.system.SystemBusToBattle;
 import com.rpc.interfaces.system.SystemBusToGame;
-import com.template.templates.type.TipType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -17,8 +16,6 @@ import java.lang.reflect.Proxy;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
@@ -58,15 +55,13 @@ public class RpcProxy {
                     rpcHolder.sendRequest(rpcRequest, hashKey, serverType, uid, false);
                     return null;
                 }
-
                 CompletableFuture<RpcResponse> rpcResponseCompletableFuture = rpcHolder.sendRequest(rpcRequest, hashKey, serverType, uid, true);
-                RpcResponse rpcResponse =null;
-                try {
-                    rpcResponse=rpcResponseCompletableFuture.get(5,TimeUnit.SECONDS);
-                } catch(TimeoutException e){
-                    throw new StatusException("rpc超时 method = "+method.getName() +",requestId = "+ requestId,TipType.VisitOverTime);
-                }
-                return rpcResponse.getData();
+                return rpcResponseCompletableFuture.thenApply(rpcResponse -> {
+                        if(rpcResponse.getThrowable()!=null){
+                            return rpcResponse.getThrowable();
+                        }
+                    return rpcResponse.getData();
+                });
             }
         });
         return (T) proxyInstance;

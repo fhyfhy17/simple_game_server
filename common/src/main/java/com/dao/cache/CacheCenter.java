@@ -101,7 +101,6 @@ public class CacheCenter {
                     try{
                         saveDbThreadPool.execute(() -> {
                             StopWatch stopWatch = new StopWatch();
-                            stopWatch.reset();
                             stopWatch.start();
     
                             String name = key.toString() + finalI;

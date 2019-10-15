@@ -5,6 +5,7 @@ import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.controller.interceptor.HandlerInterceptor;
 import com.exception.StatusException;
+import com.google.protobuf.Message;
 import com.pojo.Packet;
 import com.util.ExceptionUtil;
 import com.util.SpringUtils;
@@ -26,12 +27,16 @@ public class ResultCompletableFutureReplyInterceptor implements HandlerIntercept
         if (!CompletableFuture.class.isAssignableFrom(o.getClass())) {
             return;
         }
-
-        CompletableFuture<Object> completableFuture = (CompletableFuture<Object>) o;
-
         Type actualTypeArgument = TypeUtil.getTypeArgument(TypeUtil.getReturnType(SpringUtils.getRawMethod(handler.getMethod())));
+    
+        if (!Message.class.isAssignableFrom(actualTypeArgument.getClass())) {
+            return;
+        }
+        CompletableFuture<Object> completableFuture = (CompletableFuture<Object>) o;
+        
         completableFuture.whenComplete((result, throwable) -> {
             if (throwable != null) {
+                
                 if (throwable.getCause() instanceof StatusException) {
                     StatusException se = (StatusException) throwable.getCause();
                     try {

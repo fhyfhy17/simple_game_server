@@ -1,16 +1,20 @@
 package com.rpc;
 
 import com.enums.TypeEnum;
+import com.exception.StatusException;
 import com.manager.ServerInfoManager;
 import com.pojo.Packet;
+import com.template.templates.type.TipType;
 import com.util.ContextUtil;
 import com.util.ProtoUtil;
 import com.util.ProtostuffUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RpcHolder {
     private ConcurrentHashMap<String, FutureContext> requestContext = new ConcurrentHashMap<>();
 
+    private static final int OVER_TIME = 5000; //超时5秒
+    
     public CompletableFuture<RpcResponse> sendRequest(RpcRequest rpcRequest,Object hashKey,TypeEnum.ServerTypeEnum serverType,long uid,boolean needResponse) {
         String requestId = rpcRequest.getId();
         CompletableFuture<RpcResponse> future = null;
@@ -57,24 +63,26 @@ public class RpcHolder {
             log.error("rpcResponseFuture,原因是收到了多条同requestID 回复 requestId = {}，也有可能是超时被删", requestId);
             return;
         }
-
-        futureContext.future.complete(rpcResponse);
-
+        if(rpcResponse.getThrowable()!=null){
+            futureContext.future.completeExceptionally(rpcResponse.getThrowable());
+        }else {
+            futureContext.future.complete(rpcResponse);
+        }
     }
 
-    //@Scheduled(fixedDelay = 1000)
-    ////检查超时
-    ////重试并没有意义，如果5秒不返回，直接超时处理
-    //public void checkOvertime() {
-    //    Iterator<FutureContext> it = requestContext.values().iterator();
-    //    while (it.hasNext()) {
-    //        FutureContext next = it.next();
-    //        if (System.currentTimeMillis() - next.startTime > overtime) {
-    //            it.remove();
-    //            next.future.completeExceptionally(new StatusException(TipType.VisitOverTime));
-    //        }
-    //    }
-    //}
+    @Scheduled(fixedDelay = 1000)
+    //检查超时
+    //重试并没有意义，如果5秒不返回，直接超时处理
+    public void checkOvertime() {
+        Iterator<FutureContext> it = requestContext.values().iterator();
+        while (it.hasNext()) {
+            FutureContext next = it.next();
+            if (System.currentTimeMillis() - next.startTime > OVER_TIME) {
+                it.remove();
+                next.future.completeExceptionally(new StatusException(TipType.VisitOverTime));
+            }
+        }
+    }
 
     @AllArgsConstructor
     private static class FutureContext {

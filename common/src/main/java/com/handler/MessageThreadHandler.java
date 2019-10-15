@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Slf4j
-public class MessageThreadHandler extends ScheduleAble implements Runnable {
+public class MessageThreadHandler extends ScheduleAble implements Runnable,ICallBack {
     // 执行器ID
     private String handlerId;
     // 心跳频率10毫秒
@@ -33,12 +33,15 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
     private StopWatch stopWatch = new StopWatch();
 
     protected final ConcurrentLinkedQueue<Packet> tickQueues= new ConcurrentLinkedQueue<>();
-
+    
+    protected final ConcurrentLinkedQueue<Runnable> callBackQueues= new ConcurrentLinkedQueue<>();
+    
     @Override
     public void run() {
         for (; ; ) {
             stopWatch.start();
             ContextHolder.setScheduleAble(this);
+            ContextHolder.setICallBack(this);
             tick();
             stopWatch.stop();
             try {
@@ -61,6 +64,8 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
         tickPacket();
         // 执行任务调度心跳
         tickSchedule();
+        // 执行回调心跳
+        tickCall();
     }
     
     
@@ -164,5 +169,21 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 }
             }
         }
+    }
+    
+    public void tickCall() {
+        while (!callBackQueues.isEmpty()) {
+            Runnable runnable = callBackQueues.poll();
+            try {
+                runnable.run();
+            } catch (Throwable t) {
+                log.error("tickCall报错", t);
+            }
+        }
+    }
+    
+    @Override
+    public void addCall(Runnable runnable){
+        callBackQueues.add(runnable);
     }
 }

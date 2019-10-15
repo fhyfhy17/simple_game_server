@@ -2,10 +2,15 @@ package com.controller;
 
 import com.Constant;
 import com.config.ZookeeperConfig;
-import com.dao.*;
+import com.dao.BagRepository;
+import com.dao.CenterMailRepository;
+import com.dao.MailRepository;
+import com.dao.NoCellBagRepository;
+import com.dao.PlayerRepository;
+import com.dao.UnionRepository;
+import com.dao.UserRepository;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
-import com.exception.WrapException;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.GameServerManager;
 import com.manager.ServerInfoManager;
@@ -14,13 +19,16 @@ import com.net.msg.LOGIN_MSG;
 import com.net.msg.Options;
 import com.node.RemoteNode;
 import com.pojo.Packet;
-import com.pojo.Tuple;
 import com.rpc.RpcProxy;
 import com.rpc.RpcRequest;
 import com.rpc.interfaces.player.GameToLogin;
 import com.service.PlayerService;
 import com.thread.schedule.ScheduleTask;
-import com.util.*;
+import com.util.ContextUtil;
+import com.util.IdCreator;
+import com.util.ProtoUtil;
+import com.util.ProtostuffUtil;
+import com.util.SerializeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -86,29 +94,17 @@ public class WebTestEnter {
     @RequestMapping("/test/testResponse")
     public void testResponse() {
         GameToLogin gameToLogin = rpcProxy.proxy(GameToLogin.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
-        Tuple<String, Throwable> objects = gameToLogin.testResponse(2222L);
-        log.info(objects.getKey());
-    }
-
-
-    @RequestMapping("/test/test2")
-    public void test2() {
-        GameToLogin gameToLogin = rpcProxy.proxy(GameToLogin.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
-        Tuple<String, Throwable> objects = gameToLogin.testResponse(2222L);
-        CompletableFuture<String> future = gameToLogin.test2(33444L);
-        future.whenComplete((result, throwable) -> {
-
-            ContextUtil.test(() -> {
-                if (throwable != null) {
-                    throw new WrapException("报了啥啥错，", throwable);
-                } else {
-                    System.out.println(result);
-                }
-            });
-
+        CompletableFuture<String> f=gameToLogin.testResponse(2222L);
+        f.whenComplete((str,t)->{
+            if(t!=null){
+                System.out.println(t.getMessage());
+            }else{
+                System.out.println(str);
+            }
         });
-        log.info(objects.getKey());
+       
     }
+    
     @RequestMapping("/test/self")
     public void self() {
         //TODO 给自己发个RPC请求，这个以后可以摘出来，做成一个功能。 另看能不能集成在RPC访问对端报错，发送方加后续处理那

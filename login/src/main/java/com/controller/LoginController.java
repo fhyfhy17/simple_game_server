@@ -5,7 +5,6 @@ import com.annotation.Controllor;
 import com.entry.UserEntry;
 import com.exception.StatusException;
 import com.net.msg.LOGIN_MSG;
-import com.pojo.Tuple;
 import com.rpc.interfaces.player.GameToLogin;
 import com.service.LoginService;
 import com.template.templates.type.TipType;
@@ -54,20 +53,13 @@ public class LoginController extends BaseController implements GameToLogin {
 
 
     }
-
+   
     @Controllor
     @Override
-    public Tuple<String, Throwable> testResponse(Long playerId) {
-        try {
-            Thread.sleep(6000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return new Tuple<>(playerId + "abc", null);
-    }
-
-    @Override
-    public CompletableFuture<String> test2(Long playerId) {
-        return CompletableFuture.completedFuture("aaaa" + playerId);
+    public CompletableFuture<String> testResponse(Long playerId) {
+        CompletableFuture<String> c=new CompletableFuture();
+        c.completeExceptionally(new RuntimeException("1111"));
+        return c;
+         //return CompletableFuture.completedFuture("aaaa" + playerId);
     }
 }

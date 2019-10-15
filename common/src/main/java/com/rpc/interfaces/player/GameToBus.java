@@ -3,12 +3,13 @@ package com.rpc.interfaces.player;
 import com.annotation.Rpc;
 import com.entry.UnionEntry;
 import com.pojo.OnlineContext;
-import com.pojo.Tuple;
+
+import java.util.concurrent.CompletableFuture;
 
 public interface GameToBus {
 
     @Rpc(needResponse = true)
-    default Tuple<UnionEntry, Throwable> createUnion(Long playerId, String unionName) {
+    default CompletableFuture<UnionEntry> createUnion(Long playerId,String unionName) {
         return null;
     }
 

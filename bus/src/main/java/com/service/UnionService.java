@@ -5,7 +5,6 @@ import com.entry.PlayerEntry;
 import com.entry.UnionEntry;
 import com.exception.StatusException;
 import com.google.common.collect.Maps;
-import com.pojo.Tuple;
 import com.template.templates.type.TipType;
 import com.util.IdCreator;
 import lombok.Getter;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,24 +73,25 @@ public class UnionService extends BaseService {
     }
 
 
-    public Tuple<UnionEntry, Throwable> createUnion(long playerId, String unionName) {
-        Tuple<UnionEntry, Throwable> result = new Tuple<>();
+    public CompletableFuture<UnionEntry> createUnion(long playerId,String unionName) {
+        CompletableFuture<UnionEntry> completableFuture = new CompletableFuture<>();
         try {
             for (UnionEntry unionEntry : unionMap.values()) {
                 if (unionEntry.getName().equals(unionName)) {
-                    throw new StatusException(TipType.UnionNameExist);
+                    completableFuture.completeExceptionally(new StatusException(TipType.UnionNameExist));
+                    return completableFuture;
                 }
             }
 
             UnionEntry unionEntry = new UnionEntry(IdCreator.nextId(UnionEntry.class));
             unionEntry.setLeaderId(playerId);
             unionRepository.save(unionEntry);
-            result.setKey(unionEntry);
+            completableFuture.complete(unionEntry);
         } catch (Exception e) {
-            result.setValue(e);
+            completableFuture.completeExceptionally(e);
         }
 
-        return result;
+        return completableFuture;
     }
 
     @Override
