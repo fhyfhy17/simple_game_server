@@ -1,6 +1,5 @@
 package com.service;
 
-import com.GameReceiver;
 import com.annotation.EventListener;
 import com.dao.CenterMailRepository;
 import com.entry.CenterMailEntry;
@@ -8,12 +7,10 @@ import com.entry.MailEntry;
 import com.entry.po.ItemInfo;
 import com.entry.po.MailPo;
 import com.pojo.Player;
-import com.rpc.RpcProxy;
 import com.template.TemplateManager;
 import com.template.templates.MailTemplate;
 import com.template.templates.type.CenterMailType;
 import com.util.IdCreator;
-import com.util.MessageThreadUtil;
 import com.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
@@ -30,7 +27,7 @@ import java.util.Map;
 @Service
 @EventListener
 @Slf4j
-public class MailService extends BaseService {
+public class MailService extends GameService {
     @Autowired
     private CenterMailRepository centerMailRepository;
 
@@ -77,7 +74,7 @@ public class MailService extends BaseService {
                 Long playerIdPersonal = centerMailEntry.getReceiverId().iterator().next();
                 if (playerMap.containsKey(playerIdPersonal)) {
                     Player player=playerMap.get(playerIdPersonal);
-                    MessageThreadUtil.addSystemDis(player.getUid(),()->{
+                    systemDis(player.getUid(),()->{
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
@@ -86,7 +83,7 @@ public class MailService extends BaseService {
                 for(Long playerId : centerMailEntry.getReceiverId()){
                     if(onlineService.getPlayerMap().containsKey(playerId)){
                         Player player=onlineService.getPlayerMap().get(playerId);
-                        MessageThreadUtil.addSystemDis(player.getUid(),()->{
+                        systemDis(player.getUid(),()->{
                             player.getMailModule().onCenterMail(centerMailEntry);
                         });
                     }
@@ -94,7 +91,7 @@ public class MailService extends BaseService {
                 break;
             case CenterMailType.Total:
                 for(Player player : playerMap.values()){
-                    MessageThreadUtil.addSystemDis(player.getUid(),()->{
+                    systemDis(player.getUid(),()->{
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
