@@ -1,14 +1,15 @@
 package com.controller.interceptor.handlerInterceptorImpl;
 
 import cn.hutool.core.util.TypeUtil;
+import com.Constant;
 import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerExecutionChain;
 import com.controller.interceptor.HandlerInterceptor;
 import com.exception.StatusException;
-import com.google.protobuf.Message;
 import com.pojo.Packet;
 import com.util.ExceptionUtil;
 import com.util.SpringUtils;
+import com.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -27,11 +28,12 @@ public class ResultCompletableFutureReplyInterceptor implements HandlerIntercept
         if (!CompletableFuture.class.isAssignableFrom(o.getClass())) {
             return;
         }
-        Type actualTypeArgument = TypeUtil.getTypeArgument(TypeUtil.getReturnType(SpringUtils.getRawMethod(handler.getMethod())));
-    
-        if (!Message.class.isAssignableFrom(actualTypeArgument.getClass())) {
+        if (StringUtil.contains(message.getRpc(), Constant.RPC_REQUEST)) {
             return;
         }
+
+        Type actualTypeArgument = TypeUtil.getTypeArgument(TypeUtil.getReturnType(SpringUtils.getRawMethod(handler.getMethod())));
+
         CompletableFuture<Object> completableFuture = (CompletableFuture<Object>) o;
         
         completableFuture.whenComplete((result, throwable) -> {
