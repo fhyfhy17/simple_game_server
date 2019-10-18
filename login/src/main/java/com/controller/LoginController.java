@@ -57,7 +57,7 @@ public class LoginController extends BaseController implements GameToLogin {
     @Controllor
     @Override
     public CompletableFuture<String> testResponse(Long playerId) {
-        CompletableFuture<String> c=new CompletableFuture();
+        CompletableFuture<String> c=new CompletableFuture<>();
         c.completeExceptionally(new RuntimeException("1111"));
         return c;
          //return CompletableFuture.completedFuture("aaaa" + playerId);

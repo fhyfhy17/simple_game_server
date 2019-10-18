@@ -85,6 +85,7 @@ public class UnionService extends BaseService {
 
             UnionEntry unionEntry = new UnionEntry(IdCreator.nextId(UnionEntry.class));
             unionEntry.setLeaderId(playerId);
+            unionEntry.setName(unionName);
             unionRepository.save(unionEntry);
             completableFuture.complete(unionEntry);
         } catch (Exception e) {

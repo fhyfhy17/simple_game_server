@@ -36,15 +36,7 @@ public class DisruptorCreator {
         List<WorkerHandler> workerHandlers = new ArrayList<>();
 
         for (int i = 0; i < defaultWorkerHandlersCount; i++) {
-            Constructor<? extends WorkerHandler> constructor = null;
-            WorkerHandler workerHandler = null;
-            try {
-                constructor = this.workerHandler.getConstructor(String.class);
-                workerHandler = constructor.newInstance("workerHandler-" + name + "-" + i);
-            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-
+            WorkerHandler workerHandler = new WorkerHandler("workerHandler-" + name + "-" + i);
             workerHandlers.add(workerHandler);
         }
 

@@ -56,7 +56,7 @@ public class UnionModule extends GameModule {
     }
     // 异步RPC的代价还是挺大的，写起来复杂，如果调用都是有返回值的，那这调用一串全得改成CompletableFuture，直到不需要返回值的为止。
     // 唯一的好处就是。。。  是无痛的，不阻塞。。。
-    public void createUnion(String unionName) {
+    public CompletableFuture<UnionEntry> createUnion(String unionName) {
         //有帮派返回
         //条件不足返回
         //player 直接扣钱
@@ -65,7 +65,7 @@ public class UnionModule extends GameModule {
 
         //rpc调用要对结果进行异常判断，失败把之前的操作进行补偿
         CompletableFuture<UnionEntry> result = gameToBus.createUnion(player.getPlayerId(), unionName);
-        result.whenComplete((unionEntry,throwable)->callBack(()->{
+       return result.whenComplete((unionEntry,throwable)->callBack(()->{
             if(throwable!=null){
                 //player 把钱加回来
                 throw new WrapException(throwable.getMessage(),throwable);
