@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Slf4j
-public class MessageThreadHandler extends ScheduleAble implements Runnable,ICallBack {
+public class MessageThreadHandler extends ScheduleAble implements Runnable {
     // 执行器ID
     private String handlerId;
     // 心跳频率10毫秒
@@ -34,14 +34,15 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable,ICall
 
     protected final ConcurrentLinkedQueue<Packet> tickQueues= new ConcurrentLinkedQueue<>();
     
-    protected final ConcurrentLinkedQueue<Runnable> callBackQueues= new ConcurrentLinkedQueue<>();
+    protected final ConcurrentLinkedQueue<Packet> rpcRequestQueues= new ConcurrentLinkedQueue<>();
+    
+    protected final ConcurrentLinkedQueue<Packet> rpcResponseQueues= new ConcurrentLinkedQueue<>();
     
     @Override
     public void run() {
         for (; ; ) {
             stopWatch.start();
             ContextHolder.setScheduleAble(this);
-            ContextHolder.setICallBack(this);
             tick();
             stopWatch.stop();
             try {
@@ -62,62 +63,87 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable,ICall
     protected void tick(){
         // 执行心跳
         tickPacket();
+        // 执行rpcRequest
+        tickRpcRequest();
+        // 执行rpcResponse
+        tickRpcResponse();
         // 执行任务调度心跳
         tickSchedule();
-        // 执行回调心跳
-        tickCall();
     }
     
     
-    public void messageReceived(Packet msg) {
-        tickQueues.add(msg);
+    public void messageReceived(Packet packet) {
+        if (Constant.RPC_RESPONSE.equals(packet.getRpc())){
+            rpcResponseQueues.add(packet);
+        }else if(StringUtil.contains(packet.getRpc(), Constant.RPC_REQUEST)){
+            rpcRequestQueues.add(packet);
+        }else{
+            tickQueues.add(packet);
+        }
+        
     }
   
+    protected void tickRpcResponse(){
+        while(!rpcResponseQueues.isEmpty()){
+            Packet packet = rpcResponseQueues.poll();
+            SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(), RpcResponse.class));
+        }
+    }
+    protected void tickRpcRequest(){
+        while(!rpcRequestQueues.isEmpty()){
+            Packet packet = null;
+            ControllerHandler handler = null;
+            try{
+                packet = rpcRequestQueues.poll();
+                handler = ControllerFactory.getControllerMap().get(packet.getId());
+                RpcRequest rpcRequest = ProtostuffUtil.deserializeObject(packet.getData(), RpcRequest.class);
+                String key = rpcRequest.getClassName() + "_" + rpcRequest.getMethodName();
+                handler = ControllerFactory.getRpcControllerMap().get(key);
+                if (handler == null) {
+                    log.error("收到不存在的Rpc消息，消息KEY={}" , key);
+                    continue;
+                }
+                Object[] m = rpcRequest.getParameters();
+                //拦截器前
+                if (!HandlerExecutionChain.applyPreHandle(packet, handler, m)) {
+                    continue;
+                }
+                //执行方法
+                Object result = ControllorUtil.handleMethod(handler, m);
+                ////拦截器后
+                if (!Objects.isNull(result)) {
+                    HandlerExecutionChain.applyPostHandle(handler, packet, result);
+                }
+            }catch(Throwable t){
+                HandlerExecutionChain.applyPostHandle(handler, packet, t);
+            }
+          
+        }
+    }
 
     protected void tickPacket() {
         while (!tickQueues.isEmpty()) {
 
             ControllerHandler handler = null;
             Packet packet = null;
-            RpcRequest rpcRequest = null;
             try {
                 packet = tickQueues.poll();
-
-                if (Constant.RPC_RESPONSE.equals(packet.getRpc())) {
-                    SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(), RpcResponse.class));
+                
+                final int cmdId = packet.getId();
+                handler = ControllerFactory.getControllerMap().get(cmdId);
+                if (handler == null) {
+                    log.error("收到不存在的消息，消息ID={}" , cmdId);
                     continue;
                 }
-                boolean isRpc = StringUtil.contains(packet.getRpc(), Constant.RPC_REQUEST);
-
-                if (!isRpc) {
-                    final int cmdId = packet.getId();
-                    handler = ControllerFactory.getControllerMap().get(cmdId);
-                    if (handler == null) {
-                        throw new IllegalStateException("收到不存在的消息，消息ID=" + cmdId);
-                    }
-                } else {
-                    rpcRequest = ProtostuffUtil.deserializeObject(packet.getData(), RpcRequest.class);
-                    String key = rpcRequest.getClassName() + "_" + rpcRequest.getMethodName();
-                    handler = ControllerFactory.getRpcControllerMap().get(key);
-                    if (handler == null) {
-                        throw new IllegalStateException("收到不存在的Rpc消息，消息KEY=" + key);
-                    }
-                }
-
-                Object result = null;
-                Object[] m;
-                if (!isRpc) {
-                    m = handler.getMethodArgumentValues(packet);
-                } else {
-                    m = rpcRequest.getParameters();
-                }
+                Object[] m = handler.getMethodArgumentValues(packet);
+              
                 //拦截器前
                 if (!HandlerExecutionChain.applyPreHandle(packet, handler, m)) {
                     continue;
                 }
 
                 //执行方法
-                result = ControllorUtil.handleMethod(handler, m);
+                Object result = ControllorUtil.handleMethod(handler, m);
 
                 ////针对method的每个参数进行处理， 处理多参数,返回result（这是老的invoke执行controller 暂时废弃）
                 //Message result = (Message) com.handler.invokeForController(packet);
@@ -129,7 +155,6 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable,ICall
 
             } catch (StatusException se) {
                 try {
-                    //rpcRequest是不会报错的，因为每个rpcRequest都全部try好，包装错误到消息里了
                     //报错推到前端
                     if (handler != null)
                         ExceptionUtil.sendStatusExceptionToClient(handler.getMethod().getReturnType(), packet, se);
@@ -169,21 +194,5 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable,ICall
                 }
             }
         }
-    }
-    
-    public void tickCall() {
-        while (!callBackQueues.isEmpty()) {
-            Runnable runnable = callBackQueues.poll();
-            try {
-                runnable.run();
-            } catch (Throwable t) {
-                log.error("tickCall报错", t);
-            }
-        }
-    }
-    
-    @Override
-    public void addCall(Runnable runnable){
-        callBackQueues.add(runnable);
     }
 }

@@ -23,18 +23,13 @@ public class ContextHolder {
         param.put(Constant.CONTEXT_SCHEDULE_ABLE, scheduleAble);
     }
     
-    public static ICallBack getCall(){
-        Param param = getParam();
-        return param.get(Constant.CONTEXT_CALL);
-    }
-    
-    public static void setICallBack(ICallBack call){
-        Param param = getParam();
-        param.put(Constant.CONTEXT_CALL, call);
-    }
-    
     public static void callBack(Runnable runnable){
-        getCall().addCall(runnable);
+        getScheduleAble().scheduleOnce(new ScheduleTask(){
+            @Override
+            public void execute(){
+                runnable.run();
+            }
+        },3);
     }
 
     public static ScheduleTask getScheduleTask() {

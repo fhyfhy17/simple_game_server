@@ -26,7 +26,15 @@ public class ResultRpcReplyInterceptor implements HandlerInterceptor {
         if (!StringUtil.contains(message.getRpc(), Constant.RPC_REQUEST)) {
             return;
         }
-    
+        
+        if(result instanceof Throwable){
+            RpcResponse rpcResponse = new RpcResponse();
+            rpcResponse.setRequestId(message.getRpc());
+            rpcResponse.setThrowable((Throwable)result);
+            send(message,rpcResponse);
+            return;
+        }
+        
         if (!CompletableFuture.class.isAssignableFrom(result.getClass())) {
             log.error("rpc返回结果必须为 CompletableFuture<> !" );
             return;
@@ -41,13 +49,16 @@ public class ResultRpcReplyInterceptor implements HandlerInterceptor {
             }else {
                 rpcResponse.setData(back);
             }
-            ServerInfoManager.sendMessage(message.getFrom(),
-                    ProtoUtil.buildRpcResponseMessage(
-                            ProtostuffUtil.serializeObject(rpcResponse, RpcResponse.class),
-                            message.getUid(),
-                            ContextUtil.id));
+            send(message,rpcResponse);
            });
        
+    }
+    private void send(Packet packet,RpcResponse rpcResponse){
+        ServerInfoManager.sendMessage(packet.getFrom(),
+                ProtoUtil.buildRpcResponseMessage(
+                        ProtostuffUtil.serializeObject(rpcResponse, RpcResponse.class),
+                        packet.getUid(),
+                        ContextUtil.id));
     }
 
 }
