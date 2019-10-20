@@ -1,7 +1,6 @@
 package com.controller;
 
 import com.annotation.Controllor;
-import com.handler.ContextHolder;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.OnlineContext;
 import com.pojo.Param;
@@ -12,16 +11,22 @@ import com.service.PlayerService;
 import com.util.ContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Controller
 @Slf4j
 public class LoginController extends BaseController implements GameToGame, GameToBus {
     @Autowired
     private PlayerService playerService;
+
+    @Autowired
+    @Qualifier("callBackForMessageThread")
+    private Executor callBackForMessageThread;
 
     @Controllor
     public CompletableFuture<LOGIN_MSG.GTC_PLAYER_LIST> playerList(UidContext context, LOGIN_MSG.CTG_PLAYER_LIST req) {
@@ -40,27 +45,17 @@ public class LoginController extends BaseController implements GameToGame, GameT
         LOGIN_MSG.GTC_GAME_LOGIN_PLAYER.Builder builder = LOGIN_MSG.GTC_GAME_LOGIN_PLAYER.newBuilder();
         CompletableFuture<LOGIN_MSG.PLAYER_INFO> result = playerService.login(req.getPlayerId());
 		Param param=new Param();
-        return result.thenApply((playerInfo)->{
+        return result.thenApplyAsync((playerInfo) -> {
             builder.setPlayerInfo(playerInfo);
-            //异步的话，这还是IO线程
+            //异步的话，这还是IO线程 ----通过指定线程池加上ThreadLocal ，直接线程就切回了调用线程
             log.info(Thread.currentThread().getName() + "执行了一下");
             // 通知bus登陆信息
             putOnline(new OnlineContext(playerInfo.getUid(), playerInfo.getPlayerId(), context.getGate(), ContextUtil.id));
-    
-            /**
-             * 这是回调调用，用于异步的消息切回本线程,使用的前提是在  {@link com.handler.MessageThreadHandler} 设置 ContextHolder.setScheduleAble(this);
-             */
-            ContextHolder.callBack(()->{
-            	param.put("aa","bb");
-				log.info(Thread.currentThread().getName() + "   回调里执行了一下");
-            });
-            
-            
-            
+
             log.info("param : {}" ,param);
 			log.info(Thread.currentThread().getName() + "   回调结束后执行了一下");
             return builder.build();
-        });
+        }, callBackForMessageThread);
     }
 
     @Controllor

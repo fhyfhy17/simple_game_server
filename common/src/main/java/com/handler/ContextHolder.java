@@ -22,15 +22,6 @@ public class ContextHolder {
         Param param = getParam();
         param.put(Constant.CONTEXT_SCHEDULE_ABLE, scheduleAble);
     }
-    
-    public static void callBack(Runnable runnable){
-        getScheduleAble().scheduleOnce(new ScheduleTask(){
-            @Override
-            public void execute(){
-                runnable.run();
-            }
-        },3);
-    }
 
     public static ScheduleTask getScheduleTask() {
         Param param = getParam();

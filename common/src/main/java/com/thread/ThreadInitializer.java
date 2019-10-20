@@ -35,5 +35,9 @@ public class ThreadInitializer {
                 new NamedThreadFactory("saveDb 线程", true));
         return saveBbThreadPool;
     }
-    
+
+    @Bean(name = "callBackForMessageThread")
+    public Executor getCallBackExecutor() {
+        return TtlExecutors.getTtlExecutor(new CallBackForMessageThreadExecutor());
+    }
 }
