@@ -6,7 +6,7 @@ import java.util.List;
 
 public class FileUtil {
 
-    public static List<String> getFiles(String filePath, String filter) {
+    public static List<String> getFileNames(String filePath, String filter) {
         File root = new File(filePath);
         File[] files = root.listFiles(pathname -> {
             String name = pathname.getName();
@@ -23,5 +23,22 @@ public class FileUtil {
             }
         }
         return filelist;
+    }
+    
+    public static List<File> getFiles(String filePath, String filter) {
+        File root = new File(filePath);
+        File[] files = root.listFiles(pathname -> {
+            String name = pathname.getName();
+            return name.endsWith(filter);
+        });
+        List<File> fileList = new ArrayList<>();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                getFiles(file.getAbsolutePath(), filter);
+            } else {
+                fileList.add(file);
+            }
+        }
+        return fileList;
     }
 }
