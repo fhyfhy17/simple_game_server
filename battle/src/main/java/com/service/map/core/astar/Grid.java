@@ -338,8 +338,12 @@ public class Grid implements Cloneable {
         return passedNodeList;
     }
     
+    //下面两个算法，以输入的两个点为基准，每个格子为长宽1，进行格子的搜索
+    //所以以世界坐标比用格子index坐标要细致很多，但是从结果上看，两者基本是一致的，
+    //supercover覆盖面比较广，通过四个格子的连接点，会把四个格子都算进去，bresenham是通过格子画一条线，所以格子数较少。 所以supercover更严格，bresenham更宽松
+    
     //基于  bresenham 算法
-    public List<Node> bresenham(Grid grid, int x0, int y0, int x1, int y1) {
+    public List<Node> bresenham(int x0, int y0, int x1, int y1) {
         List<Node> line = new ArrayList<>();
         
         int dx = Math.abs(x1 - x0);
@@ -354,18 +358,16 @@ public class Grid implements Cloneable {
         int currentY = y0;
         
         while(true) {
-            line.add( grid.getNode(currentX,currentY));
+            line.add(getNode(currentX,currentY));
             
             if(currentX == x1 && currentY == y1) {
                 break;
             }
-            
             e2 = 2*err;
             if(e2 > -1 * dy) {
                 err = err - dy;
                 currentX = currentX + sx;
             }
-            
             if(e2 < dx) {
                 err = err + dx;
                 currentY = currentY + sy;
@@ -388,8 +390,7 @@ public class Grid implements Cloneable {
         int dy = y2 - y1;
         
         nodes.add(getNode(x1, y1)); // first point
-        // NB the last point can't be here, because of its previous point (which
-        // has to be verified)
+        // NB the last point can't be here, because of its previous point (which has to be verified)
         if(dy<0){
             ystep=-1;
             dy=-dy;
@@ -406,19 +407,15 @@ public class Grid implements Cloneable {
         ddy = 2 * dy; // work with double values for full precision
         ddx = 2 * dx;
         if (ddx >= ddy) { // first octant (0 <= slope <= 1)
-            // compulsory initialization (even for errorprev, needed when
-            // dx==dy)
+            // compulsory initialization (even for errorprev, needed when dx==dy)
             errorprev = error = dx; // start in the middle of the square
-            for (int i = 0; i < dx; i++) { // do not use the first point
-                // (already
-                // done)
+            for (int i = 0; i < dx; i++) { // do not use the first point(already done)
                 x += xstep;
                 error += ddy;
                 if (error > ddx) { // increment y if AFTER the middle ( > )
                     y += ystep;
                     error -= ddx;
-                    // three cases (octant == right->right-top for directions
-                    // below):
+                    // three cases (octant == right->right-top for directions below):
                     if(error + errorprev<ddx) {// bottom square also
                         nodes.add(getNode(x,y - ystep));
                     }else if(error + errorprev>ddx) {// left square also
