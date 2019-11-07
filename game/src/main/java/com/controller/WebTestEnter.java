@@ -287,8 +287,8 @@ public class WebTestEnter {
 
     @RequestMapping("/test/testZk")
     public void testZk() {
-        int count=100;
-        DisLock lock=LockUtil.lock("cccc");
+        int count=1000;
+        DisLock lock=LockUtil.lock("ccc");
         s.reset();
         s.start();
         for (int i = 0; i < count; i++) {

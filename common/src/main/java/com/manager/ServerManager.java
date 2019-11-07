@@ -138,12 +138,15 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
                         }
                         //这要不要做成个事件
                         serverStatus = TypeEnum.ServerStatus.OPEN;
+                        startOver();
                     }
                 }
             },1000,200);
         }
         
     }
+    //完全启动成功后
+    public abstract void startOver();
     
     public TypeEnum.ServerStatus getServerStatus() {
         return serverStatus;

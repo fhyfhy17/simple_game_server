@@ -3,6 +3,8 @@ package com.manager;
 import com.BaseVerticle;
 import com.LoginReceiver;
 import com.LoginVerticle;
+import com.lock.DisLock;
+import com.lock.LockUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
@@ -35,6 +37,21 @@ public class LoginServerManager extends ServerManager {
     public void onServerStop() {
         super.onServerStop();
         log.info("停服完成 -------------------------------------------------------");
+    }
+    
+    @Override
+    public void startOver(){
+        //DisLock ccc=LockUtil.lock("ccc");
+        //try
+        //{
+        //    ccc.lock();
+        //    Thread.sleep(10000);
+        //}catch(Exception e){
+        //
+        //}finally
+        //{
+        //    ccc.unLock();
+        //}
     }
     
     @Override

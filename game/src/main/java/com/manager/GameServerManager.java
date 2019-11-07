@@ -38,6 +38,11 @@ public class GameServerManager extends ServerManager {
     }
     
     @Override
+    public void startOver(){
+    
+    }
+    
+    @Override
     public void onApplicationEvent(ContextClosedEvent event) {
         onServerStop();
     }
