@@ -11,6 +11,8 @@ import com.dao.UnionRepository;
 import com.dao.UserRepository;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
+import com.lock.DisLock;
+import com.lock.LockUtil;
 import com.lock.zk.ZkDistributedLock;
 import com.manager.GameServerManager;
 import com.manager.ServerInfoManager;
@@ -285,27 +287,28 @@ public class WebTestEnter {
 
     @RequestMapping("/test/testZk")
     public void testZk() {
-        ZkDistributedLock lock = zookeeperConfig.getZkLock();
+        int count=100;
+        DisLock lock=LockUtil.lock("cccc");
         s.reset();
         s.start();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < count; i++) {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             new Thread(() -> {
-                lock.lock("a");
+                lock.lock();
                 try {
                     System.out.println(Thread.currentThread().getId() + " 获得了锁");
                     int i1 = this.a.incrementAndGet();
-                    if (i1 != 0 && i1 % 1000 == 0) {
+                    if (i1 != 0 && i1 % count == 0) {
                         s.stop();
-                        System.out.println("1000个 锁已经全部完事了，共用了：" + s.getTime());
+                        System.out.println(count+"个 锁已经全部完事了，共用了：" + s.getTime());
                     }
 
                 } finally {
-                    lock.unlock();
+                    lock.unLock();
                 }
 
 //                RedissonClient lock = redissonConfig.getClient();

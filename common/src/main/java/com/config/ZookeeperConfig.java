@@ -2,7 +2,6 @@ package com.config;
 
 
 import com.Constant;
-import com.lock.zk.ZkDistributedLock;
 import com.manager.ServerInfoManager;
 import com.pojo.ServerInfo;
 import com.service.BaseService;
@@ -31,8 +30,7 @@ public class ZookeeperConfig extends BaseService{
 
     @Autowired
     private ServerInfo serverInfo;
-
-    private ZkDistributedLock lock;
+    
     private CuratorFramework curator;
     private PathChildrenCache childrenCache;
     
@@ -86,12 +84,9 @@ public class ZookeeperConfig extends BaseService{
         );
     
         ZookeeperUtil.connectZookeeper(serverInfo);
-        lock = new ZkDistributedLock(ContextUtil.zkIpPort, 1000, "testLock");
-    }
 
-    public ZkDistributedLock getZkLock() {
-        return lock;
     }
+    
     
     @Override
     public void onStart(){
