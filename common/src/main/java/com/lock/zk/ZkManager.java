@@ -1,29 +1,43 @@
 package com.lock.zk;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-
+@Slf4j
 public class ZkManager{
-
-    private static final Logger log = LoggerFactory.getLogger(ZkManager.class);
-
+    
     public static ZooKeeper zk;
-
+    
+    public static final String LOCK_ROOT = "/Locks";
     /**
      * 初始化
      */
     public static void initial(String connectString) throws Exception{
         initial(connectString, null);
     }
-
+    
+    public static void create(String path) throws KeeperException, InterruptedException {
+        
+        if (null == ZkManager.zk.exists(path, false)) {
+            synchronized (ZkManager.class) {
+                try {
+                    ZkManager.zk.create(path, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                } catch (Exception e) {
+                    //ignore
+                }
+            }
+        }
+    }
+    
     /**
      * 初始化
      */
     public static void initial(String connectString, Runnable successTask) throws Exception{
-        zk = new ZooKeeper("127.0.0.1:2181", 1000, event -> {
+        zk = new ZooKeeper( connectString, 1000, event -> {
             log.info("event=" + event.getType() + "，state=" + event.getState());
             if(event.getState() == Watcher.Event.KeeperState.Expired){
                 try{
@@ -43,7 +57,7 @@ public class ZkManager{
             }
         }
         log.warn("zookeeper连接成功");
-
+        
         if(successTask != null){
             successTask.run();
         }

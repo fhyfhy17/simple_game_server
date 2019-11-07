@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class LockUtil{
 	
 	private static RedissonConfig redissonConfig;
-	private static LockType lockType =LockType.Redis; //zk的两个客户端，一个要创建不存在的路径，不知道怎么同步， 另一个curator速度太慢，应该都是实现的不对。。。先用redis
+	private static LockType lockType =LockType.Zk;
 	
 	
 	enum LockType{

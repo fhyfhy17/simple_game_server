@@ -20,7 +20,7 @@ public class DistributedLock {
 	/** 锁的根节点 */
 	private String lockRootNode;
 	
-	private static final String ROOT = "/Locks";
+
 	
 	/** 竞争锁的完整节点 */
 	private String fullNode;
@@ -37,25 +37,13 @@ public class DistributedLock {
 		}
 		
 	}
-	private static final Object o = new Object();
+
+	
 	public void lock(int timeout, TimeUnit unit) throws KeeperException, InterruptedException, TimeoutException{
 		//注册锁竞争
 		ZooKeeper zk = ZkManager.zk;
-		String path = ROOT+lockRootNode;
-		
-		synchronized(o){
-			Stat stat0=zk.exists(ROOT,false);
-			if(stat0==null)
-			{
-				zk.create(ROOT,new byte[0],ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-			}
-			//检查锁的路径是否存在
-			Stat stat=zk.exists(path,false);
-			if(stat==null)
-			{
-				zk.create(path,new byte[0],ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-			}
-		}
+		String path = ZkManager.LOCK_ROOT+lockRootNode;
+		ZkManager.create(path);
 		
 		fullNode = zk.create(path + "/", null, Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 		

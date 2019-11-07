@@ -4,7 +4,9 @@ import com.BaseVerticle;
 import com.GameReceiver;
 import com.GameVerticle;
 import com.lock.zk.ZkManager;
+import com.util.ContextUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.zookeeper.KeeperException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Component;
@@ -40,13 +42,17 @@ public class GameServerManager extends ServerManager {
     
     @Override
     public void startOver(){
-        try
-        {
-            ZkManager.initial("");
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
+        try{
+            ZkManager.initial(ContextUtil.zkIpPort,()->{
+                try{
+                    ZkManager.create(ZkManager.LOCK_ROOT);
+                }
+                catch(KeeperException | InterruptedException e){
+                    e.printStackTrace();
+                }
+            });
+        } catch(Exception e){
+            log.error("",e);
         }
     }
     
