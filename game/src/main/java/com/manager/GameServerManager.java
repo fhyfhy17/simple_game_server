@@ -3,6 +3,7 @@ package com.manager;
 import com.BaseVerticle;
 import com.GameReceiver;
 import com.GameVerticle;
+import com.lock.zk.ZkManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
@@ -39,7 +40,14 @@ public class GameServerManager extends ServerManager {
     
     @Override
     public void startOver(){
-    
+        try
+        {
+            ZkManager.initial("");
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     
     @Override

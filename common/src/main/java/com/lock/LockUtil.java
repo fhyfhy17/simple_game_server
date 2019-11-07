@@ -1,6 +1,7 @@
 package com.lock;
 
 import com.lock.redis.RedissonConfig;
+import com.lock.zk.DistributedLock;
 import com.lock.zk.ZkDistributedLock;
 import com.util.ContextUtil;
 import org.redisson.api.RLock;
@@ -12,8 +13,7 @@ import org.springframework.stereotype.Component;
 public class LockUtil{
 	
 	private static RedissonConfig redissonConfig;
-	private static ZkDistributedLock zkDistributedLock;
-	private static LockType lockType =LockType.Redis;
+	private static LockType lockType =LockType.Redis; //zk的两个客户端，一个要创建不存在的路径，不知道怎么同步， 另一个curator速度太慢，应该都是实现的不对。。。先用redis
 	
 	
 	enum LockType{
@@ -31,7 +31,7 @@ public class LockUtil{
 			RLock lock=redissonConfig.getClient().getLock(key);
 			disLock =new DisLock(lock);
 		}else {
-			ZkDistributedLock.ZkLock lock=zkDistributedLock.getLock(key);
+			DistributedLock lock=new DistributedLock(key);
 			disLock = new DisLock(lock);
 		}
 	
@@ -49,8 +49,4 @@ public class LockUtil{
 		LockUtil.redissonConfig=redissonConfig;
 	}
 	
-	@Autowired
-	public void setZkDistributedLock(ZkDistributedLock zkDistributedLock){
-		LockUtil.zkDistributedLock = zkDistributedLock;
-	}
 }

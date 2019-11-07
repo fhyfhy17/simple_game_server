@@ -13,7 +13,7 @@ import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
 import com.lock.DisLock;
 import com.lock.LockUtil;
-import com.lock.zk.ZkDistributedLock;
+import com.lock.zk.DistributedLock;
 import com.manager.GameServerManager;
 import com.manager.ServerInfoManager;
 import com.mongoListener.MongoEventListener;
@@ -282,8 +282,38 @@ public class WebTestEnter {
 
     AtomicInteger a = new AtomicInteger(0);
     StopWatch s = new StopWatch();
-
-
+    
+    @RequestMapping("/test/testZk2")
+    public void testZk2() throws Exception{
+        int count=1000;
+       
+        s.reset();
+        s.start();
+        for (int i = 0; i < count; i++) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            new Thread(() -> {
+                DisLock lock=LockUtil.lock("/test93");
+                try {
+                    lock.lock();
+                    System.out.println(Thread.currentThread().getId() + " 获得了锁");
+                    int i1 = this.a.incrementAndGet();
+                    if (i1 != 0 && i1 % count == 0) {
+                        s.stop();
+                        System.out.println(count+"个 锁已经全部完事了，共用了：" + s.getTime());
+                    }
+                    
+                }
+                finally {
+                    lock.unLock();
+                }
+            }
+            ).start();
+        }
+    }
 
     @RequestMapping("/test/testZk")
     public void testZk() {

@@ -1,12 +1,12 @@
 package com.lock;
 
-import com.lock.zk.ZkDistributedLock;
+import com.lock.zk.DistributedLock;
 import org.redisson.api.RLock;
 
 public class DisLock{
 	
 	private RLock rLock;
-	private ZkDistributedLock.ZkLock zkLock;
+	private DistributedLock zkLock;
 	private LockUtil.LockType lockType;
 	
 	public DisLock(RLock rLock){
@@ -14,7 +14,7 @@ public class DisLock{
 		this.lockType=LockUtil.LockType.Redis;
 	}
 	
-	public DisLock(ZkDistributedLock.ZkLock lock){
+	public DisLock(DistributedLock lock){
 		this.zkLock=lock;
 		this.lockType=LockUtil.LockType.Zk;
 	}
