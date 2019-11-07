@@ -90,7 +90,7 @@ public class DistributedLock {
 		try{
 			zk.delete(fullNode, -1);
 		} catch(InterruptedException | KeeperException e){
-			e.printStackTrace();
+			log.error("",e);
 		}
 	}
 	
