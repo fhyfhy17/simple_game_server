@@ -224,6 +224,7 @@ public class TemplateLoader {
             log.error("警告：XML 资源文件加载为空：{}", file.getName());
         }
 
+        // TemplateCache赋值
         HashMap<Integer, T> collect = (HashMap<Integer, T>) ts.stream().collect(Collectors.toMap(T::getId, Function.identity()));
 
         try {
@@ -231,6 +232,8 @@ public class TemplateLoader {
             Object o = aClass.newInstance();
             Method setMap = aClass.getMethod("setMap", HashMap.class);
             setMap.invoke(o, collect);
+            Method after = aClass.getMethod("after");
+            after.invoke(o);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }

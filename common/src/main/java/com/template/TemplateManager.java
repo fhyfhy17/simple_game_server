@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -17,10 +16,9 @@ import java.util.Map;
 public class TemplateManager {
     @Autowired
     private TemplateLoader loader;
-    private Map<Class<? extends AbstractTemplate>, Map<Integer, AbstractTemplate>> templates = new HashMap<>();
 
     /**
-     * 加载模板数据的过程.
+     * 加载模板数据的过程. 热更新重新加载也是调用此方法
      */
     @PostConstruct
     public void load() {
