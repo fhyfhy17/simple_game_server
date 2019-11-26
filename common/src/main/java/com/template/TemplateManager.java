@@ -50,7 +50,7 @@ public class TemplateManager {
             Class<? extends AbstractTemplate> subclass = o.getClass().asSubclass(AbstractTemplate.class);
             List<? extends AbstractTemplate> abstractTemplates=loader.loadTemplate(new File(path),subclass);
             for(AbstractTemplate abstractTemplate : abstractTemplates){
-            
+                //TODO 这里赋值给Cache
             }
             this.templates.put(subclass,
                     abstractTemplates.stream().collect(Collectors.toMap(AbstractTemplate::getId, Function.identity())));
