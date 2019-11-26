@@ -16,6 +16,7 @@
         <module>client</module>
         <module>bus</module>
         <module>battle</module>
+        <module>xlsx</module>
     </modules>
 
 

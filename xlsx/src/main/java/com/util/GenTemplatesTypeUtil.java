@@ -105,16 +105,16 @@ public class GenTemplatesTypeUtil {
         System.out.println("---------------------------");
         String className = fileName;
         StringBuilder buff = new StringBuilder();
-        buff.append("package com.template.templates.type;\n\n");
+        buff.append("package com.template.templates.type;\r\n\r\n");
 
 
-        buff.append("public class ").append(toUpperFirstLetter(className)).append(" {\n");
+        buff.append("public class ").append(toUpperFirstLetter(className)).append(" {\r\n");
 
 
         for (TypeClass t : typeList) {
 
 
-            buff.append("\n    public static final int ").append(toUpperFirstLetter(t.getName())).append(" = ")
+            buff.append("\r\n    public static final int ").append(toUpperFirstLetter(t.getName())).append(" = ")
                     .append(t.getId())
                     .append(";")
                     .append("//")
@@ -122,17 +122,17 @@ public class GenTemplatesTypeUtil {
                     .append("\r\n");
         }
         buff.append("\r\n");
-        buff.append("\n    public static final int FIRST_ID = ")
+        buff.append("\r\n    public static final int FIRST_ID = ")
                 .append(first)
                 .append(";")
                 .append("//第一个ID\r\n");
 
-        buff.append("\n    public static final int LAST_ID = ")
+        buff.append("\r\n    public static final int LAST_ID = ")
                 .append(last)
                 .append(";")
                 .append("//最后一个ID\r\n");
 
-        buff.append("\n    public static final int TYPE_SIZE = ")
+        buff.append("\r\n    public static final int TYPE_SIZE = ")
                 .append(size)
                 .append(";")
                 .append("//ID数量\r\n");

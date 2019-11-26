@@ -86,22 +86,22 @@ public class GenTemplatesUtil {
         System.out.println("---------------------------");
         String className = fileName + "Template";
         StringBuilder buff = new StringBuilder();
-        buff.append("package com.template.templates;\n\n")
-                .append("import com.annotation.Template;\n")
-                .append("import lombok.Data;\n")
+        buff.append("package com.template.templates;\r\n\r\n")
+                .append("import com.annotation.Template;\r\n")
+                .append("import lombok.Data;\r\n")
                 .append("\r\n")
-                .append("import java.util.*;\n")
+                .append("import java.util.*;\r\n")
                 .append("\r\n")
-                .append("import org.springframework.stereotype.Component;\n")
+                .append("import org.springframework.stereotype.Component;\r\n")
                 .append("\r\n");
 
 
-        buff.append("@Data\n");
-        buff.append("@Component\n");
-        buff.append("@Template(path = \"").append(fullPathName).append("\")\n");
+        buff.append("@Data\r\n");
+        buff.append("@Component\r\n");
+        buff.append("@Template(path = \"").append(fullPathName).append("\")\r\n");
 
 
-        buff.append("public class ").append(toUpperFirstLetter(className)).append(" extends AbstractTemplate {\n");
+        buff.append("public class ").append(toUpperFirstLetter(className)).append(" extends AbstractTemplate {\r\n");
 
 
         for (Attribute attr : attrList) {
@@ -112,13 +112,13 @@ public class GenTemplatesUtil {
             }
             Pair<String, String> type = getType(value);
 
-            buff.append("\n    private ").append(type.t1).append(" ")
+            buff.append("\r\n    private ").append(type.t1).append(" ")
                     .append(key)
                     .append("".equals(type.t2) ? "" : " = " + type.t2)
                     .append("; //");
 //                    .append()
         }
-        buff.append("\n");
+        buff.append("\r\n");
 
 //        for (Attribute attr : attrList) {
 //            String key = attr.getName();
@@ -132,7 +132,7 @@ public class GenTemplatesUtil {
 //        }
 
 
-        buff.append("\n}");
+        buff.append("\r\n}");
         System.out.println(buff.toString());
 
         FileUtil.writeStringToFile(FileUtil.getJavaTemplatesPath()
