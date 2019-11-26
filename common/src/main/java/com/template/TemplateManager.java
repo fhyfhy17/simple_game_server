@@ -48,10 +48,13 @@ public class TemplateManager {
                     + templateAnno.path();
 
             Class<? extends AbstractTemplate> subclass = o.getClass().asSubclass(AbstractTemplate.class);
+            List<? extends AbstractTemplate> abstractTemplates=loader.loadTemplate(new File(path),subclass);
+            for(AbstractTemplate abstractTemplate : abstractTemplates){
+            
+            }
             this.templates.put(subclass,
-                    loader.loadTemplate(new File(path), subclass)
-                            .stream()
-                            .collect(Collectors.toMap(AbstractTemplate::getId, Function.identity())));
+                    abstractTemplates.stream().collect(Collectors.toMap(AbstractTemplate::getId, Function.identity())));
+            
         }
     }
 
