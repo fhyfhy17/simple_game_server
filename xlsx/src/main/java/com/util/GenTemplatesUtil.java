@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class GenTemplatesUtil {
         templateFileName = xmlName.substring(0, xmlName.indexOf("."));
         writeToModel(templateFileName, attrList, file.getName());
 //
-
+        writeToModelCache(templateFileName);
     }
 
     //
@@ -178,6 +179,68 @@ public class GenTemplatesUtil {
         arr[0] = Character.toUpperCase(arr[0]);
         return String.valueOf(arr);
     }
+    
+    private static void writeToModelCache(String fileName) {
+     
+        System.out.println("---------------------------");
+        String className = toUpperFirstLetter(fileName) + "TemplateCache";
+        String fullFilePath = FileUtil.getJavaTemplatesPath()
+                + File.separator + toUpperFirstLetter(className) + ".java";
+        if(FileUtil.exists(fullFilePath)){
+            System.out.println(fullFilePath+" 已存在");
+            return;
+        }
+        
+        String rawClassName = toUpperFirstLetter(fileName) + "Template";
+        StringBuilder buff = new StringBuilder();
+        buff.append("package com.template.templates;\r\n\r\n")
+                .append("import java.util.HashMap;\r\n")
+                .append("\r\n");
+        
+        
+        buff.append("public class ").append(className).append(" {\r\n\r\n");
 
+        buff.append("   public static HashMap<Integer,"+rawClassName+"> cache=new HashMap<>();\r\n\r\n");
+        
+        buff.append("   public static HashMap<Integer,"+rawClassName+"> getMap(){\r\n");
+        
+        buff.append("       return cache;\r\n");
+        
+        buff.append("   }\r\n\r\n");
+        
+        buff.append("   public static "+rawClassName+" get(int id){\r\n");
+        
+        buff.append("       return cache.get(id);\r\n");
+    
+        buff.append("   }\r\n\r\n");
+        
+        buff.append("   public static void after(){\r\n\r\n");
+        
+        buff.append("   }\r\n");
+    
+        //public static HashMap<Integer,LanguageTemplate> cache=new HashMap<>();
+        //
+        //public static HashMap<Integer,LanguageTemplate> getMap(){
+        //    return cache;
+        //}
+        //
+        //public static LanguageTemplate get(int id){
+        //    return cache.get(id);
+        //}
+        //
+        //public static void after(){
+        //
+        //}
+        
+        
+        
+        buff.append("\r\n}");
+        System.out.println(buff.toString());
+        
+        FileUtil.writeStringToFile(FileUtil.getJavaTemplatesPath()
+                        + File.separator + toUpperFirstLetter(className) + ".java"
+                , buff.toString(), Charset.forName("utf-8"));
+        
+    }
 
 }

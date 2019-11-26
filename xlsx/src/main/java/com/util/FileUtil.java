@@ -9,7 +9,6 @@ import java.util.Objects;
 
 public class FileUtil {
 
-
     public static List<String> getFiles(String filePath, String filter) {
 
         //Predicate<String> fileFilter = fileName->fileName.endsWith(filter)&&!fileName.startsWith("~");
@@ -145,4 +144,8 @@ public class FileUtil {
         }
     }
 
+    public static boolean exists(String path){
+        File file = new File(path);
+        return file.exists();
+    }
 }
