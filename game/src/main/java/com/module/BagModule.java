@@ -5,7 +5,6 @@ import com.abs.impl.CommonCellBag;
 import com.dao.BagRepository;
 import com.entry.BagEntry;
 import com.entry.BaseEntry;
-import com.template.TemplateManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +16,9 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Order(2)
-public class BagModule extends BaseModule
-{
+public class BagModule extends BaseModule {
 
     private BagEntry bagEntry;
-    @Autowired
-    private TemplateManager templateManager;
 
     private CellBagAbs bag;
     @Autowired
@@ -33,7 +29,7 @@ public class BagModule extends BaseModule
         player.setBagModule(this);
         bagEntry = bagRepository.findById(player.getPlayerId()).orElse(new BagEntry(player.getPlayerId()));
         bag = new CommonCellBag();
-        bag.init(bagEntry.indexMap, templateManager, player);
+        bag.init(bagEntry.indexMap, player);
 
     }
 
@@ -41,13 +37,13 @@ public class BagModule extends BaseModule
     public BaseEntry getEntry() {
         return bagEntry;
     }
-    
+
     @Override
-    public CrudRepository getRepository(){
+    public CrudRepository getRepository() {
         return bagRepository;
     }
-    
-    
+
+
     @Override
     public void onLogin() {
 

@@ -10,6 +10,10 @@ public class ItemTemplateCache {
        return cache;
    }
 
+    public static void setMap(HashMap<Integer, ItemTemplate> map) {
+        ItemTemplateCache.cache = map;
+    }
+
    public static ItemTemplate get(int id){
        return cache.get(id);
    }

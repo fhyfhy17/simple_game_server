@@ -10,6 +10,10 @@ public class MailTemplateCache {
        return cache;
    }
 
+    public static void setMap(HashMap<Integer, MailTemplate> map) {
+        MailTemplateCache.cache = map;
+    }
+
    public static MailTemplate get(int id){
        return cache.get(id);
    }

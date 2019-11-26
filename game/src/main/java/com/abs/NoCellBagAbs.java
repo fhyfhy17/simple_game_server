@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.pojo.Player;
 import com.template.TemplateManager;
 import com.template.templates.ItemTemplate;
+import com.template.templates.ItemTemplateCache;
 import com.template.templates.type.ItemUseType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,14 +24,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public abstract class NoCellBagAbs {
 
-    private TemplateManager tm;
-
     public Map<Integer, Long> map = new HashMap<>();
 
     private Player player;
 
     public void init(Map<Integer, Long> map, TemplateManager templateManager, Player player) {
-        this.tm = templateManager;
         this.map = map;
         this.player = player;
 
@@ -114,7 +112,7 @@ public abstract class NoCellBagAbs {
         }
 
         //TODO  使用条件等
-        ItemTemplate t = tm.getTemplate(ItemTemplate.class, itemId);
+        ItemTemplate t = ItemTemplateCache.get(itemId);
         switch (t.getType()) {
             case ItemUseType.OpenBox:
 

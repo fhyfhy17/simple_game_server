@@ -10,6 +10,10 @@ public class LanguageTemplateCache {
        return cache;
    }
 
+    public static void setMap(HashMap<Integer, LanguageTemplate> map) {
+        LanguageTemplateCache.cache = map;
+    }
+
    public static LanguageTemplate get(int id){
        return cache.get(id);
    }

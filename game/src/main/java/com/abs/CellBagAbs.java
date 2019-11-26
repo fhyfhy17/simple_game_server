@@ -5,8 +5,8 @@ import com.entry.po.ItemPo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.pojo.Player;
-import com.template.TemplateManager;
 import com.template.templates.ItemTemplate;
+import com.template.templates.ItemTemplateCache;
 import com.template.templates.type.ItemBigType;
 import com.template.templates.type.ItemUseType;
 import com.template.templates.type.OverBagType;
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public abstract class CellBagAbs {
 
-    private TemplateManager tm;
     public int maxIndex = 64;
     public Map<Integer, Map<Integer, ItemPo>> idIndexMap = new HashMap<>();
     public Map<Integer, ItemPo> indexMap = new HashMap<>();
@@ -34,8 +33,7 @@ public abstract class CellBagAbs {
     private Player player;
 
 
-    public void init(Map<Integer, ItemPo> indexMap, TemplateManager templateManager, Player player) {
-        this.tm = templateManager;
+    public void init(Map<Integer, ItemPo> indexMap, Player player) {
         this.indexMap = indexMap;
         this.player = player;
         if (CollectionUtils.isEmpty(indexMap)) {
@@ -129,7 +127,7 @@ public abstract class CellBagAbs {
         int allUseNum = 0;
         while (it.hasNext()) {
             ItemInfo itemInfo = it.next();
-            ItemTemplate t = tm.getTemplate(ItemTemplate.class, itemInfo.id);
+            ItemTemplate t = ItemTemplateCache.get(itemInfo.id);
 
             if (t.getBigType() == ItemBigType.Currency) {
                 TempCell tempCell = new TempCell(ItemBigType.Currency, itemInfo.id, 0, itemInfo.num);
@@ -170,7 +168,7 @@ public abstract class CellBagAbs {
         //把空格填起来，返回记录操作数据
         List<Integer> tempEmptyList = new ArrayList<>(emptyList);
         for (ItemInfo itemInfo : itemInfos) {
-            ItemTemplate t = tm.getTemplate(ItemTemplate.class, itemInfo.id);
+            ItemTemplate t = ItemTemplateCache.get(itemInfo.id);
             while (itemInfo.num > 0) {
                 int index = overBagType;
                 if (tempEmptyList.size() > 0) {
@@ -389,7 +387,7 @@ public abstract class CellBagAbs {
             return false;
         }
         //TODO  使用条件等
-        ItemTemplate t = tm.getTemplate(ItemTemplate.class, itemId);
+        ItemTemplate t = ItemTemplateCache.get(itemId);
         switch (t.getType()) {
             case ItemUseType.OpenBox:
 

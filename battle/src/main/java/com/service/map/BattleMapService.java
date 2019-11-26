@@ -5,6 +5,7 @@ import com.service.BaseService;
 import com.service.map.core.astar.MapDataTemplate;
 import com.template.TemplateManager;
 import com.template.templates.ItemTemplate;
+import com.template.templates.ItemTemplateCache;
 import com.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class BattleMapService extends BaseService{
 	
 	@Override
 	public void onStart(){
-		ItemTemplate template=templateManager.getTemplate(ItemTemplate.class,1);
+        ItemTemplate template = ItemTemplateCache.get(1);
 		//template.get
 		//TODO 做个地图template ， 启动 Scene, 做Scene的 Tick
 		

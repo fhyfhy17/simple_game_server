@@ -7,8 +7,8 @@ import com.entry.MailEntry;
 import com.entry.po.ItemInfo;
 import com.entry.po.MailPo;
 import com.pojo.Player;
-import com.template.TemplateManager;
 import com.template.templates.MailTemplate;
+import com.template.templates.MailTemplateCache;
 import com.template.templates.type.CenterMailType;
 import com.util.IdCreator;
 import com.util.Util;
@@ -34,8 +34,6 @@ public class MailService extends GameService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @Autowired
-    private TemplateManager templateManager;
     
     @Autowired
     private OnlineService onlineService;
@@ -52,7 +50,7 @@ public class MailService extends GameService {
     }
 
     public MailPo createMail(int mailTemplateId) {
-        MailTemplate mailTemplate = templateManager.getTemplate(MailTemplate.class, mailTemplateId);
+        MailTemplate mailTemplate = MailTemplateCache.get(mailTemplateId);
 
         List<ItemInfo> itemInfoList = Util.createItemInfoList(mailTemplate.getItems());
 

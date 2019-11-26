@@ -12,61 +12,15 @@ import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class TemplateLoader {
-
-    <T extends AbstractTemplate> List<T> loadTemplate(File file, Class<T> clazz) {
-
-        List<T> ts = new ArrayList<>();
-
-        try {
-            Document doc = new SAXBuilder().build(file);
-            Element root = doc.getRootElement();
-            Iterator<Element> it = root.getChildren().iterator();
-            int count = 0;
-            while (it.hasNext()) {
-                Element next = it.next();
-                count++;
-                if (count == 1) {
-                    continue;
-                }
-                T t = clazz.newInstance();
-                for (Object elem : next.getAttributes()) {
-                    Attribute attr = (Attribute) elem;
-                    String value = (null == attr.getValue()) ? "" : attr.getValue().trim();
-                    setProperties(t, attr.getName(), value);
-                }
-                if (ts.stream().anyMatch(x -> x.getId() == t.getId())) {
-                    log.error("文件= {} 发现重复ID= {} ", file.getName(), t.getId());
-                    continue;
-                }
-                ts.add(t);
-            }
-
-        } catch (Exception e) {
-            log.error("加载 XML 资源文件 {} 报错", file.getName(), e);
-        }
-
-        if (ts.isEmpty()) {
-            log.error("警告：XML 资源文件加载为空：{}", file.getName());
-        }
-
-        return ts;
-    }
 
     // FIXME  烦，写得一坨便便，有时间再细改吧，List这里写得头疼，还有判空问题什么的
     private static <T> void setProperties(T object, String fieldName, String fieldValue) {
@@ -102,12 +56,12 @@ public class TemplateLoader {
                     if (genericReturnType instanceof ParameterizedType) {
                         ParameterizedType g2 = (ParameterizedType) genericReturnType;
                         Type t = g2.getActualTypeArguments()[0];
-                        while(!(t instanceof Class)){
+                        while (!(t instanceof Class)) {
                             ParameterizedType g3 = (ParameterizedType) t;
                             t = g3.getActualTypeArguments()[0];
                             wrapCount++;
                         }
-                        typeClass = (Class<?>)t;
+                        typeClass = (Class<?>) t;
                     }
                     if (typeClass == String.class) {
                         if (wrapCount == 0) {
@@ -222,17 +176,65 @@ public class TemplateLoader {
                     e.getMessage(), object.getClass().getSimpleName(), fieldName, field, fieldValue);
         }
     }
-    
-    private static void parse(Class<?> clazz,int layers,String value){
-        if(StringUtils.isEmpty(value)){
+
+    private static void parse(Class<?> clazz, int layers, String value) {
+        if (StringUtils.isEmpty(value)) {
             return;
         }
-        
-        for(int i=0;i<layers;i++)
-        {
-        
+
+        for (int i = 0; i < layers; i++) {
+
         }
-    
+
+    }
+
+    <T extends AbstractTemplate> List<T> loadTemplate(File file, Class<T> clazz) {
+
+        List<T> ts = new ArrayList<>();
+
+        try {
+            Document doc = new SAXBuilder().build(file);
+            Element root = doc.getRootElement();
+            Iterator<Element> it = root.getChildren().iterator();
+            int count = 0;
+            while (it.hasNext()) {
+                Element next = it.next();
+                count++;
+                if (count == 1) {
+                    continue;
+                }
+                T t = clazz.newInstance();
+                for (Object elem : next.getAttributes()) {
+                    Attribute attr = (Attribute) elem;
+                    String value = (null == attr.getValue()) ? "" : attr.getValue().trim();
+                    setProperties(t, attr.getName(), value);
+                }
+                if (ts.stream().anyMatch(x -> x.getId() == t.getId())) {
+                    log.error("文件= {} 发现重复ID= {} ", file.getName(), t.getId());
+                    continue;
+                }
+                ts.add(t);
+            }
+
+        } catch (Exception e) {
+            log.error("加载 XML 资源文件 {} 报错", file.getName(), e);
+        }
+
+        if (ts.isEmpty()) {
+            log.error("警告：XML 资源文件加载为空：{}", file.getName());
+        }
+
+        HashMap<Integer, T> collect = (HashMap<Integer, T>) ts.stream().collect(Collectors.toMap(T::getId, Function.identity()));
+
+        try {
+            Class<?> aClass = Class.forName(clazz.getName() + "Cache");
+            Object o = aClass.newInstance();
+            Method setMap = aClass.getMethod("setMap", HashMap.class);
+            setMap.invoke(o, collect);
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return ts;
     }
 
     private static double formatDouble(String strVal) {

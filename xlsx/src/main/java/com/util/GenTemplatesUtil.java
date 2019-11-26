@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -206,6 +205,12 @@ public class GenTemplatesUtil {
         
         buff.append("       return cache;\r\n");
         
+        buff.append("   }\r\n\r\n");
+
+        buff.append("   public static void setMap(HashMap<Integer," + rawClassName + "> map){\r\n");
+
+        buff.append("       " + className + ".cache = map;\r\n");
+
         buff.append("   }\r\n\r\n");
         
         buff.append("   public static "+rawClassName+" get(int id){\r\n");

@@ -9,12 +9,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -48,38 +44,7 @@ public class TemplateManager {
                     + templateAnno.path();
 
             Class<? extends AbstractTemplate> subclass = o.getClass().asSubclass(AbstractTemplate.class);
-            List<? extends AbstractTemplate> abstractTemplates=loader.loadTemplate(new File(path),subclass);
-            for(AbstractTemplate abstractTemplate : abstractTemplates){
-                //TODO 这里赋值给Cache
-            }
-            this.templates.put(subclass,
-                    abstractTemplates.stream().collect(Collectors.toMap(AbstractTemplate::getId, Function.identity())));
-            
+            loader.loadTemplate(new File(path), subclass);
         }
     }
-
-    public Map<Class<? extends AbstractTemplate>, Map<Integer, AbstractTemplate>> getTemplates() {
-        return this.templates;
-    }
-
-    public <T extends AbstractTemplate> Map<Integer, T> getTemplateMap(Class<? extends T> clazz) {
-        return (Map<Integer, T>) this.templates.get(clazz);
-    }
-
-    public <T extends AbstractTemplate> T getTemplate(Class<? extends T> clazz, Integer id) {
-        return (T) this.templates.get(clazz).get(id);
-    }
-
-    public <T extends AbstractTemplate> T getTemplateSingle(Class<? extends T> clazz) {
-        return (T) this.templates.get(clazz).entrySet().iterator().next().getValue();
-    }
-
-    public <T extends AbstractTemplate> List<T> getTemplateList(Class<? extends T> clazz) {
-        List<T> list = new ArrayList<>();
-        for (AbstractTemplate value : this.templates.get(clazz).values()) {
-            list.add((T) value);
-        }
-        return list;
-    }
-
 }
