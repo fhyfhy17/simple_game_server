@@ -46,10 +46,10 @@ public class FileUtil {
         Arrays.stream(files).forEach(file -> {
             if (file.isDirectory()) {
                 getFiles(file.getAbsolutePath(), filter);
-                System.out.println("显示" + filePath + "下所有子目录及其文件" + file.getAbsolutePath());
+                //System.out.println("显示" + filePath + "下所有子目录及其文件" + file.getAbsolutePath());
             } else {
                 filelist.add(file.getAbsolutePath());
-                System.out.println("显示" + filePath + "下所有子目录" + file.getAbsolutePath());
+                //System.out.println("显示" + filePath + "下所有子目录" + file.getAbsolutePath());
             }
         });
 

@@ -23,6 +23,7 @@ public class GenTemplatesUtil {
 
 
         List<String> fileList = FileUtil.getFiles(templatesPath, ".xml");
+       
         convert(fileList);
 
         GenTemplatesTypeUtil.generate();
@@ -76,6 +77,7 @@ public class GenTemplatesUtil {
         String templateFileName = "";
         String xmlName = file.getName().split("_")[1];
         templateFileName = xmlName.substring(0, xmlName.indexOf("."));
+
         writeToModel(templateFileName, attrList, file.getName());
 //
         writeToModelCache(templateFileName);
@@ -83,7 +85,6 @@ public class GenTemplatesUtil {
 
     //
     private static void writeToModel(String fileName, List<Attribute> attrList, String fullPathName) {
-        System.out.println("---------------------------");
         String className = fileName + "Template";
         StringBuilder buff = new StringBuilder();
         buff.append("package com.template.templates;\r\n\r\n")
@@ -91,13 +92,10 @@ public class GenTemplatesUtil {
                 .append("import lombok.Data;\r\n")
                 .append("\r\n")
                 .append("import java.util.*;\r\n")
-                .append("\r\n")
-                .append("import org.springframework.stereotype.Component;\r\n")
                 .append("\r\n");
 
 
         buff.append("@Data\r\n");
-        buff.append("@Component\r\n");
         buff.append("@Template(path = \"").append(fullPathName).append("\")\r\n");
 
 
@@ -133,7 +131,7 @@ public class GenTemplatesUtil {
 
 
         buff.append("\r\n}");
-        System.out.println(buff.toString());
+        System.out.println("生成 template "+className);
 
         FileUtil.writeStringToFile(FileUtil.getJavaTemplatesPath()
                         + File.separator + toUpperFirstLetter(className) + ".java"
@@ -181,12 +179,12 @@ public class GenTemplatesUtil {
     
     private static void writeToModelCache(String fileName) {
      
-        System.out.println("---------------------------");
+       
         String className = toUpperFirstLetter(fileName) + "TemplateCache";
         String fullFilePath = FileUtil.getJavaTemplatesPath()
                 + File.separator + toUpperFirstLetter(className) + ".java";
         if(FileUtil.exists(fullFilePath)){
-            System.out.println(fullFilePath+" 已存在");
+            System.out.println(className+" 存在，无需生成");
             return;
         }
         
@@ -222,7 +220,7 @@ public class GenTemplatesUtil {
         buff.append("   public static void after(){\r\n\r\n");
         
         buff.append("   }\r\n");
-    
+        System.out.println("新建生成 templateCache"+className);
         //public static HashMap<Integer,LanguageTemplate> cache=new HashMap<>();
         //
         //public static HashMap<Integer,LanguageTemplate> getMap(){

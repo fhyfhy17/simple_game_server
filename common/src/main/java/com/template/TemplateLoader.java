@@ -235,7 +235,7 @@ public class TemplateLoader {
             Method after = aClass.getMethod("after");
             after.invoke(o);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-            e.printStackTrace();
+            log.error("TemplateCache赋值出错",e);
         }
         return ts;
     }

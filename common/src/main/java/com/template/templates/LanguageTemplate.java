@@ -5,10 +5,7 @@ import lombok.Data;
 
 import java.util.*;
 
-import org.springframework.stereotype.Component;
-
 @Data
-@Component
 @Template(path = "Language.xlsx_language.xml")
 public class LanguageTemplate extends AbstractTemplate {
 

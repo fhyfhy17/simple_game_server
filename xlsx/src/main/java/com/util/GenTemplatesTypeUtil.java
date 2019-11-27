@@ -25,6 +25,7 @@ public class GenTemplatesTypeUtil {
 
         List<String> fileList = FileUtil.getFiles(templatesTypePath, ".xml");
         convert(fileList);
+
     }
 
     public static void convert(List<String> fileList) {
@@ -95,6 +96,7 @@ public class GenTemplatesTypeUtil {
         String templateFileName = "";
         String xmlName = file.getName().split("_")[0];
         templateFileName = xmlName.substring(0, xmlName.indexOf("."));
+   
         writeToModel(templateFileName, typeList, file.getName(), first, last, typeList.size());
 //
 
@@ -102,7 +104,7 @@ public class GenTemplatesTypeUtil {
 
     //
     private static void writeToModel(String fileName, List<TypeClass> typeList, String fullPathName, int first, int last, int size) {
-        System.out.println("---------------------------");
+
         String className = fileName;
         StringBuilder buff = new StringBuilder();
         buff.append("package com.template.templates.type;\r\n\r\n");
@@ -138,7 +140,7 @@ public class GenTemplatesTypeUtil {
                 .append("//ID数量\r\n");
 
         buff.append("\r\n}");
-        System.out.println(buff.toString());
+        System.out.println("生成 type "+className);
 
         FileUtil.writeStringToFile(FileUtil.getJavaTemplatesPath()
                         + File.separator

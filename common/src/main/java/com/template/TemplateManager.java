@@ -2,6 +2,7 @@ package com.template;
 
 import com.annotation.Template;
 import com.template.templates.AbstractTemplate;
+import com.util.ReflectionUtil;
 import com.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -22,13 +24,17 @@ public class TemplateManager {
      */
     @PostConstruct
     public void load() {
-        Map<String, Object> templates = SpringUtils.getBeansWithAnnotation(Template.class);
-        for (Map.Entry<String, Object> t : templates.entrySet()) {
-            String className = t.getKey();
-            Object o = t.getValue();
+        List<Class<?>> scan=ReflectionUtil.scan(null,Template.class,"com.template.templates");
+        for(Class<?> clazz : scan){
+            Object o=null;
+            try{
+                o=clazz.newInstance();
+            } catch(InstantiationException | IllegalAccessException e){
+                log.error("",e);
+            }
 
             if (!(o instanceof AbstractTemplate)) {
-                log.error("非模板类 = {}", className);
+                log.error("非模板类 = {}", clazz);
                 continue;
             }
             Template templateAnno = o.getClass().getAnnotation(Template.class);

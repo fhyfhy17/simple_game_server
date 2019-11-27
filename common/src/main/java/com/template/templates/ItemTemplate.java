@@ -5,10 +5,7 @@ import lombok.Data;
 
 import java.util.*;
 
-import org.springframework.stereotype.Component;
-
 @Data
-@Component
 @Template(path = "Item.xlsx_item.xml")
 public class ItemTemplate extends AbstractTemplate {
 

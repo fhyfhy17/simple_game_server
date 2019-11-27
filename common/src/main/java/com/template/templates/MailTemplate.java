@@ -5,10 +5,7 @@ import lombok.Data;
 
 import java.util.*;
 
-import org.springframework.stereotype.Component;
-
 @Data
-@Component
 @Template(path = "Mail.xlsx_mail.xml")
 public class MailTemplate extends AbstractTemplate {
 
