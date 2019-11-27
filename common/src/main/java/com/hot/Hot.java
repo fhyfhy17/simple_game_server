@@ -16,6 +16,15 @@ import java.util.Objects;
 @Slf4j
 public class Hot {
 
+//    List<VirtualMachineDescriptor> list = VirtualMachine.list();
+//		for (VirtualMachineDescriptor descriptor : list) {
+//        if (descriptor.displayName().endsWith("HelloSample")) {
+//            VirtualMachine virtualMachine = VirtualMachine.attach(descriptor.id());
+//            virtualMachine.loadAgent("D:\\hot\\1\\agent2.jar", "arg1");
+//            virtualMachine.detach();
+//        }
+//    }
+
     private static Instrumentation instrumentation;
     public static void agentmain(String agentArgs, Instrumentation instrumentation) {
         Hot.instrumentation = instrumentation;
