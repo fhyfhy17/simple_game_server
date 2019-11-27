@@ -71,7 +71,6 @@
                 <version>${boot.version}</version>
             </plugin>
 
-
         </plugins>
 
 
