@@ -2,18 +2,12 @@ package com.controller;
 
 import com.Constant;
 import com.config.ZookeeperConfig;
-import com.dao.BagRepository;
-import com.dao.CenterMailRepository;
-import com.dao.MailRepository;
-import com.dao.NoCellBagRepository;
-import com.dao.PlayerRepository;
-import com.dao.UnionRepository;
-import com.dao.UserRepository;
+import com.dao.*;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
+import com.hot.Hot;
 import com.lock.DisLock;
 import com.lock.LockUtil;
-import com.lock.zk.DistributedLock;
 import com.manager.GameServerManager;
 import com.manager.ServerInfoManager;
 import com.mongoListener.MongoEventListener;
@@ -25,12 +19,9 @@ import com.rpc.RpcProxy;
 import com.rpc.RpcRequest;
 import com.rpc.interfaces.player.GameToLogin;
 import com.service.PlayerService;
+import com.sun.tools.attach.*;
 import com.thread.schedule.ScheduleTask;
-import com.util.ContextUtil;
-import com.util.IdCreator;
-import com.util.ProtoUtil;
-import com.util.ProtostuffUtil;
-import com.util.SerializeUtil;
+import com.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -39,6 +30,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -53,21 +47,21 @@ public class WebTestEnter {
     PlayerRepository playerRepository;
     @Autowired
     UserRepository userRepository;
-    
+
     @Autowired
     BagRepository bagRepository;
-    
+
     @Autowired
     NoCellBagRepository noCellBagRepository;
-    
+
     @Autowired
     MailRepository mailRepository;
     @Autowired
     CenterMailRepository centerMailRepository;
     @Autowired
     UnionRepository unionRepository;
-    
-    
+
+
     @Autowired
     MongoEventListener saveEventListener;
 
@@ -76,18 +70,19 @@ public class WebTestEnter {
 
     @Autowired
     private ZookeeperConfig zookeeperConfig;
-   
+
 //    @Autowired
 //    @Qualifier("ha")
 //    private HazelcastInstance hazelcastInstance;
 //    @Autowired
 //    RedissonConfig redissonConfig;
-    
+
     @Autowired
     private MongoTemplate mongoTemplate;
-    
+
     @Autowired
     private PlayerService playerService;
+
     @RequestMapping("/test/poolThreadLocalTest")
     public void poolThreadLocalTest() {
         playerService.testPool();
@@ -96,17 +91,41 @@ public class WebTestEnter {
     @RequestMapping("/test/testResponse")
     public void testResponse() {
         GameToLogin gameToLogin = rpcProxy.proxy(GameToLogin.class, 123, TypeEnum.ServerTypeEnum.LOGIN, 123);
-        CompletableFuture<String> f=gameToLogin.testResponse(2222L);
-        f.whenComplete((str,t)->{
-            if(t!=null){
+        CompletableFuture<String> f = gameToLogin.testResponse(2222L);
+        f.whenComplete((str, t) -> {
+            if (t != null) {
                 System.out.println(t.getMessage());
-            }else{
+            } else {
                 System.out.println(str);
             }
         });
-       
+
     }
-    
+
+    @RequestMapping("/test/print")
+    public void print() {
+        System.out.println(2);
+    }
+
+    @RequestMapping("/test/hot")
+    public void hot() throws IOException, AgentLoadException, AgentInitializationException, AttachNotSupportedException {
+        int pid = SystemUtil.getPid();
+        if (pid == 0) {
+            log.error("未找到pid");
+            return;
+        }
+
+        List<VirtualMachineDescriptor> list = VirtualMachine.list();
+        for (VirtualMachineDescriptor descriptor : list) {
+            if (descriptor.id().equals(String.valueOf(pid))) {
+                VirtualMachine virtualMachine = VirtualMachine.attach(descriptor.id());
+                virtualMachine.loadAgent(System.getProperty("user.dir") + File.separator + "bin" + File.separator + "hot" + File.separator + "agent.jar", "arg1");
+                virtualMachine.detach();
+            }
+        }
+        Hot.reload();
+    }
+
     @RequestMapping("/test/self")
     public void self() {
         //TODO 给自己发个RPC请求，这个以后可以摘出来，做成一个功能。 另看能不能集成在RPC访问对端报错，发送方加后续处理那
@@ -154,23 +173,24 @@ public class WebTestEnter {
 //        stopWatch.stop();
 //        log.info("共用时："+stopWatch.getTime());
     }
-    
+
     @RequestMapping("/test/testinsert")
     public void testinsert() {
         playerEntry = playerRepository.save(new PlayerEntry(0));
     }
+
     @RequestMapping("/test/testupdate")
     public void testupdate() {
         playerRepository.save(playerEntry);
     }
+
     @RequestMapping("/test/saveall")
     public void saveall() {
-        for(int i=0;i<100;i++)
-        {
+        for (int i = 0; i < 100; i++) {
             //playerRepository.saveAll(Lists.newArrayList(new PlayerEntry( RandomUtils.nextInt(200,300)),new PlayerEntry(RandomUtils.nextInt(100,200)),new PlayerEntry(RandomUtils.nextInt(100,200))));
-            PlayerEntry playerEntry=new PlayerEntry(RandomUtils.nextInt(100,200));
-            
-            playerEntry.setName(RandomUtils.nextDouble()+"");
+            PlayerEntry playerEntry = new PlayerEntry(RandomUtils.nextInt(100, 200));
+
+            playerEntry.setName(RandomUtils.nextDouble() + "");
             playerRepository.save(playerEntry);
             //
             //playerRepository.insert(new PlayerEntry(RandomUtils.nextInt(100,200)));
@@ -182,13 +202,13 @@ public class WebTestEnter {
             //userRepository.save(new UserEntry( RandomUtils.nextInt(100,200)));
             //
         }
-       
-        
-    
+
+
     }
+
     @RequestMapping("/test/insertt")
     public void insertt() {
-      playerRepository.insert(new PlayerEntry(201));
+        playerRepository.insert(new PlayerEntry(201));
     }
 
 
@@ -197,33 +217,32 @@ public class WebTestEnter {
 //        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.BUS, 123);
 //        gameToBus.noNeedResponse0();
 //    }
-    
+
     private PlayerEntry playerEntry;
     @Autowired
     private GameServerManager gameServerManager;
-    
+
     @RequestMapping("/test/sche1")
     public void sche1() {
-        gameServerManager.getThreadSchedule().scheduleOnce(new ScheduleTask(){
+        gameServerManager.getThreadSchedule().scheduleOnce(new ScheduleTask() {
             @Override
-            public void execute(){
+            public void execute() {
                 log.info("这是 sche1");
             }
-        },1);
+        }, 1);
     }
-    
+
     @RequestMapping("/test/sche2")
     public void sche2() {
-        gameServerManager.getThreadSchedule().scheduleCron(new ScheduleTask(){
+        gameServerManager.getThreadSchedule().scheduleCron(new ScheduleTask() {
             @Override
-            public void execute(){
+            public void execute() {
                 log.info("这是 sche2");
             }
-        },"*/2 * * * * ?");
+        }, "*/2 * * * * ?");
     }
-    
-    
-    
+
+
     @RequestMapping("/test/a")
     public void test() {
         for (int i = 0; i < 100; i++) {
@@ -282,11 +301,11 @@ public class WebTestEnter {
 
     AtomicInteger a = new AtomicInteger(0);
     StopWatch s = new StopWatch();
-    
+
     @RequestMapping("/test/testZk2")
-    public void testZk2() throws Exception{
-        int count=1000;
-       
+    public void testZk2() throws Exception {
+        int count = 1000;
+
         s.reset();
         s.start();
         for (int i = 0; i < count; i++) {
@@ -296,18 +315,17 @@ public class WebTestEnter {
                 e.printStackTrace();
             }
             new Thread(() -> {
-                DisLock lock=LockUtil.lock("/test93");
+                DisLock lock = LockUtil.lock("/test93");
                 try {
                     lock.lock();
                     System.out.println(Thread.currentThread().getId() + " 获得了锁");
                     int i1 = this.a.incrementAndGet();
                     if (i1 != 0 && i1 % count == 0) {
                         s.stop();
-                        System.out.println(count+"个 锁已经全部完事了，共用了：" + s.getTime());
+                        System.out.println(count + "个 锁已经全部完事了，共用了：" + s.getTime());
                     }
-                    
-                }
-                finally {
+
+                } finally {
                     lock.unLock();
                 }
             }
@@ -317,8 +335,8 @@ public class WebTestEnter {
 
     @RequestMapping("/test/testZk")
     public void testZk() {
-        int count=1000;
-        DisLock lock=LockUtil.lock("ccc");
+        int count = 1000;
+        DisLock lock = LockUtil.lock("ccc");
         s.reset();
         s.start();
         for (int i = 0; i < count; i++) {
@@ -334,7 +352,7 @@ public class WebTestEnter {
                     int i1 = this.a.incrementAndGet();
                     if (i1 != 0 && i1 % count == 0) {
                         s.stop();
-                        System.out.println(count+"个 锁已经全部完事了，共用了：" + s.getTime());
+                        System.out.println(count + "个 锁已经全部完事了，共用了：" + s.getTime());
                     }
 
                 } finally {

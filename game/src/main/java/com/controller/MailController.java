@@ -6,7 +6,7 @@ import com.exception.StatusException;
 import com.net.msg.MAIL_MSG;
 import com.pojo.Player;
 import com.service.OnlineService;
-import com.util.Util;
+import com.util.GameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,7 +42,7 @@ public class MailController extends BaseController {
             mailInfo.setHasRead(mailPo.isHasRead());
             mailInfo.setHasReceived(mailPo.isHasReceived());
             mailInfo.setMailTime(mailPo.getMailTime());
-            mailInfo.addAllItems(Util.transferItemInfoList(mailPo.getItemList()));
+            mailInfo.addAllItems(GameUtil.transferItemInfoList(mailPo.getItemList()));
         }
         return builder.build();
     }
@@ -53,8 +53,8 @@ public class MailController extends BaseController {
         MAIL_MSG.GTC_RECEIVE_ITEMS.Builder builder = MAIL_MSG.GTC_RECEIVE_ITEMS.newBuilder();
         long mailId = req.getMailId();
         MailPo mailPo = player.getMailModule().receiveItems(mailId);
-        builder.addAllItems(Util.transferItemInfoList(mailPo.getItemList()));
+        builder.addAllItems(GameUtil.transferItemInfoList(mailPo.getItemList()));
         return builder.build();
     }
-    
+
 }

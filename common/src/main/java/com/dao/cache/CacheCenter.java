@@ -4,8 +4,8 @@ import com.entry.BaseEntry;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.util.CollectionUtil;
 import com.util.StringUtil;
-import com.util.Util;
 import com.util.support.Cat;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
@@ -66,13 +62,13 @@ public class CacheCenter {
     public void clearWhenDeleteAllForPlayer(long id) {
         synchronized (lock) {
             for (String key : cacheMap.keySet()) {
-                if (StringUtil.getSpliteSuffix(key,Cat.colon).equals(String.valueOf(id))) {
+                if (StringUtil.getSpliteSuffix(key, Cat.colon).equals(String.valueOf(id))) {
                     cacheMap.remove(key);
                 }
             }
         }
     }
-    
+
     @Scheduled(fixedDelay = 1000 * 5)// 5秒执行一次
     public void batchSave() {
 
@@ -83,35 +79,35 @@ public class CacheCenter {
             //按class分组，因为mongo的批量只支持单集合批量
             Map<Class, List<BaseEntry>> collect = list.stream()
                     .collect(Collectors.groupingBy(x -> x.getClass().asSubclass(BaseEntry.class)));
-            if(collect.size()<=0){
+            if (collect.size() <= 0) {
                 return;
             }
             log.info("共有 {} 个集合等待更新", collect.size());
 
             //开始保存
-            for (Map.Entry<Class,List<BaseEntry>> classListEntry : collect.entrySet()) {
+            for (Map.Entry<Class, List<BaseEntry>> classListEntry : collect.entrySet()) {
                 List<BaseEntry> value = classListEntry.getValue();
-                Class key=classListEntry.getKey();
-    
-                Map<Integer,List<BaseEntry>> integerListMap=Util.spiltList(value,50);//每次批量分成50个数据一份
-                Collection<List<BaseEntry>> values=integerListMap.values();
+                Class key = classListEntry.getKey();
+
+                Map<Integer, List<BaseEntry>> integerListMap = CollectionUtil.spiltList(value, 50);//每次批量分成50个数据一份
+                Collection<List<BaseEntry>> values = integerListMap.values();
                 int count = 0;
-                for(List<BaseEntry> baseEntries : values){
+                for (List<BaseEntry> baseEntries : values) {
                     int finalI = count++;
-                    try{
+                    try {
                         saveDbThreadPool.execute(() -> {
                             StopWatch stopWatch = new StopWatch();
                             stopWatch.start();
-    
+
                             String name = key.toString() + finalI;
                             log.info("开始执行 {}  一共有 {} 条", name, baseEntries.size());
                             BulkOperations ops = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, key);
-    
+
                             for (BaseEntry baseEntry : baseEntries) {
                                 Map<String, Object> updateMap = null;
                                 ObjectMapper objectMapper = new ObjectMapper();
                                 objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        
+
                                 try {
                                     String json = objectMapper.writeValueAsString(baseEntry);
                                     updateMap = objectMapper.readValue(json, Map.class);
@@ -128,19 +124,19 @@ public class CacheCenter {
                                     }
                                     update.set(stringObjectEntry.getKey(), stringObjectEntry.getValue());
                                 }
-        
+
                                 ops.upsert(new Query(Criteria.where("id").is(baseEntry.getId())), update);
                             }
                             ops.execute();
                             stopWatch.stop();
                             log.info("结束执行 {}  ，用时 {} 毫秒", name, stopWatch.getTime());
-    
+
                         });
-        
-                    }catch(Exception e){
-                        log.error("入库报错",e);
+
+                    } catch (Exception e) {
+                        log.error("入库报错", e);
                     }
-                
+
                 }
             }
         }

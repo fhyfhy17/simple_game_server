@@ -10,8 +10,8 @@ import com.pojo.Player;
 import com.template.templates.MailTemplate;
 import com.template.templates.MailTemplateCache;
 import com.template.templates.type.CenterMailType;
+import com.util.GameUtil;
 import com.util.IdCreator;
-import com.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class MailService extends GameService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    
+
     @Autowired
     private OnlineService onlineService;
 
@@ -52,7 +52,7 @@ public class MailService extends GameService {
     public MailPo createMail(int mailTemplateId) {
         MailTemplate mailTemplate = MailTemplateCache.get(mailTemplateId);
 
-        List<ItemInfo> itemInfoList = Util.createItemInfoList(mailTemplate.getItems());
+        List<ItemInfo> itemInfoList = GameUtil.createItemInfoList(mailTemplate.getItems());
 
         MailPo mailPo = new MailPo();
         mailPo.setMailId(IdCreator.nextId(MailEntry.class));
@@ -61,46 +61,46 @@ public class MailService extends GameService {
         mailPo.setItemList(itemInfoList);
         return mailPo;
     }
-    
+
     /**
      * 世界邮件的接收处理
      */
-    public void onCenterMail(CenterMailEntry centerMailEntry){
-        Map<Long,Player> playerMap=onlineService.getPlayerMap();
-        switch(centerMailEntry.getType()){
+    public void onCenterMail(CenterMailEntry centerMailEntry) {
+        Map<Long, Player> playerMap = onlineService.getPlayerMap();
+        switch (centerMailEntry.getType()) {
             case CenterMailType.Personal:
                 Long playerIdPersonal = centerMailEntry.getReceiverId().iterator().next();
                 if (playerMap.containsKey(playerIdPersonal)) {
-                    Player player=playerMap.get(playerIdPersonal);
-                    systemDis(player.getUid(),()->{
+                    Player player = playerMap.get(playerIdPersonal);
+                    systemDis(player.getUid(), () -> {
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
                 break;
             case CenterMailType.Multiple:
-                for(Long playerId : centerMailEntry.getReceiverId()){
-                    if(onlineService.getPlayerMap().containsKey(playerId)){
-                        Player player=onlineService.getPlayerMap().get(playerId);
-                        systemDis(player.getUid(),()->{
+                for (Long playerId : centerMailEntry.getReceiverId()) {
+                    if (onlineService.getPlayerMap().containsKey(playerId)) {
+                        Player player = onlineService.getPlayerMap().get(playerId);
+                        systemDis(player.getUid(), () -> {
                             player.getMailModule().onCenterMail(centerMailEntry);
                         });
                     }
                 }
                 break;
             case CenterMailType.Total:
-                for(Player player : playerMap.values()){
-                    systemDis(player.getUid(),()->{
+                for (Player player : playerMap.values()) {
+                    systemDis(player.getUid(), () -> {
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
-                
+
                 break;
             default:
-                log.info("类型错误 世界邮件 centermail = {}",centerMailEntry);
+                log.info("类型错误 世界邮件 centermail = {}", centerMailEntry);
         }
     }
-    
-    
+
+
     @Override
     public void onStart() {
 

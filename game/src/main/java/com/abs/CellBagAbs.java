@@ -10,7 +10,7 @@ import com.template.templates.ItemTemplateCache;
 import com.template.templates.type.ItemBigType;
 import com.template.templates.type.ItemUseType;
 import com.template.templates.type.OverBagType;
-import com.util.Util;
+import com.util.CollectionUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -290,7 +290,7 @@ public abstract class CellBagAbs {
      * 由于，放入是紧着没满的放，用是紧着没满的用，所以整理只需要做排序就可以了
      */
     public void tidy() {
-        LinkedHashMap<Integer, ItemPo> sortedMap = Util.mapValueSort(indexMap);
+        LinkedHashMap<Integer, ItemPo> sortedMap = CollectionUtil.mapValueSort(indexMap);
         indexMap.clear();
         idIndexMap.clear();
         emptyList.clear();
@@ -343,7 +343,7 @@ public abstract class CellBagAbs {
 
         for (ItemInfo itemInfo : list) {
             Map<Integer, ItemPo> integerItemPoMap = idIndexMap.get(itemInfo.id);
-            List<ItemPo> itemPos = Util.mapValueSortReturnList(integerItemPoMap);
+            List<ItemPo> itemPos = CollectionUtil.mapValueSortReturnList(integerItemPoMap);
 
 
             for (ItemPo itemPo : itemPos) {

@@ -1,44 +1,55 @@
 package com.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
+@Slf4j
 public class FileUtil {
 
     public static List<String> getFileNames(String filePath, String filter) {
-        File root = new File(filePath);
-        File[] files = root.listFiles(pathname -> {
-            String name = pathname.getName();
-            return name.endsWith(filter);
-        });
-        List<String> filelist = new ArrayList<>();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                getFiles(file.getAbsolutePath(), filter);
-                System.out.println("显示" + filePath + "下所有子目录及其文件" + file.getAbsolutePath());
-            } else {
-                filelist.add(file.getAbsolutePath());
-                System.out.println("显示" + filePath + "下所有子目录" + file.getAbsolutePath());
-            }
+        Predicate<String> fileFilter = fileName -> fileName.endsWith(filter) && !fileName.startsWith("~");
+        List<String> fileList = new ArrayList<>();
+        try {
+            Files.walkFileTree(Paths.get(filePath), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (fileFilter.test(file.getFileName().toString())) {
+                        fileList.add(file.toFile().getAbsolutePath());
+                    }
+                    return super.visitFile(file, attrs);
+                }
+            });
+        } catch (IOException e) {
+            log.error("", e);
         }
-        return filelist;
+
+        return fileList;
     }
-    
+
     public static List<File> getFiles(String filePath, String filter) {
-        File root = new File(filePath);
-        File[] files = root.listFiles(pathname -> {
-            String name = pathname.getName();
-            return name.endsWith(filter);
-        });
+        Predicate<String> fileFilter = fileName -> fileName.endsWith(filter) && !fileName.startsWith("~");
         List<File> fileList = new ArrayList<>();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                getFiles(file.getAbsolutePath(), filter);
-            } else {
-                fileList.add(file);
-            }
+        try {
+            Files.walkFileTree(Paths.get(filePath), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (fileFilter.test(file.getFileName().toString())) {
+                        fileList.add(file.toFile());
+                    }
+                    return super.visitFile(file, attrs);
+                }
+            });
+        } catch (IOException e) {
+            log.error("", e);
         }
+
         return fileList;
     }
 }

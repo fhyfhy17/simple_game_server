@@ -6,8 +6,8 @@ import com.manager.ServerInfoManager;
 import com.pojo.ServerInfo;
 import com.service.BaseService;
 import com.util.ContextUtil;
+import com.util.GameUtil;
 import com.util.StringUtil;
-import com.util.Util;
 import com.util.ZookeeperUtil;
 import com.util.support.Cat;
 import lombok.extern.slf4j.Slf4j;
@@ -26,19 +26,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Configuration
 @Slf4j
-public class ZookeeperConfig extends BaseService{
+public class ZookeeperConfig extends BaseService {
 
     @Autowired
     private ServerInfo serverInfo;
-    
+
     private CuratorFramework curator;
     private PathChildrenCache childrenCache;
-    
+
     @Bean("curator")
     public CuratorFramework getCurator() {
         RetryPolicy retryPolicy = new RetryForever(200);
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-                .connectString(StringUtil.getSplitePrefix(ContextUtil.zkIpPort,Cat.colon))
+                .connectString(StringUtil.getSplitePrefix(ContextUtil.zkIpPort, Cat.colon))
                 .namespace("sgs")
                 .sessionTimeoutMs(60 * 1000)
                 .retryPolicy(retryPolicy).build();
@@ -62,46 +62,44 @@ public class ZookeeperConfig extends BaseService{
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
+
         final AtomicBoolean first = new AtomicBoolean(true);
         childrenCache.getListenable().addListener(
                 (client, event) -> {
                     switch (event.getType()) {
                         case CHILD_ADDED:
-                            if(first.get()){
+                            if (first.get()) {
                                 first.set(false);
                                 count.decrementAndGet();
                             }
-                            ServerInfoManager.addServer(Util.transToServerInfo(event.getData().getPath()));
+                            ServerInfoManager.addServer(GameUtil.transToServerInfo(event.getData().getPath()));
                             break;
                         case CHILD_REMOVED:
-                            ServerInfoManager.removeServer(Util.transToServerInfo(event.getData().getPath()));
+                            ServerInfoManager.removeServer(GameUtil.transToServerInfo(event.getData().getPath()));
                             break;
                         default:
                             break;
                     }
                 }
         );
-    
+
         ZookeeperUtil.connectZookeeper(serverInfo);
 
     }
-    
-    
-    @Override
-    public void onStart(){
-    
-    }
-    
-    
 
-    public void onClose(){
+
+    @Override
+    public void onStart() {
+
+    }
+
+
+    public void onClose() {
         childrenCache.clear();
-        try{
+        try {
             childrenCache.close();
-        }
-        catch(IOException e){
-            log.error("",e);
+        } catch (IOException e) {
+            log.error("", e);
         }
         curator.close();
     }
