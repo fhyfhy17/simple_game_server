@@ -34,9 +34,8 @@ public class GateServerManager extends ServerManager {
     public void onServerStart() {
         super.onServerStart();
         //启动netty
-        new Thread(()->{
-            NettyServer nettyServer = new NettyServer();
-            this.nettyServer = nettyServer;
+        new Thread(() -> {
+            nettyServer = new NettyServer();
             nettyServer.init(count);
         }).start();
         connectManager.start();
@@ -44,19 +43,19 @@ public class GateServerManager extends ServerManager {
         //启动器计数
         startWatch.count();
     }
-    
+
     @Override
     public void onServerStop() {
         this.nettyServer.stop();
         super.onServerStop();
         log.info("停服完成 -------------------------------------------------------");
     }
-    
+
     @Override
-    public void startOver(){
-    
+    public void startOver() {
+
     }
-    
+
     @Override
     public void onApplicationEvent(ContextClosedEvent event) {
         onServerStop();
