@@ -36,8 +36,8 @@ public class GateServerManager extends ServerManager {
         //启动netty
         new Thread(()->{
             NettyServer nettyServer = new NettyServer();
-            nettyServer.init(count);
             this.nettyServer = nettyServer;
+            nettyServer.init(count);
         }).start();
         connectManager.start();
         gateReceiver.start();
