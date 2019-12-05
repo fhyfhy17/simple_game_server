@@ -8,7 +8,6 @@ import java.util.zip.CRC32;
 
 @Component
 public class NettyMessageFilter {
-    private CRC32 crc32 = new CRC32();
 
     public boolean checkAutoIncrease(Session session, NettyMessage message) {
         if (session.getAutoIncrease() == message.getAutoIncrease()) {
@@ -26,7 +25,8 @@ public class NettyMessageFilter {
         if (Objects.isNull(data) && message.getCheckCode() == 0) {
             return true;
         }
-        crc32.reset();
+
+        CRC32 crc32 = new CRC32();
         crc32.update(data);
         return crc32.getValue() == message.getCheckCode();
     }
