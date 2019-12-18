@@ -6,7 +6,6 @@
         <artifactId>sgs</artifactId>
         <groupId>fhy</groupId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -198,24 +197,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>com.vlkan</groupId>
-                <artifactId>quasar-maven-plugin</artifactId>
-                <version>0.7.5</version>
-                <configuration>
-                    <check>true</check>
-                    <debug>true</debug>
-                    <verbose>true</verbose>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>instrument</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
 
     </build>
