@@ -1,17 +1,16 @@
 package com.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class GenTemplatesUtil {
 
@@ -135,7 +134,7 @@ public class GenTemplatesUtil {
 
         FileUtil.writeStringToFile(FileUtil.getJavaTemplatesPath()
                         + File.separator + toUpperFirstLetter(className) + ".java"
-                , buff.toString(), Charset.forName("utf-8"));
+                , buff.toString(), StandardCharsets.UTF_8);
 
     }
 
@@ -143,17 +142,14 @@ public class GenTemplatesUtil {
         if (value.contains("[][]")) {
             value = value.substring(0, value.indexOf("[][]"));
             value = "List<List<" + toUpperFirstLetter(value) + ">>";
-            Pair<String, String> pair = new Pair<>(value, "new ArrayList<>()");
-            return pair;
+            return new Pair<>(value, "new ArrayList<>()");
         } else if (value.contains("[]")) {
             value = value.substring(0, value.indexOf("[]"));
             value = "List<" + toUpperFirstLetter(value) + ">";
-            Pair<String, String> pair = new Pair<>(value, "new ArrayList<>()");
-            return pair;
+            return new Pair<>(value, "new ArrayList<>()");
         } else {
             value = singleToUpperFirstLetter(value);
-            Pair<String, String> pair = new Pair<>(value, "");
-            return pair;
+            return new Pair<>(value, "");
         }
     }
 
@@ -242,7 +238,7 @@ public class GenTemplatesUtil {
         
         FileUtil.writeStringToFile(FileUtil.getJavaTemplatesPath()
                         + File.separator + toUpperFirstLetter(className) + ".java"
-                , buff.toString(), Charset.forName("utf-8"));
+                , buff.toString(), StandardCharsets.UTF_8);
         
     }
 

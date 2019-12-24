@@ -33,7 +33,7 @@ public class CollectionUtil {
      * @return 有序的map
      */
     public static <K, V extends Comparable> LinkedHashMap<K, V> mapValueSort(Map<K, V> map) {
-        return (LinkedHashMap<K, V>) map.entrySet().stream()
+        return  map.entrySet().stream()
                 .sorted(Comparator.comparing(Map.Entry::getValue))
                 .collect(Collectors.toMap((Map.Entry<K, V> k) -> k.getKey(), (Map.Entry<K, V> v) -> v.getValue(), (k, v) -> v, LinkedHashMap::new));
 

@@ -188,7 +188,7 @@ public class TemplateLoader {
 
     }
 
-    <T extends AbstractTemplate> List<T> loadTemplate(File file, Class<T> clazz) {
+    <T extends AbstractTemplate> void loadTemplate(File file, Class<T> clazz) {
 
         List<T> ts = new ArrayList<>();
 
@@ -237,7 +237,6 @@ public class TemplateLoader {
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             log.error("TemplateCache赋值出错",e);
         }
-        return ts;
     }
 
     private static double formatDouble(String strVal) {

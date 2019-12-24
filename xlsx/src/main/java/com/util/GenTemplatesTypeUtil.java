@@ -1,19 +1,18 @@
 package com.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
 
 public class GenTemplatesTypeUtil {
 
@@ -147,7 +146,7 @@ public class GenTemplatesTypeUtil {
                         + "type"
                         + File.separator
                         + toUpperFirstLetter(className) + ".java"
-                , buff.toString(), Charset.forName("utf-8"));
+                , buff.toString(), StandardCharsets.UTF_8);
 
     }
 
