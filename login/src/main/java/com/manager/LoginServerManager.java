@@ -3,8 +3,6 @@ package com.manager;
 import com.BaseVerticle;
 import com.LoginReceiver;
 import com.LoginVerticle;
-import com.lock.DisLock;
-import com.lock.LockUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
@@ -30,9 +28,14 @@ public class LoginServerManager extends ServerManager {
         super.onServerStart();
         loginReceiver.start();
         //启动器计数
-        startWatch.count();
+//        startWatch.count();
     }
-    
+
+    @Override
+    public void asyncStart() {
+
+    }
+
     @Override
     public void onServerStop() {
         super.onServerStop();

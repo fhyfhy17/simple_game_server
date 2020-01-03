@@ -28,9 +28,14 @@ public class BusServerManager extends ServerManager {
         super.onServerStart();
         busReceiver.start();
         //启动器计数
-        startWatch.count();
+//        startWatch.count();
     }
-    
+
+    @Override
+    public void asyncStart() {
+
+    }
+
     @Override
     public void onServerStop() {
         super.onServerStop();

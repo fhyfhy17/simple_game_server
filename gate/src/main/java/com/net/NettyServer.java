@@ -1,5 +1,6 @@
 package com.net;
 
+import com.manager.ServerManager;
 import com.net.coder.MessageDecoder;
 import com.net.coder.MessageEncoder;
 import com.util.SpringUtils;
@@ -13,11 +14,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.GenericFutureListener;
-import lombok.extern.slf4j.Slf4j;
-
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -28,11 +27,10 @@ public class NettyServer {
     private AtomicBoolean started = new AtomicBoolean(false);
 
 
-    public void init(AtomicInteger count) {
+    public void init(ServerManager serverManager) {
         log.info("启动netty");
-        count.incrementAndGet();
         if (started.compareAndSet(false, true)) {
-            bossGroup = new NioEventLoopGroup();
+            bossGroup = new NioEventLoopGroup(1);
             workerGroup = new NioEventLoopGroup();
 
             try {
@@ -55,7 +53,7 @@ public class NettyServer {
                 ChannelFuture f = b.bind(SpringUtils.getBean(SocketAddress.class)).sync();
                 f.addListener((GenericFutureListener<ChannelFuture>)future->{
                     log.info("Netty 启动成功");
-                    count.decrementAndGet();
+                    serverManager.decrAsyncCount();
                 });
                 f.channel().closeFuture().sync();
             } catch (InterruptedException e) {

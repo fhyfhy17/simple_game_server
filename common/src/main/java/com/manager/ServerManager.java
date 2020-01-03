@@ -5,22 +5,16 @@ import com.config.ZookeeperConfig;
 import com.controller.ControllerFactory;
 import com.dao.cache.CacheCenter;
 import com.enums.TypeEnum;
-import com.handler.ContextHolder;
 import com.node.Node;
 import com.service.BaseService;
-import com.thread.schedule.DefaultScheduleAble;
-import com.thread.schedule.ScheduleAble;
-import com.thread.schedule.ScheduleTask;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.quartz.SchedulerException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextClosedEvent;
-
+import com.util.ContextUtil;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
 
 @Slf4j
 public abstract class ServerManager implements ApplicationListener<ContextClosedEvent>{
@@ -40,19 +34,21 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
 
     public abstract BaseVerticle getVerticle();
     
-    @Getter
-    private ScheduleAble threadSchedule;//专门一个的线程，放schedule的
+//    @Getter
+//    private ScheduleAble threadSchedule;//专门一个的线程，放schedule的
     
-    protected AtomicInteger count;
+    protected AtomicInteger count = new AtomicInteger(0);
     
-    protected StartWatch startWatch;
+//    protected StartWatch startWatch;
     
     //服务器启动
     public void onServerStart() {
         //计数监控启动
-        startWatch = new StartWatch();
-        count=startWatch.init();
-    
+//        startWatch = new StartWatch();
+//        count=startWatch.init();
+
+        asyncInit();
+
         //启动node
         getVerticle().init();
 
@@ -60,21 +56,48 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
         if (!Objects.isNull(services)) {
             services.forEach(BaseService::onStart);
         }
+
+        //启动消息注册器
+        ControllerFactory.init();
+
+
+    }
+
+    private void asyncInit(){
         //启动连接
         new Thread(() -> {
             try {
-                zookeeperConfig.init(count);
+                incrAsyncCount();
+                zookeeperConfig.init(this);
             } catch (Exception e) {
                 log.error("", e);
             }
         }).start();
-        
-        //启动消息注册器
-        ControllerFactory.init();
-        
+
+        asyncStart();
     }
-    
-    
+
+    public abstract void asyncStart();
+
+
+    public void incrAsyncCount(){
+        count.incrementAndGet();
+    }
+
+    public void decrAsyncCount(){
+        checkStartOver(count.decrementAndGet());
+    }
+
+    private void checkStartOver(int count){
+        if(count != 0){
+            return;
+        }
+        log.info(ContextUtil.id + "服务器启动成功");
+        //这要不要做成个事件
+        serverStatus = TypeEnum.ServerStatus.OPEN;
+        startOver();
+    }
+
     //服务器关闭
     public void onServerStop() {
 
@@ -111,40 +134,40 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
     /**
      * 启动监控器
      */
-     class StartWatch{
-        
-        private AtomicInteger count;
-        
-        public AtomicInteger init(){
-            threadSchedule= new DefaultScheduleAble();
-            threadSchedule.schedulerListInit();
-            new Thread(threadSchedule::tickSchedule,"startStopWatch 线程").start();
-            count = new AtomicInteger(0);
-            return count;
-        }
-        
-        
-        public void count(){
-            threadSchedule.schedulePeriod(new ScheduleTask(){
-                @Override
-                public void execute(){
-                    ScheduleTask scheduleTask=ContextHolder.getScheduleTask();
-                    if(count.get()==0){
-                        log.info("服务器启动成功");
-                        try{
-                            threadSchedule.deleteSchedulerJob(scheduleTask.jobKey);
-                        } catch(SchedulerException e){
-                            log.error("",e);
-                        }
-                        //这要不要做成个事件
-                        serverStatus = TypeEnum.ServerStatus.OPEN;
-                        startOver();
-                    }
-                }
-            },1000,200);
-        }
-        
-    }
+//     class StartWatch{
+//
+//        private AtomicInteger count;
+//
+//        public AtomicInteger init(){
+//            threadSchedule= new DefaultScheduleAble();
+//            threadSchedule.schedulerListInit();
+//            new Thread(threadSchedule::tickSchedule,"startStopWatch 线程").start();
+//            count = new AtomicInteger(0);
+//            return count;
+//        }
+//
+//
+//        public void count(){
+//            threadSchedule.schedulePeriod(new ScheduleTask(){
+//                @Override
+//                public void execute(){
+//                    ScheduleTask scheduleTask=ContextHolder.getScheduleTask();
+//                    if(count.get()==0){
+//                        log.info("服务器启动成功");
+//                        try{
+//                            threadSchedule.deleteSchedulerJob(scheduleTask.jobKey);
+//                        } catch(SchedulerException e){
+//                            log.error("",e);
+//                        }
+//                        //这要不要做成个事件
+//                        serverStatus = TypeEnum.ServerStatus.OPEN;
+//                        startOver();
+//                    }
+//                }
+//            },1000,200);
+//        }
+//
+//    }
     //完全启动成功后
     public abstract void startOver();
     

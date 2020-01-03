@@ -33,15 +33,20 @@ public class GateServerManager extends ServerManager {
     @Override
     public void onServerStart() {
         super.onServerStart();
-        //启动netty
-        new Thread(() -> {
-            nettyServer = new NettyServer();
-            nettyServer.init(count);
-        }).start();
         connectManager.start();
         gateReceiver.start();
         //启动器计数
-        startWatch.count();
+//        startWatch.count();
+    }
+
+    @Override
+    public void asyncStart() {
+        //启动netty
+        new Thread(() -> {
+            nettyServer = new NettyServer();
+            incrAsyncCount();
+            nettyServer.init(this);
+        }).start();
     }
 
     @Override

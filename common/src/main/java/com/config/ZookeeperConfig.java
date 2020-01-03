@@ -3,6 +3,7 @@ package com.config;
 
 import com.Constant;
 import com.manager.ServerInfoManager;
+import com.manager.ServerManager;
 import com.pojo.ServerInfo;
 import com.service.BaseService;
 import com.util.ContextUtil;
@@ -10,6 +11,8 @@ import com.util.GameUtil;
 import com.util.StringUtil;
 import com.util.ZookeeperUtil;
 import com.util.support.Cat;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -19,10 +22,6 @@ import org.apache.curator.retry.RetryForever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Configuration
 @Slf4j
@@ -46,9 +45,7 @@ public class ZookeeperConfig extends BaseService {
     }
 
 
-    public void init(AtomicInteger count) throws Exception {
-        count.incrementAndGet();
-
+    public void init(ServerManager serverManager) throws Exception {
         curator = getCurator();
         curator.start();
 
@@ -70,7 +67,7 @@ public class ZookeeperConfig extends BaseService {
                         case CHILD_ADDED:
                             if (first.get()) {
                                 first.set(false);
-                                count.decrementAndGet();
+                                serverManager.decrAsyncCount();
                             }
                             ServerInfoManager.addServer(GameUtil.transToServerInfo(event.getData().getPath()));
                             break;

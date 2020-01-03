@@ -1,6 +1,11 @@
 package com.util;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CollectionUtil {
@@ -33,7 +38,7 @@ public class CollectionUtil {
      * @return 有序的map
      */
     public static <K, V extends Comparable> LinkedHashMap<K, V> mapValueSort(Map<K, V> map) {
-        return  map.entrySet().stream()
+        return  (LinkedHashMap<K, V>)map.entrySet().stream()
                 .sorted(Comparator.comparing(Map.Entry::getValue))
                 .collect(Collectors.toMap((Map.Entry<K, V> k) -> k.getKey(), (Map.Entry<K, V> v) -> v.getValue(), (k, v) -> v, LinkedHashMap::new));
 
