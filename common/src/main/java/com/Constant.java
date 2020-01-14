@@ -31,4 +31,8 @@ public class Constant {
     
     public static final String SCHEDULE_PULSE_PARAM = "schedulePulseParam";
 
+    public static final int ZSET_MAX_LEVEL = 32;
+    public static final int ZSET_INIT_CAPACITY = 128;
+    public static final float ZSET_SKIPLIST_P = 0.25f;
+
 }
