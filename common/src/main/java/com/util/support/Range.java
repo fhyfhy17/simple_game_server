@@ -1,4 +1,4 @@
-package com.rank;
+package com.util.support;
 
 import lombok.Getter;
 

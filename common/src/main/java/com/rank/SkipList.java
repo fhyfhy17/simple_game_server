@@ -2,7 +2,8 @@ package com.rank;
 
 
 import com.Constant;
-import com.rank.Range.RangeOpt;
+import com.util.support.Range;
+import com.util.support.Range.RangeOpt;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
