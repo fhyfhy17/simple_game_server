@@ -19,7 +19,7 @@ public class SkipList<K, S> {
     private final SkipListNode<K, S>[] updateCache = new SkipListNode[Constant.ZSET_MAX_LEVEL];
     private final int[] rankCache = new int[Constant.ZSET_MAX_LEVEL];
 
-    private final Comparator<K> objComparator;
+    private final Comparator<K> keyComparator;
     private final ScoreComparator<S> scoreComparator;
 
     /**
@@ -47,8 +47,8 @@ public class SkipList<K, S> {
      */
     private int level = 1;
 
-    SkipList(Comparator<K> objComparator, ScoreComparator<S> scoreComparator) {
-        this.objComparator = objComparator;
+    SkipList(Comparator<K> keyComparator, ScoreComparator<S> scoreComparator) {
+        this.keyComparator = keyComparator;
         this.scoreComparator = scoreComparator;
         this.header = zslCreateNode(Constant.ZSET_MAX_LEVEL, null, null);
     }
@@ -72,10 +72,10 @@ public class SkipList<K, S> {
      * </pre>
      *
      * @param score 分数
-     * @param obj   obj 分数对应的成员id
+     * @param key   key 分数对应的成员id
      */
     @SuppressWarnings("UnusedReturnValue")
-    SkipListNode zslInsert(S score, K obj) {
+    SkipListNode zslInsert(S score, K key) {
         // 新节点的level
         final int level = zslRandomLevel();
 
@@ -103,7 +103,7 @@ public class SkipList<K, S> {
                 }
 
                 while (preNode.levelInfo[i].forward != null &&
-                    compareScoreAndObj(preNode.levelInfo[i].forward, score, obj) < 0) {
+                    compareScoreAndKey(preNode.levelInfo[i].forward, score, key) < 0) {
                     // preNode的后继节点仍然小于要插入的节点，需要继续前进，同时累计排名
                     rank[i] += preNode.levelInfo[i].span;
                     preNode = preNode.levelInfo[i].forward;
@@ -124,12 +124,12 @@ public class SkipList<K, S> {
             }
 
             /* 由于我们允许的重复score，并且zslInsert(该方法)的调用者在插入前必须测试要插入的member是否已经在hash表中。
-             * 因此我们假设key（obj）尚未被插入，并且重复插入score的情况永远不会发生。*/
+             * 因此我们假设key（key）尚未被插入，并且重复插入score的情况永远不会发生。*/
             /* we assume the key is not already inside, since we allow duplicated
-             * scores, and the re-insertion of score and redis object should never
+             * scores, and the re-insertion of score and redis key should never
              * happen since the caller of zslInsert() should test in the hash table
              * if the element is already inside or not.*/
-            final SkipListNode<K, S> newNode = zslCreateNode(level, score, obj);
+            final SkipListNode<K, S> newNode = zslCreateNode(level, score, key);
 
             /* 这些节点的高度小于等于新插入的节点的高度，需要更新指针。此外它们当前的跨度被拆分了两部分，需要重新计算。 */
             for (int i = 0; i < level; i++) {
@@ -202,13 +202,13 @@ public class SkipList<K, S> {
     }
 
     /**
-     * Delete an element with matching score/object from the skiplist.
+     * Delete an element with matching score/key from the skiplist.
      *
      * @param score 分数用于快速定位节点
-     * @param obj   用于确定节点是否是对应的数据节点
+     * @param key   用于确定节点是否是对应的数据节点
      */
     @SuppressWarnings("UnusedReturnValue")
-    boolean zslDelete(S score, K obj) {
+    boolean zslDelete(S score, K key) {
         // update - 需要更新后继节点的Node
         // 1. 分数小的节点
         // 2. 分数相同但id小的节点（分数相同时根据数据排序）
@@ -218,7 +218,7 @@ public class SkipList<K, S> {
             SkipListNode<K, S> preNode = this.header;
             for (int i = this.level - 1; i >= 0; i--) {
                 while (preNode.levelInfo[i].forward != null &&
-                    compareScoreAndObj(preNode.levelInfo[i].forward, score, obj) < 0) {
+                    compareScoreAndKey(preNode.levelInfo[i].forward, score, key) < 0) {
                     // preNode的后继节点仍然小于要删除的节点，需要继续前进
                     preNode = preNode.levelInfo[i].forward;
                 }
@@ -226,12 +226,11 @@ public class SkipList<K, S> {
                 update[i] = preNode;
             }
 
-            /* 由于可能多个节点拥有相同的分数，因此必须同时比较score和object */
+            /* 由于可能多个节点拥有相同的分数，因此必须同时比较score和key */
             /* We may have multiple elements with the same score, what we need
-             * is to find the element with both the right score and object. */
+             * is to find the element with both the right score and key. */
             final SkipListNode<K, S> targetNode = preNode.levelInfo[0].forward;
-            if (targetNode != null && scoreEquals(targetNode.score, score) && objEquals(
-                targetNode.obj, obj)) {
+            if (targetNode != null && scoreEquals(targetNode.score, score) && keyEquals(targetNode.key, key)) {
                 zslDeleteNode(targetNode, update);
                 return true;
             }
@@ -442,7 +441,7 @@ public class SkipList<K, S> {
                 && zslValueLteMax(firstNodeGteMin.score, range)) {
                 final SkipListNode<K, S> next = firstNodeGteMin.levelInfo[0].forward;
                 zslDeleteNode(firstNodeGteMin, update);
-                dict.remove(firstNodeGteMin.obj);
+                dict.remove(firstNodeGteMin.key);
                 removed++;
                 firstNodeGteMin = next;
             }
@@ -490,7 +489,7 @@ public class SkipList<K, S> {
             while (firstNodeGteStart != null && traversed <= end) {
                 final SkipListNode<K, S> next = firstNodeGteStart.levelInfo[0].forward;
                 zslDeleteNode(firstNodeGteStart, update);
-                dict.remove(firstNodeGteStart.obj);
+                dict.remove(firstNodeGteStart.key);
                 removed++;
                 traversed++;
                 firstNodeGteStart = next;
@@ -528,7 +527,7 @@ public class SkipList<K, S> {
             final SkipListNode<K, S> targetRankNode = lastNodeLtStart.levelInfo[0].forward;
             if (null != targetRankNode) {
                 zslDeleteNode(targetRankNode, update);
-                dict.remove(targetRankNode.obj);
+                dict.remove(targetRankNode.key);
                 return targetRankNode;
             } else {
                 return null;
@@ -547,22 +546,22 @@ public class SkipList<K, S> {
      * first element.
      *
      * @param score 节点分数
-     * @param obj   节点对应的数据id
+     * @param key   节点对应的数据id
      * @return 排名，从1开始
      */
-    int zslGetRank(S score, K obj) {
+    int zslGetRank(S score, K key) {
         int rank = 0;
         SkipListNode<K, S> firstNodeGteScore = this.header;
         for (int i = this.level - 1; i >= 0; i--) {
             while (firstNodeGteScore.levelInfo[i].forward != null &&
-                compareScoreAndObj(firstNodeGteScore.levelInfo[i].forward, score, obj) <= 0) {
+                compareScoreAndKey(firstNodeGteScore.levelInfo[i].forward, score, key) <= 0) {
                 // <= 也继续前进，也就是我们期望在目标节点停下来，这样rank也不必特殊处理
                 rank += firstNodeGteScore.levelInfo[i].span;
                 firstNodeGteScore = firstNodeGteScore.levelInfo[i].forward;
             }
 
             /* firstNodeGteScore might be equal to zsl->header, so test if firstNodeGteScore is header */
-            if (firstNodeGteScore != this.header && objEquals(firstNodeGteScore.obj, obj)) {
+            if (firstNodeGteScore != this.header && keyEquals(firstNodeGteScore.key, key)) {
                 // 可能在任意层找到
                 return rank;
             }
@@ -609,11 +608,11 @@ public class SkipList<K, S> {
      *
      * @param level 节点的高度
      * @param score 成员分数
-     * @param obj   成员id
+     * @param key   成员id
      * @return node
      */
-    static <K, S> SkipListNode<K, S> zslCreateNode(int level, S score, K obj) {
-        final SkipListNode<K, S> node = new SkipListNode<>(obj, score, new SkipListLevel[level]);
+    static <K, S> SkipListNode<K, S> zslCreateNode(int level, S score, K key) {
+        final SkipListNode<K, S> node = new SkipListNode<>(key, score, new SkipListLevel[level]);
         for (int index = 0; index < level; index++) {
             node.levelInfo[index] = new SkipListLevel<>();
         }
@@ -651,35 +650,26 @@ public class SkipList<K, S> {
      *
      * @param forward 后继节点
      * @param score   分数
-     * @param obj     成员的键
+     * @param key     成员的键
      * @return 0 表示equals
      */
-    int compareScoreAndObj(SkipListNode<K, S> forward, S score, K obj) {
+    int compareScoreAndKey(SkipListNode<K, S> forward, S score, K key) {
         final int scoreCompareR = compareScore(forward.score, score);
         if (scoreCompareR != 0) {
             return scoreCompareR;
         }
-        return compareObj(forward.obj, obj);
+			return keyComparator.compare(forward.key, key);
     }
 
     /**
-     * 比较两个成员的key，<b>必须保证当且仅当两个键相等的时候返回0</b>
-     *
-     * @return 0表示相等
-     */
-    int compareObj(K objA, K objB) {
-        return objComparator.compare(objA, objB);
-    }
-
-    /**
-     * 判断两个对象是否相等
+     * 判断两个key对象是否相等
      *
      * @return true/false
      * @apiNote 使用compare == 0判断相等
      */
-    boolean objEquals(K objA, K objB) {
+    boolean keyEquals(K keyA, K keyB) {
         // 不使用equals，而是使用compare
-        return compareObj(objA, objB) == 0;
+			return keyComparator.compare(keyA, keyB)==0;
     }
 
     /**
@@ -712,7 +702,7 @@ public class SkipList<K, S> {
         int rank = 0;
         while (curNode != null) {
             sb.append("{rank:").append(rank++)
-                .append(",obj:").append(curNode.obj)
+                .append(",key:").append(curNode.key)
                 .append(",score:").append(curNode.score);
 
             curNode = curNode.directForward();

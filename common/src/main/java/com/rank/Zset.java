@@ -142,7 +142,7 @@ public class Zset<K, S> implements Iterable<Entry<K, S>> {
         }
         final SkipListNode<K, S> delete = zsl.zslDeleteByRank(rank + 1, map);
         assert null != delete;
-        return new Entry<>(delete.obj, delete.score);
+        return new Entry<>(delete.key, delete.score);
     }
 
     /**
@@ -287,7 +287,7 @@ public class Zset<K, S> implements Iterable<Entry<K, S>> {
         }
         final SkipListNode<K, S> node = zsl.zslGetElementByRank(rank + 1);
         assert null != node;
-        return new Entry<>(node.obj, node.score);
+        return new Entry<>(node.key, node.score);
     }
 
 //    /**
@@ -379,7 +379,7 @@ public class Zset<K, S> implements Iterable<Entry<K, S>> {
                 }
             }
 
-            result.add(new Entry<>(listNode.obj, listNode.score));
+            result.add(new Entry<>(listNode.key, listNode.score));
 
             /* Move to next node */
             if (reverse) {
@@ -446,7 +446,7 @@ public class Zset<K, S> implements Iterable<Entry<K, S>> {
 
         final List<Entry<K, S>> result = new ArrayList<>(rangeLen);
         while (rangeLen-- > 0 && listNode != null) {
-            result.add(new Entry<>(listNode.obj, listNode.score));
+            result.add(new Entry<>(listNode.key, listNode.score));
             listNode = reverse ? listNode.backward : listNode.levelInfo[0].forward;
         }
         return result;
@@ -490,12 +490,12 @@ public class Zset<K, S> implements Iterable<Entry<K, S>> {
     private int zcountInternal(final Range<S> range) {
         final SkipListNode<K, S> firstNodeInRange = zsl.zslFirstInRange(range);
         if (firstNodeInRange != null) {
-            final int firstNodeRank = zsl.zslGetRank(firstNodeInRange.score, firstNodeInRange.obj);
+            final int firstNodeRank = zsl.zslGetRank(firstNodeInRange.score, firstNodeInRange.key);
 
             /* 如果firstNodeInRange不为null，那么lastNode也一定不为null(最坏的情况下firstNode就是lastNode) */
             final SkipListNode<K, S> lastNodeInRange = zsl.zslLastInRange(range);
             assert lastNodeInRange != null;
-            final int lastNodeRank = zsl.zslGetRank(lastNodeInRange.score, lastNodeInRange.obj);
+            final int lastNodeRank = zsl.zslGetRank(lastNodeInRange.score, lastNodeInRange.key);
 
             return lastNodeRank - firstNodeRank + 1;
         }
@@ -573,7 +573,7 @@ public class Zset<K, S> implements Iterable<Entry<K, S>> {
             lastReturned = next;
             next = next.directForward();
 
-            return new Entry<>(lastReturned.obj, lastReturned.score);
+            return new Entry<>(lastReturned.key, lastReturned.score);
         }
 
         public void remove() {
@@ -584,8 +584,8 @@ public class Zset<K, S> implements Iterable<Entry<K, S>> {
             checkModification();
 
             // remove lastReturned
-            map.remove(lastReturned.obj);
-            zsl.zslDelete(lastReturned.score, lastReturned.obj);
+            map.remove(lastReturned.key);
+            zsl.zslDelete(lastReturned.score, lastReturned.key);
 
             // reset lastReturned
             lastReturned = null;

@@ -8,7 +8,7 @@ public class SkipListNode<K, S> {
     /**
      * 节点对应的数据id
      */
-    final K obj;
+    final K key;
     /**
      * 该节点数据对应的评分 - 如果要通用的话，这里将来将是一个泛型对象，需要实现{@link Comparable}。
      */
@@ -24,8 +24,8 @@ public class SkipListNode<K, S> {
      */
     SkipListNode<K, S> backward;
 
-    SkipListNode(K obj, S score, SkipListLevel[] levelInfo) {
-        this.obj = obj;
+    SkipListNode(K key, S score, SkipListLevel[] levelInfo) {
+        this.key = key;
         this.score = score;
         // noinspection unchecked
         this.levelInfo = levelInfo;
