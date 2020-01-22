@@ -3,7 +3,6 @@ package com.rpc.interfaces.player;
 import com.annotation.Rpc;
 import com.entry.UnionEntry;
 import com.pojo.OnlineContext;
-
 import java.util.concurrent.CompletableFuture;
 
 public interface GameToBus {
@@ -24,4 +23,9 @@ public interface GameToBus {
         return null;
     }
 
+
+    @Rpc(needResponse = true)
+    default CompletableFuture<String> needResponse(Long uid) {
+        return null;
+    }
 }

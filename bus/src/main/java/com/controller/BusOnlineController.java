@@ -5,11 +5,11 @@ import com.net.msg.BUS_MSG;
 import com.pojo.OnlineContext;
 import com.rpc.interfaces.player.GameToBus;
 import com.service.BusOnlineService;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import java.util.List;
 
 @Controller
 @Slf4j
@@ -39,4 +39,11 @@ public class BusOnlineController extends BaseController implements GameToBus {
         busOnlineService.onHeart(from, uidsList);
     }
 
+    @Controllor
+    @Override
+    public CompletableFuture<String> needResponse(Long uid) {
+        CompletableFuture<String> c=new CompletableFuture<>();
+        c.complete("abcde12345");
+        return c;
+    }
 }

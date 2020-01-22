@@ -2,7 +2,13 @@ package com.controller;
 
 import com.Constant;
 import com.config.ZookeeperConfig;
-import com.dao.*;
+import com.dao.BagRepository;
+import com.dao.CenterMailRepository;
+import com.dao.MailRepository;
+import com.dao.NoCellBagRepository;
+import com.dao.PlayerRepository;
+import com.dao.UnionRepository;
+import com.dao.UserRepository;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
 import com.hot.Hot;
@@ -17,11 +23,28 @@ import com.node.RemoteNode;
 import com.pojo.Packet;
 import com.rpc.RpcProxy;
 import com.rpc.RpcRequest;
+import com.rpc.interfaces.player.GameToBus;
 import com.rpc.interfaces.player.GameToLogin;
 import com.service.PlayerService;
-import com.sun.tools.attach.*;
-import com.thread.schedule.ScheduleTask;
-import com.util.*;
+import com.sun.tools.attach.AgentInitializationException;
+import com.sun.tools.attach.AgentLoadException;
+import com.sun.tools.attach.AttachNotSupportedException;
+import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
+import com.util.ContextUtil;
+import com.util.IdCreator;
+import com.util.ProtoUtil;
+import com.util.ProtostuffUtil;
+import com.util.SerializeUtil;
+import com.util.SystemUtil;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -29,14 +52,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 
 //import com.config.RedissonConfig;
 
@@ -146,32 +161,40 @@ public class WebTestEnter {
 
     @RequestMapping("/test/rpc")
     public void rpc() {
-//        StopWatch stopWatch = new StopWatch();
-//
-//        stopWatch.start();
-//        CountDownLatch countDownLatch =new CountDownLatch(10);
-//        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.BUS, 123);
-//        for (int i = 0; i < 10; i++) {
-//            new Thread(() -> {
-//                for (int j = 0; j < 100; j++) {
-//
-//                    gameToBus.needResponse("");
-//                    //log.info("发送 RPC 请求时间  "+ System.currentTimeMillis());
-//                }
-//                countDownLatch.countDown();
-//            }).start();
-//
-//        }
-//        try
-//        {
-//            countDownLatch.await();
-//        }
-//        catch(InterruptedException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        stopWatch.stop();
-//        log.info("共用时："+stopWatch.getTime());
+        StopWatch stopWatch = new StopWatch();
+
+        stopWatch.start();
+        CountDownLatch countDownLatch =new CountDownLatch(1000);
+        GameToBus gameToBus = rpcProxy.proxy(GameToBus.class, 123, TypeEnum.ServerTypeEnum.BUS, 123);
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> {
+                for (int j = 0; j < 100; j++) {
+                    CompletableFuture<String> stringCompletableFuture = gameToBus
+                        .needResponse(123L);
+                    stringCompletableFuture.whenComplete((result,throwable)->{
+                        if(throwable==null){
+                            System.out.println(result);
+                            countDownLatch.countDown();
+                        }else {
+                            System.out.println(throwable);
+                        }
+                    });
+                    //log.info("发送 RPC 请求时间  "+ System.currentTimeMillis());
+                }
+
+            }).start();
+
+        }
+        try
+        {
+            countDownLatch.await();
+        }
+        catch(InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        stopWatch.stop();
+        log.info("共用时："+stopWatch.getTime());
     }
 
     @RequestMapping("/test/testinsert")
@@ -222,25 +245,25 @@ public class WebTestEnter {
     @Autowired
     private GameServerManager gameServerManager;
 
-    @RequestMapping("/test/sche1")
-    public void sche1() {
-        gameServerManager.getThreadSchedule().scheduleOnce(new ScheduleTask() {
-            @Override
-            public void execute() {
-                log.info("这是 sche1");
-            }
-        }, 1);
-    }
+//    @RequestMapping("/test/sche1")
+//    public void sche1() {
+//        gameServerManager.getThreadSchedule().scheduleOnce(new ScheduleTask() {
+//            @Override
+//            public void execute() {
+//                log.info("这是 sche1");
+//            }
+//        }, 1);
+//    }
 
-    @RequestMapping("/test/sche2")
-    public void sche2() {
-        gameServerManager.getThreadSchedule().scheduleCron(new ScheduleTask() {
-            @Override
-            public void execute() {
-                log.info("这是 sche2");
-            }
-        }, "*/2 * * * * ?");
-    }
+//    @RequestMapping("/test/sche2")
+//    public void sche2() {
+//        gameServerManager.getThreadSchedule().scheduleCron(new ScheduleTask() {
+//            @Override
+//            public void execute() {
+//                log.info("这是 sche2");
+//            }
+//        }, "*/2 * * * * ?");
+//    }
 
 
     @RequestMapping("/test/a")
