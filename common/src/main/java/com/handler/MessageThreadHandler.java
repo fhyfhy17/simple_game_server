@@ -1,6 +1,7 @@
 package com.handler;
 
 import com.Constant;
+import com.annotation.Rpc;
 import com.controller.ControllerFactory;
 import com.controller.ControllerHandler;
 import com.controller.interceptor.HandlerExecutionChain;
@@ -15,6 +16,7 @@ import com.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.quartz.SchedulerException;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -28,12 +30,12 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
 
     private StopWatch stopWatch = new StopWatch();
 
-    protected final ConcurrentLinkedQueue<Packet> tickQueues= new ConcurrentLinkedQueue<>();
-    
-    protected final ConcurrentLinkedQueue<Packet> rpcRequestQueues= new ConcurrentLinkedQueue<>();
-    
-    protected final ConcurrentLinkedQueue<Packet> rpcResponseQueues= new ConcurrentLinkedQueue<>();
-    
+    protected final ConcurrentLinkedQueue<Packet> tickQueues = new ConcurrentLinkedQueue<>();
+
+    protected final ConcurrentLinkedQueue<Packet> rpcRequestQueues = new ConcurrentLinkedQueue<>();
+
+    protected final ConcurrentLinkedQueue<Packet> rpcResponseQueues = new ConcurrentLinkedQueue<>();
+
     @Override
     public void run() {
         for (; ; ) {
@@ -56,7 +58,7 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
         }
     }
 
-    protected void tick(){
+    protected void tick() {
         // 执行心跳
         tickPacket();
         // 执行rpcRequest
@@ -66,37 +68,38 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
         // 执行任务调度心跳
         tickSchedule();
     }
-    
-    
+
+
     public void messageReceived(Packet packet) {
-        if (Constant.RPC_RESPONSE.equals(packet.getRpc())){
+        if (Constant.RPC_RESPONSE.equals(packet.getRpc())) {
             rpcResponseQueues.add(packet);
-        }else if(StringUtil.contains(packet.getRpc(), Constant.RPC_REQUEST)){
+        } else if (StringUtil.contains(packet.getRpc(), Constant.RPC_REQUEST)) {
             rpcRequestQueues.add(packet);
-        }else{
+        } else {
             tickQueues.add(packet);
         }
-        
+
     }
-  
-    protected void tickRpcResponse(){
-        while(!rpcResponseQueues.isEmpty()){
+
+    protected void tickRpcResponse() {
+        while (!rpcResponseQueues.isEmpty()) {
             Packet packet = rpcResponseQueues.poll();
             SpringUtils.getBean(RpcHolder.class).receiveResponse(ProtostuffUtil.deserializeObject(packet.getData(), RpcResponse.class));
         }
     }
-    protected void tickRpcRequest(){
-        while(!rpcRequestQueues.isEmpty()){
+
+    protected void tickRpcRequest() {
+        while (!rpcRequestQueues.isEmpty()) {
             Packet packet = null;
             ControllerHandler handler = null;
-            try{
+            try {
                 packet = rpcRequestQueues.poll();
                 handler = ControllerFactory.getControllerMap().get(packet.getId());
                 RpcRequest rpcRequest = ProtostuffUtil.deserializeObject(packet.getData(), RpcRequest.class);
                 String key = rpcRequest.getClassName() + "_" + rpcRequest.getMethodName();
                 handler = ControllerFactory.getRpcControllerMap().get(key);
                 if (handler == null) {
-                    log.error("收到不存在的Rpc消息，消息KEY={}" , key);
+                    log.error("收到不存在的Rpc消息，消息KEY={}", key);
                     continue;
                 }
                 Object[] m = rpcRequest.getParameters();
@@ -110,10 +113,16 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
                 if (!Objects.isNull(result)) {
                     HandlerExecutionChain.applyPostHandle(handler, packet, result);
                 }
-            }catch(Throwable t){
+            } catch (Throwable t) {
+                Rpc rpc = AnnotationUtils.findAnnotation(handler.getMethod(), Rpc.class);
+                //不需要回复的，就地打印
+                if (rpc != null && !rpc.needResponse()) {
+                    log.error("", t);
+                    return;
+                }
                 HandlerExecutionChain.applyPostHandle(handler, packet, t);
             }
-          
+
         }
     }
 
@@ -124,15 +133,15 @@ public class MessageThreadHandler extends ScheduleAble implements Runnable {
             Packet packet = null;
             try {
                 packet = tickQueues.poll();
-                
+
                 final int cmdId = packet.getId();
                 handler = ControllerFactory.getControllerMap().get(cmdId);
                 if (handler == null) {
-                    log.error("收到不存在的消息，消息ID={}" , cmdId);
+                    log.error("收到不存在的消息，消息ID={}", cmdId);
                     continue;
                 }
                 Object[] m = handler.getMethodArgumentValues(packet);
-              
+
                 //拦截器前
                 if (!HandlerExecutionChain.applyPreHandle(packet, handler, m)) {
                     continue;

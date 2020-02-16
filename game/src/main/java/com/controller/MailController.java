@@ -1,10 +1,13 @@
 package com.controller;
 
 import com.annotation.Controllor;
+import com.entry.CenterMailEntry;
 import com.entry.po.MailPo;
 import com.exception.StatusException;
 import com.net.msg.MAIL_MSG;
 import com.pojo.Player;
+import com.rpc.interfaces.player.GameToGame;
+import com.service.MailService;
 import com.service.OnlineService;
 import com.util.GameUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +18,13 @@ import java.util.List;
 
 @Controller
 @Slf4j
-public class MailController extends BaseController {
+public class MailController extends BaseController implements GameToGame {
 
     @Autowired
     private OnlineService onlineService;
+
+    @Autowired
+    private MailService mailService;
 
     @Controllor
     //删除邮件
@@ -57,4 +63,11 @@ public class MailController extends BaseController {
         return builder.build();
     }
 
+    @Controllor
+    @Override
+    //收到世界邮件
+    public Object centerMail(CenterMailEntry centerMailEntry) {
+        mailService.onCenterMail(centerMailEntry);
+        return null;
+    }
 }

@@ -2,13 +2,8 @@ package com.controller;
 
 import com.Constant;
 import com.config.ZookeeperConfig;
-import com.dao.BagRepository;
-import com.dao.CenterMailRepository;
-import com.dao.MailRepository;
-import com.dao.NoCellBagRepository;
-import com.dao.PlayerRepository;
-import com.dao.UnionRepository;
-import com.dao.UserRepository;
+import com.dao.*;
+import com.entry.CenterMailEntry;
 import com.entry.PlayerEntry;
 import com.enums.TypeEnum;
 import com.hot.Hot;
@@ -24,27 +19,12 @@ import com.pojo.Packet;
 import com.rpc.RpcProxy;
 import com.rpc.RpcRequest;
 import com.rpc.interfaces.player.GameToBus;
+import com.rpc.interfaces.player.GameToGame;
 import com.rpc.interfaces.player.GameToLogin;
 import com.service.PlayerService;
-import com.sun.tools.attach.AgentInitializationException;
-import com.sun.tools.attach.AgentLoadException;
-import com.sun.tools.attach.AttachNotSupportedException;
-import com.sun.tools.attach.VirtualMachine;
-import com.sun.tools.attach.VirtualMachineDescriptor;
-import com.util.ContextUtil;
-import com.util.IdCreator;
-import com.util.ProtoUtil;
-import com.util.ProtostuffUtil;
-import com.util.SerializeUtil;
-import com.util.SystemUtil;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.sun.tools.attach.*;
+import com.template.templates.type.CenterMailType;
+import com.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -52,6 +32,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 //import com.config.RedissonConfig;
 
@@ -116,6 +108,21 @@ public class WebTestEnter {
         });
 
     }
+
+    @RequestMapping("/test/centerMailTest")
+    public void centerMailTest() {
+        //TODO 这里应该是gm -> game   用GameToGame 测试。
+        GameToGame gameToGame = rpcProxy.proxy(GameToGame.class, 123, TypeEnum.ServerTypeEnum.GAME, 123);
+        CenterMailEntry centerMailEntry = new CenterMailEntry(IdCreator.nextId(CenterMailEntry.class));
+        centerMailEntry.setMailStartTime(System.currentTimeMillis());
+        centerMailEntry.setMailEndTime(Instant.now().plus(Duration.ofDays(1)).toEpochMilli());
+        ArrayList<Long> rs = new ArrayList<>();
+        rs.add(123L);
+        centerMailEntry.setReceiverId(rs);
+        centerMailEntry.setType(CenterMailType.Personal);
+        gameToGame.centerMail(centerMailEntry);
+    }
+
 
     @RequestMapping("/test/print")
     public void print() {
