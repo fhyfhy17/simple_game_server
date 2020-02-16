@@ -5,25 +5,27 @@ import com.config.ZookeeperConfig;
 import com.controller.ControllerFactory;
 import com.dao.cache.CacheCenter;
 import com.enums.TypeEnum;
+import com.event.Event;
 import com.node.Node;
 import com.service.BaseService;
 import com.util.ContextUtil;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Slf4j
-public abstract class ServerManager implements ApplicationListener<ContextClosedEvent>{
+public abstract class ServerManager implements ApplicationListener<ContextClosedEvent> {
 
     @Autowired
     private Node node;
     @Autowired
     private CacheCenter cacheCenter;
-    
+
     private volatile TypeEnum.ServerStatus serverStatus = TypeEnum.ServerStatus.STARTING;
 
     @Autowired(required = false)
@@ -56,7 +58,8 @@ public abstract class ServerManager implements ApplicationListener<ContextClosed
         if (!Objects.isNull(services)) {
             services.forEach(BaseService::onStart);
         }
-
+        //启动事件注册
+        Event.init();
         //启动消息注册器
         ControllerFactory.init();
 

@@ -5,7 +5,9 @@ import com.config.ZookeeperConfig;
 import com.dao.*;
 import com.entry.CenterMailEntry;
 import com.entry.PlayerEntry;
+import com.enums.EventType;
 import com.enums.TypeEnum;
+import com.event.Event;
 import com.hot.Hot;
 import com.lock.DisLock;
 import com.lock.LockUtil;
@@ -127,6 +129,11 @@ public class WebTestEnter {
     @RequestMapping("/test/print")
     public void print() {
         System.out.println(2);
+    }
+
+    @RequestMapping("/test/testEvent")
+    public void testEvent() {
+        Event.post(EventType.PlayerTest, 1, "a", new CenterMailEntry(2));
     }
 
     @RequestMapping("/test/hot")

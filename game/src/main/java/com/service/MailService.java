@@ -1,11 +1,13 @@
 package com.service;
 
 import com.annotation.EventListener;
+import com.annotation.EventMethod;
 import com.dao.CenterMailRepository;
 import com.entry.CenterMailEntry;
 import com.entry.MailEntry;
 import com.entry.po.ItemInfo;
 import com.entry.po.MailPo;
+import com.enums.EventType;
 import com.pojo.Player;
 import com.template.templates.MailTemplate;
 import com.template.templates.MailTemplateCache;
@@ -47,6 +49,13 @@ public class MailService extends GameService {
         query.addCriteria(c);
         return mongoTemplate.find(query, CenterMailEntry.class);
 
+    }
+
+    @EventMethod(EventType.PlayerTest)
+    public void test(int a, String b, CenterMailEntry c) {
+        System.out.println(Thread.currentThread().getName() + "---- " + a);
+        System.out.println(b);
+        System.out.println(c);
     }
 
     public MailPo createMail(int mailTemplateId) {

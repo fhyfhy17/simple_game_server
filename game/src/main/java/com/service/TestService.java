@@ -1,12 +1,12 @@
 package com.service;
 
 import com.annotation.EventListener;
+import com.annotation.EventMethod;
 import com.dao.PlayerRepository;
 import com.dao.UserRepository;
 import com.entry.PlayerEntry;
 import com.entry.UserEntry;
-import com.event.playerEvent.TestEvent;
-import com.google.common.eventbus.Subscribe;
+import com.enums.EventType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,13 +29,14 @@ public class TestService extends BaseService {
 //    private List<MapConfig> repoList;
 
 
-    @Subscribe
-    public void test(TestEvent testEvent) {
+    @EventMethod(EventType.PlayerTest)
+    public void test(long playerId, String word) {
 //        for (MapConfig mapConfig : repoList) {
 //            System.out.println(mapConfig.getName());
 //        }
 
-        testEvent.getTestWord();
+        System.out.println(playerId);
+        System.out.println(word);
 
 //        log.info("test = {}", testEvent.getTestWord());
 //        for (String cacheName : cachemanager.getCacheNames()) {

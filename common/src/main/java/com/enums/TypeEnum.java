@@ -104,6 +104,6 @@ public interface TypeEnum {
         SWITCH,//切换服中，下线中，被挤中，不接受消息
         ;
     }
-    
+
 
 }

@@ -2,8 +2,8 @@ package com.controller;
 
 import com.annotation.Controllor;
 import com.entry.PlayerEntry;
-import com.event.EventDispatcher;
-import com.event.playerEvent.TestEvent;
+import com.enums.EventType;
+import com.event.Event;
 import com.google.protobuf.MessageLite;
 import com.net.msg.LOGIN_MSG;
 import com.pojo.Player;
@@ -42,7 +42,7 @@ public class TestController extends BaseController {
 
 
 //        }
-        EventDispatcher.playerEventDispatch(new TestEvent(player.getPlayerId(), "mykey"));
+        Event.post(EventType.PlayerTest, player.getPlayerId(), "mykey");
         return null;
     }
 

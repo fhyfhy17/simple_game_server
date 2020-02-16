@@ -40,4 +40,9 @@ public class ThreadInitializer {
     public Executor getCallBackExecutor() {
         return TtlExecutors.getTtlExecutor(new CallBackForMessageThreadExecutor());
     }
+
+    @Bean(name = "selfExecutor")
+    public Executor getSelf() {
+        return new SelfExecutor();
+    }
 }
