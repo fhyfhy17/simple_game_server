@@ -1,6 +1,7 @@
 package com.thread;
 
 import com.alibaba.ttl.threadpool.TtlExecutors;
+import com.thread.hash.HashKeyExecutor;
 import com.thread.threadPool.NamedThreadFactory;
 import com.thread.threadPool.ThreadPool;
 import org.springframework.context.annotation.Bean;
@@ -44,5 +45,12 @@ public class ThreadInitializer {
     @Bean(name = "selfExecutor")
     public Executor getSelf() {
         return new SelfExecutor();
+    }
+
+    @Bean(name = "hashKeyExecutor")
+    public Executor getHashKeyExecutor() {
+        HashKeyExecutor hashKeyExecutor = new HashKeyExecutor();
+        hashKeyExecutor.init();
+        return hashKeyExecutor;
     }
 }

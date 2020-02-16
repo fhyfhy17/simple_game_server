@@ -6,6 +6,7 @@ import com.enums.EventType;
 import com.pojo.Pair;
 import com.util.ExecutorUtil;
 import com.util.SpringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+@Slf4j
 public class Event {
 
 
