@@ -42,7 +42,7 @@ public class TestController extends BaseController {
 
 
 //        }
-        Event.post(EventType.PlayerTest, player.getPlayerId(), "mykey");
+        Event.post(EventType.Test2, player.getPlayerId(), "mykey");
         return null;
     }
 

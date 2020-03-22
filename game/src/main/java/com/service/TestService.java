@@ -29,7 +29,7 @@ public class TestService extends BaseService {
 //    private List<MapConfig> repoList;
 
 
-    @EventMethod(EventType.PlayerTest)
+    @EventMethod(EventType.Test2)
     public void test(long playerId, String word) {
 //        for (MapConfig mapConfig : repoList) {
 //            System.out.println(mapConfig.getName());

@@ -38,7 +38,15 @@ public class Event {
                 EventType eventType = annotation.value();
 
                 if (map.containsKey(eventType)) {
-                    map.get(eventType).add(new Pair<>(method, value));
+                    List<Pair<Method, Object>> pairs = map.get(eventType);
+                    if (pairs.size() > 0) {
+                        Pair<Method, Object> first = pairs.get(0);
+                        if (!compareMethod(first.getKey(), method)) {
+                            System.exit(0);
+                        }
+                    }
+                    pairs.add(new Pair<>(method, value));
+
                 } else {
                     List<Pair<Method, Object>> list = new ArrayList<>();
                     map.put(eventType, list);
@@ -49,6 +57,31 @@ public class Event {
         }
     }
 
+    private static boolean compareMethod(Method methodFirst, Method methodOther) {
+        int methodFirstParameterCount = methodFirst.getParameterCount();
+        if (methodFirstParameterCount != methodOther.getParameterCount()) {
+            log.error("同一事件的参数个数不匹配，\n" +
+                            "方法1名字:{}  参数:{}\n" +
+                            "方法2名字:{}  参数:{}", methodFirst.getDeclaringClass() + "." + methodFirst.getName()
+                    , methodFirst.getParameters(), methodOther.getDeclaringClass() + "." + methodOther.getName()
+                    , methodOther.getParameters());
+            return false;
+        }
+
+        for (int i = 0; i < methodFirstParameterCount; i++) {
+            if (methodFirst.getParameters()[i].getType().isAssignableFrom(methodOther.getParameters()[i].getType())) {
+                log.error("同一事件的参数不匹配，\n" +
+                                "方法1名字:{}  参数:{}\n" +
+                                "方法2名字:{}  参数:{}", methodFirst.getDeclaringClass() + "." + methodFirst.getName()
+                        , methodFirst.getParameters(), methodOther.getDeclaringClass() + "." + methodOther.getName()
+                        , methodOther.getParameters());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //不想做过多的类继承，所以采用了可变参数，优点是不用写很多类，缺点是重构参数时，没有IDE红线提醒
     public static void post(EventType eventType, Object... objects) {
         List<Pair<Method, Object>> list = map.get(eventType);
         if (!CollectionUtils.isEmpty(list)) {

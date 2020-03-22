@@ -78,14 +78,6 @@ public class OrderingExecutor implements Executor {
                         nextTask = dependencyQueue.poll();
                     }
                 }
-                //try
-                //{
-                //    Thread.sleep(2000);
-                //}
-                //catch(InterruptedException e)
-                //{
-                //    e.printStackTrace();
-                //}
                 if (nextTask != null)
                     delegate.execute(nextTask);
             }
