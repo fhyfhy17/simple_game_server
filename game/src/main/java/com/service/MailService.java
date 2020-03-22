@@ -14,6 +14,9 @@ import com.template.templates.MailTemplateCache;
 import com.template.templates.type.CenterMailType;
 import com.util.GameUtil;
 import com.util.IdCreator;
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +24,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @EventListener
@@ -81,7 +80,7 @@ public class MailService extends GameService {
                 Long playerIdPersonal = centerMailEntry.getReceiverId().iterator().next();
                 if (playerMap.containsKey(playerIdPersonal)) {
                     Player player = playerMap.get(playerIdPersonal);
-                    systemDis(player.getUid(), () -> {
+                    systemDispatch(player.getUid(), () -> {
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
@@ -90,7 +89,7 @@ public class MailService extends GameService {
                 for (Long playerId : centerMailEntry.getReceiverId()) {
                     if (onlineService.getPlayerMap().containsKey(playerId)) {
                         Player player = onlineService.getPlayerMap().get(playerId);
-                        systemDis(player.getUid(), () -> {
+                        systemDispatch(player.getUid(), () -> {
                             player.getMailModule().onCenterMail(centerMailEntry);
                         });
                     }
@@ -98,7 +97,7 @@ public class MailService extends GameService {
                 break;
             case CenterMailType.Total:
                 for (Player player : playerMap.values()) {
-                    systemDis(player.getUid(), () -> {
+                    systemDispatch(player.getUid(), () -> {
                         player.getMailModule().onCenterMail(centerMailEntry);
                     });
                 }
