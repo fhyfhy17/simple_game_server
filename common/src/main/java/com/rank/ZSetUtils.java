@@ -1,7 +1,8 @@
 package com.rank;
 
-import java.util.List;
 import lombok.Value;
+
+import java.util.List;
 
 
 public class ZSetUtils {
@@ -47,7 +48,7 @@ public class ZSetUtils {
             entries.zadd(i, i);
         }
         List<Entry<Long, Long>> entries1 = entries.zrangeByRank(1000, 1200);
-        entries1.stream().forEach(x -> System.out.println(x.getKey()));
+        entries1.forEach(x -> System.out.println(x.getKey()));
         long end = System.currentTimeMillis();
         System.out.println(end - start);
 
@@ -58,7 +59,7 @@ public class ZSetUtils {
             System.out.println("被删过的" + x);
         });
 
-        entries2.stream().forEach(x -> System.out.println(x.getKey() + "_" + x.getScore()));
+        entries2.forEach(x -> System.out.println(x.getKey() + "_" + x.getScore()));
 
         System.out.println(entries.zrank(18L));
 
@@ -70,9 +71,7 @@ public class ZSetUtils {
         }
 
         List<Entry<String, Common>> entries3 = e3.zrangeByRank(0, 40);
-        entries3.stream().forEach(x -> {
-            System.out.println(x);
-        });
+        entries3.forEach(System.out::println);
 
 //		e3.iterator().forEachRemaining(x->{
 //			System.out.println(x);
