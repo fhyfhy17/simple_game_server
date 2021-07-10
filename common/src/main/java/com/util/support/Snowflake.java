@@ -13,28 +13,25 @@ import java.util.concurrent.ConcurrentHashMap;
  * snowflake的结构如下(每部分用-分开):<br>
  *
  * <pre>
- * 0 - 0000000000 0000000000 0000000000 0000000000 0 - 00000 - 00000 - 000000000000
+ * 0 - 0000000000 0000000000 0000000000 0000000000 - 0000000000000 - 0000000000
  * </pre>
  * <p>
- * 第一位为未使用，接下来的41位为毫秒级时间(41位的长度可以使用69年)<br>
- * 然后是5位datacenterId和5位workerId(10位的长度最多支持部署1024个节点）<br>
- * 最后12位是毫秒内的计数（12位的计数顺序号支持每个节点每毫秒产生4096个ID序号）
+ * 第一位为未使用，接下来的40位为毫秒级时间(40位的长度可以使用34年)<br>
+ * 然后是13位workerIdBits(10位的长度最多支持部署8192个节点）<br>
+ * 最后12位是毫秒内的计数（10位的计数顺序号支持每个节点每毫秒产生1024个ID序号）
  */
 public class Snowflake {
 
-    private final long twepoch = 1569728484361L;
-    private final long workerIdBits = 5L;
-    private final long datacenterIdBits = 5L;
+    private final long twepoch = 1625898730942L;
+    private final long workerIdBits = 13L;//2^13 8192
     private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
-    private final long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
-    private final long sequenceBits = 12L;
+
+    private final long sequenceBits = 10L;
     private final long workerIdShift = sequenceBits;
-    private final long datacenterIdShift = sequenceBits + workerIdBits;
-    private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
+    private final long timestampLeftShift = sequenceBits + workerIdBits;
     private final long sequenceMask = -1L ^ (-1L << sequenceBits);
 
     private long workerId;
-    private long datacenterId;
     private long sequence = 0L;
     private long lastTimestamp = -1L;
     private ConcurrentHashMap<Class<? extends BaseEntry>, Object> lockMap = new ConcurrentHashMap<>();
@@ -43,18 +40,13 @@ public class Snowflake {
     /**
      * 构造
      *
-     * @param workerId     终端ID
-     * @param datacenterId 数据中心ID
+     * @param workerId 终端ID
      */
-    public Snowflake(long workerId, long datacenterId) {
+    public Snowflake(long workerId) {
         if (workerId > maxWorkerId || workerId < 0) {
             throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         }
-        if (datacenterId > maxDatacenterId || datacenterId < 0) {
-            throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
-        }
         this.workerId = workerId;
-        this.datacenterId = datacenterId;
         for (Class<? extends BaseEntry> entryClass : ReflectionUtil.getEntryClasses()) {
             lockMap.put(entryClass, new Object());
         }
@@ -78,7 +70,7 @@ public class Snowflake {
 
             lastTimestamp = timestamp;
 
-            return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift) | (workerId << workerIdShift) | sequence;
+            return ((timestamp - twepoch) << timestampLeftShift) | (workerId << workerIdShift) | sequence;
         }
     }
 

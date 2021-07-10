@@ -25,7 +25,7 @@ public class ServerInfoConfig {
 
     @Bean
     public Snowflake snowflake() {
-        return new Snowflake(ContextUtil.getIntId(), ContextUtil.type);
+        return new Snowflake(ContextUtil.getIntId());
     }
 
 
