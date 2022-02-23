@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * 第一位为未使用，接下来的40位为毫秒级时间(40位的长度可以使用34年)<br>
  * 然后是13位workerIdBits(最多支持部署8192个节点）<br>
- * 最后12位是毫秒内的计数（10位的计数顺序号支持每个节点每毫秒产生1024个ID序号）
+ * 最后10位是毫秒内的计数（10位的计数顺序号支持每个节点每毫秒产生1024个ID序号）
  */
 public class Snowflake {
 
